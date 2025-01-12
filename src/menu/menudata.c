@@ -211,9 +211,7 @@ void MenuVoiceStop(int chanId)
 
 void MenuVoiceSetVol(int chanId, int vsetIdx, int vol0)
 {
-    SNDTAP *sndtap_pp;
-
-    sndtap_pp = VoiceSet[vsetIdx].pTap;
+    SNDTAP *sndtap_pp = VoiceSet[vsetIdx].pTap;
 
     TapCt(0x130, chanId, (sndtap_pp->volume * vol0) >> 8);
 }
@@ -275,7 +273,6 @@ int MenuStageCl1Trans(int nStage, int nRound)
         return 0;
 
     Tim2Trans(GetIntAdrsCurrent(ocl1_rndTbl[nRound][nStage]));
-
     return 0;
 }
 
@@ -291,7 +288,6 @@ int MenuCoolCl1Trans(int nStage, int nPos, int nRound)
         return 1;
 
     Tim2Trans(GetIntAdrsCurrent(ocl1_stageTbl[nStage]->fno[nPos][nRound]));
-
     return 0;
 }
 

@@ -383,7 +383,7 @@ void WipeLoadInDispSame(void *x)
     SPR_PRIM spr_prim = D_00393680;
     SPR_DAT  spr_dat  = {};
 
-    spr_dat.GsTex0 = 0x228029a40;
+    spr_dat.GsTex0 = SCE_GS_SET_TEX0(6720, 10, 0, 10, 8, 0, 0, 0, 0, 0, 0, 0);
 
     wipe_end_flag = 1;
     SprInit();
@@ -463,7 +463,7 @@ void WipeYesNoDispTask(void *x)
 
     SPR_DAT spr_dat = {};
 
-    spr_dat.GsTex0 = 0x228029a40;
+    spr_dat.GsTex0 = SCE_GS_SET_TEX0(6720, 10, 0, 10, 8, 0, 0, 0, 0, 0, 0, 0);;
 
     SprInit();
 

@@ -9,6 +9,8 @@ static u_long128 ChangeDrawAreaPacket[12];
 static sceDmaTag exl_dmatag;
 static USR_MALLOC_STR usr_malloc_str[256];
 
+#define PAD_NUM (2)
+
 void WorkClear(void *clr_adrs, int size)
 {
     u_char *clr_pp = (u_char*)clr_adrs;
@@ -26,8 +28,7 @@ void GPadInit(void)
 
     scePadInit(0);
 
-    // Open each controller port
-    for (i = 0; i < 2; i++)
+    for (i = 0; i < PAD_NUM; i++)
     {
         if (!scePadPortOpen(i, 0, pad_dma_buf[i]))
             printf("ERROR: scePadPortOpen[%d]\n", i);
@@ -38,8 +39,7 @@ void GPadExit(void)
 {
     int i;
 
-    // Close each port
-    for (i = 0; i < 2; i++)
+    for (i = 0; i < PAD_NUM; i++)
     {
         scePadPortClose(i, 0);
     }
@@ -55,7 +55,7 @@ void GPadSysRead(void)
     int exid;
     PAD_SYSD *sysP_pp = sysPad;
 
-    for (i = 0; i < 2; i++)
+    for (i = 0; i < PAD_NUM; i++)
     {
         state = scePadGetState(i, 0);
         WorkClear(sysP_pp->rdata, 32);
@@ -74,7 +74,9 @@ void GPadSysRead(void)
                     id = exid;
 
                 if (id == 0)
+                {
                     WorkClear(sysP_pp, sizeof(PAD_SYSD));
+                }
                 else
                 {
                     sysP_pp->pad_id = id;
@@ -89,6 +91,7 @@ void GPadSysRead(void)
                         break;
                     default:
                         WorkClear(sysP_pp, sizeof(PAD_SYSD));
+                        break;
                     }
                 }
 
@@ -227,7 +230,7 @@ void padAnaRead0Clear(PADD *pad_pp)
 {
     int i;
 
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < PR_ARRAYSIZE(pad_pp->ana); i++)
     {
         pad_pp->ana[i] = 0x80;
     }
@@ -236,7 +239,7 @@ void padAnaRead0Clear(PADD *pad_pp)
 void padPrsRead(PADD *pad_pp, u_char *rdata_pp)
 {
     int i;
-    u_char *temp = pad_pp->press; /* TODO: ALSO figure out how to match this without temp vars */
+    u_char *temp = pad_pp->press; /* TODO: Also figure out how to match this without temp vars */
 
     rdata_pp += 8;
 
@@ -339,7 +342,7 @@ void GPadRead(PADD *pad_pp)
 {
     int i = 0;
 
-    while (i < 2)
+    while (i < PAD_NUM)
     {
         if (sysPad[i].rdata[0] != NULL)
             pad0Clear(pad_pp);
@@ -556,14 +559,14 @@ void GGsExecLocalMoveImage(sceGsMoveImage *lp)
     exl_dmatag.id = 0;
     exl_dmatag.next = (sceDmaTag*)lp;
 
-    sceDmaSync(sceDmaGetChan(SCE_DMA_GIF), 0, 0x7FFFFFFF);
+    sceDmaSync(sceDmaGetChan(SCE_DMA_GIF), 0, 0x7fffffff);
     FlushCache(0);
     sceDmaSend(sceDmaGetChan(SCE_DMA_GIF), &exl_dmatag);
 }
 
 u_int randMakeMax(u_int max)
 {
-    u_int ret = (rand() & 0x7FFF) * max;
+    u_int ret = (rand() & 0x7fff) * max;
     return ret >> 15;
 }
 
@@ -622,7 +625,7 @@ void* usrMalloc(u_int size)
     }
     else
     {
-        for (i = 0; i < 256; i++) 
+        for (i = 0; i < PR_ARRAYSIZE(usr_malloc_str); i++) 
         {
             if (usr_malloc_str[i].adrs == 0) 
             {
@@ -643,7 +646,7 @@ void usrFree(void *adrs)
 {
     int i;
 
-    for (i = 0; i < 256; i++) 
+    for (i = 0; i < PR_ARRAYSIZE(usr_malloc_str); i++) 
     {
         if ((usr_malloc_str[i].adrs) && (usr_malloc_str[i].adrs == adrs)) 
         { 
@@ -664,7 +667,7 @@ void usrMallcReport(void)
 
     printf("--- usr malloc report ---\n");
 
-    for (i = 0; i < 256; i++)
+    for (i = 0; i < PR_ARRAYSIZE(usr_malloc_str); i++)
     {
         if (usr_malloc_str[i].adrs)
         {

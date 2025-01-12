@@ -5,19 +5,8 @@
 
 #include <eetypes.h>
 #include <../libcdvd.h>
-#include <sifdev.h>
-#include <eekernel.h>
 
-#include <stdio.h>
-
-#include "os/syssub.h"
-#include "os/usrmem.h"
-#include "os/tim2.h"
-#include "os/mtc.h"
-
-#include "main/etc.h"
-
-#include "iop_mdl/wp2cd_rpc.h"
+#define PACKINT_MAGIC (0x44332211)
 
 typedef enum {
     FRMODE_PC = 0,

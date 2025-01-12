@@ -262,7 +262,7 @@ void MbarGuideLightMake(MBARR_CHR *mbarr_pp, int mbtime)
 {
     u_char col = 128;
 
-    if ((u_int)mbtime < 144)
+    if (mbtime < 144u)
     {
         col = (u_char)(((144 - mbtime) * 128) / 144) + 128;
     }

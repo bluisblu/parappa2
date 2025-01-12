@@ -1,5 +1,4 @@
 #include "dbug/dbgmsg.h"
-
 #include "dbug/msg8x8data.h"
 
 static u_long128 dbgPacket[4096];
@@ -89,7 +88,7 @@ void DbgMsgSetSize(u_short sw, u_short sh)
     MSGSIZE[1] = (sh << 4);
 }
 
-static void msgOutYY(u_char msg, u_short* uv_pp)
+static void msgOutYY(u_char msg, u_short *uv_pp)
 {
     if (msg < 32)
     {
@@ -107,7 +106,7 @@ static void msgOutYY(u_char msg, u_short* uv_pp)
     uv_pp[3] = (((msg >> 4) * 10) + 10);
 }
 
-void DbgMsgPrint(u_char* m_pp, u_short x, u_short y)
+void DbgMsgPrint(u_char *m_pp, u_short x, u_short y)
 {
     u_short uv_buf[4];
 
@@ -119,18 +118,17 @@ void DbgMsgPrint(u_char* m_pp, u_short x, u_short y)
         msgOutYY(*m_pp, uv_buf);
 
         sceGifPkAddGsAD(&gifPacket, SCE_GS_UV, SCE_GS_SET_UV(uv_buf[0] << 4, uv_buf[1] << 4));
-        sceGifPkAddGsAD(&gifPacket, SCE_GS_XYZ2, SCE_GS_SET_XYZ2((u_long)x, (u_long)y, 1));
+        sceGifPkAddGsAD(&gifPacket, SCE_GS_XYZ2, SCE_GS_SET_XYZ2(x, y, 1));
 
         sceGifPkAddGsAD(&gifPacket, SCE_GS_UV, SCE_GS_SET_UV(uv_buf[2] << 4, uv_buf[3] << 4));
         sceGifPkAddGsAD(&gifPacket, SCE_GS_XYZ2, SCE_GS_SET_XYZ2(x + MSGSIZE[0], y + MSGSIZE[1], MSGZPOP));
 
         x += MSGSIZE[0];
-
         m_pp++;
     }
 }
 
-void DbgMsgPrintUserPkt(u_char* m_pp, u_short x, u_short y, sceGifPacket* usrPacket_pp)
+void DbgMsgPrintUserPkt(u_char *m_pp, u_short x, u_short y, sceGifPacket *usrPacket_pp)
 {
     u_short uv_buf[4];
 
@@ -142,7 +140,7 @@ void DbgMsgPrintUserPkt(u_char* m_pp, u_short x, u_short y, sceGifPacket* usrPac
         msgOutYY(*m_pp, uv_buf);
 
         sceGifPkAddGsAD(usrPacket_pp, SCE_GS_UV, SCE_GS_SET_UV(uv_buf[0] << 4, uv_buf[1] << 4));
-        sceGifPkAddGsAD(usrPacket_pp, SCE_GS_XYZ2, SCE_GS_SET_XYZ2((u_long)x, (u_long)y, 1));
+        sceGifPkAddGsAD(usrPacket_pp, SCE_GS_XYZ2, SCE_GS_SET_XYZ2(x, y, 1));
 
         sceGifPkAddGsAD(usrPacket_pp, SCE_GS_UV, SCE_GS_SET_UV(uv_buf[2] << 4, uv_buf[3] << 4));
         sceGifPkAddGsAD(usrPacket_pp, SCE_GS_XYZ2, SCE_GS_SET_XYZ2(x + MSGSIZE[0], y + MSGSIZE[1], MSGZPOP));
@@ -153,7 +151,7 @@ void DbgMsgPrintUserPkt(u_char* m_pp, u_short x, u_short y, sceGifPacket* usrPac
     }
 }
 
-void DbgMsgClearUserPkt(sceGifPacket* usrPacket_pp)
+void DbgMsgClearUserPkt(sceGifPacket *usrPacket_pp)
 {
     sceGifPkAddGsAD(usrPacket_pp, SCE_GS_TEXFLUSH, 0);
 
@@ -172,7 +170,7 @@ void DbgMsgClearUserPkt(sceGifPacket* usrPacket_pp)
     sceGifPkAddGsAD(usrPacket_pp, SCE_GS_TEXA, SCE_GS_SET_TEXA(0, 1, 128));
 }
 
-void DbgMsgSetColorUserPkt(u_char r, u_char g, u_char b, sceGifPacket* usrPacket_pp)
+void DbgMsgSetColorUserPkt(u_char r, u_char g, u_char b, sceGifPacket *usrPacket_pp)
 {
     sceGifPkAddGsAD(usrPacket_pp, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(r, g, b, 128, 0x3f800000));
 }

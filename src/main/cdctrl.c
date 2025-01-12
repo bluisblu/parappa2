@@ -1,6 +1,19 @@
 #include "main/cdctrl.h"
-#include "iop_mdl/tapctrl_rpc.h"
+
+#include "main/etc.h"
 #include "main/p3str.h"
+
+#include "os/mtc.h"
+#include "os/syssub.h"
+#include "os/tim2.h"
+#include "os/usrmem.h"
+
+#include "iop_mdl/tapctrl_rpc.h"
+#include "iop_mdl/wp2cd_rpc.h"
+
+#include <sifdev.h>
+#include <eekernel.h>
+#include <stdio.h>
 
 /* sdata */
 void *current_intg_adrs = 0;
@@ -18,10 +31,10 @@ static int cdSampleTmp;
 /* bss - static */
 extern unsigned char RBuff[N + F - 1]; /* Ring buffer for INT decompression */
 
-#define lzss_read()  *(fp_r)++;
+#define lzss_read()   *(fp_r)++;
 #define lzss_write(x) *(fp_w)++ = (x);
 
-#define UNCACHED(addr) (u_char*)((u_int)(addr) | 0x20000000)
+#define UNCACHED(addr) (u_char*)(((u_int)addr) | 0x20000000)
 
 u_int PackIntGetDecodeSize(u_char *fp_r)
 {
@@ -329,7 +342,7 @@ void intReadSub(void)
             MtcWait(1);
 
         /* Check if we loaded a valid INT */
-        if (PACK(head_read_pp)->id != 0x44332211)
+        if (PACK(head_read_pp)->id != PACKINT_MAGIC)
         {
             printf("INT FILE ERROR!![%s]\n", cdctrl_str.fstr_pp->fname);
             while (1)
@@ -563,7 +576,7 @@ void CdctrlMemIntgDecode(u_int rbuf, u_int setbuf)
         FlushCache(0);
         
         /* Check if we loaded a valid INT */
-        if (PACK(head_read_pp)->id != 0x44332211)
+        if (PACK(head_read_pp)->id != PACKINT_MAGIC)
         {
             printf("INT FILE ERROR!![%s]\n", cdctrl_str.fstr_pp->fname);
             while (1)

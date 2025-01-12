@@ -5,12 +5,14 @@
 
 static void Tim2LoadTexture(int psm, u_int tbp, int tbw, int w, int h, u_long128 *pImage);
 
-PR_EXTERN int Tim2CheckFileHeader()
+PR_EXTERN
+int Tim2CheckFileHeader()
 {
     return 1;
 }
 
-PR_EXTERN TIM2_PICTUREHEADER* Tim2GetPictureHeader(void *pTim2, int imgno)
+PR_EXTERN
+TIM2_PICTUREHEADER* Tim2GetPictureHeader(void *pTim2, int imgno)
 {
     TIM2_FILEHEADER    *pFileHdr = (TIM2_FILEHEADER *)pTim2;
     TIM2_PICTUREHEADER *pPictHdr;
@@ -35,7 +37,8 @@ PR_EXTERN TIM2_PICTUREHEADER* Tim2GetPictureHeader(void *pTim2, int imgno)
 #if 1
 INCLUDE_ASM("prlib/tim2", Tim2GetMipMapPictureSize);
 #else
-PR_EXTERN int Tim2GetMipMapPictureSize(TIM2_PICTUREHEADER *ph, int mipmap, int *pWidth, int *pHeight)
+PR_EXTERN
+int Tim2GetMipMapPictureSize(TIM2_PICTUREHEADER *ph, int mipmap, int *pWidth, int *pHeight)
 {
     int w, h, n;
 
@@ -73,7 +76,8 @@ PR_EXTERN int Tim2GetMipMapPictureSize(TIM2_PICTUREHEADER *ph, int mipmap, int *
 }
 #endif
 
-PR_EXTERN TIM2_MIPMAPHEADER* Tim2GetMipMapHeader(TIM2_PICTUREHEADER *ph, int *pSize)
+PR_EXTERN
+TIM2_MIPMAPHEADER* Tim2GetMipMapHeader(TIM2_PICTUREHEADER *ph, int *pSize)
 {
     TIM2_MIPMAPHEADER *pMmHdr;
     extern char mmsize[8];
@@ -89,7 +93,8 @@ PR_EXTERN TIM2_MIPMAPHEADER* Tim2GetMipMapHeader(TIM2_PICTUREHEADER *ph, int *pS
     return pMmHdr;
 }
 
-PR_EXTERN void* Tim2GetImage(TIM2_PICTUREHEADER *ph, int mipmap)
+PR_EXTERN
+void* Tim2GetImage(TIM2_PICTUREHEADER *ph, int mipmap)
 {
     void *pImage;
 
@@ -109,7 +114,8 @@ PR_EXTERN void* Tim2GetImage(TIM2_PICTUREHEADER *ph, int mipmap)
     return pImage;
 }
 
-PR_EXTERN void* Tim2GetClut(TIM2_PICTUREHEADER *ph)
+PR_EXTERN
+void* Tim2GetClut(TIM2_PICTUREHEADER *ph)
 {
     void *pClut;
 
@@ -121,7 +127,8 @@ PR_EXTERN void* Tim2GetClut(TIM2_PICTUREHEADER *ph)
     return pClut;
 }
 
-PR_EXTERN u_int Tim2GetClutColor(TIM2_PICTUREHEADER *ph, int clut, int no)
+PR_EXTERN
+u_int Tim2GetClutColor(TIM2_PICTUREHEADER *ph, int clut, int no)
 {
     u_char *pClut = (u_char*)Tim2GetClut(ph);
     int n;
@@ -195,7 +202,8 @@ PR_EXTERN u_int Tim2GetClutColor(TIM2_PICTUREHEADER *ph, int clut, int no)
     return ((a << 24) | (b << 16) | (g << 8) | r);
 }
 
-PR_EXTERN u_int Tim2SetClutColor(TIM2_PICTUREHEADER *ph, int clut, int no, u_int newcolor)
+PR_EXTERN
+u_int Tim2SetClutColor(TIM2_PICTUREHEADER *ph, int clut, int no, u_int newcolor)
 {
     u_char *pClut = (u_char*)Tim2GetClut(ph);
 
@@ -293,7 +301,8 @@ PR_EXTERN u_int Tim2SetClutColor(TIM2_PICTUREHEADER *ph, int clut, int no, u_int
 #if 1
 INCLUDE_ASM("prlib/tim2", Tim2GetTexel);
 #else
-PR_EXTERN u_int Tim2GetTexel(TIM2_PICTUREHEADER *ph, int mipmap, int x, int y)
+PR_EXTERN
+u_int Tim2GetTexel(TIM2_PICTUREHEADER *ph, int mipmap, int x, int y)
 {
     u_char *pImage = (u_char*)Tim2GetImage(ph, mipmap);
 
@@ -340,7 +349,8 @@ PR_EXTERN u_int Tim2GetTexel(TIM2_PICTUREHEADER *ph, int mipmap, int x, int y)
 #if 1
 INCLUDE_ASM("prlib/tim2", Tim2SetTexel);
 #else
-PR_EXTERN u_int Tim2SetTexel(TIM2_PICTUREHEADER *ph, int mipmap, int x, int y, u_int newtexel)
+PR_EXTERN
+u_int Tim2SetTexel(TIM2_PICTUREHEADER *ph, int mipmap, int x, int y, u_int newtexel)
 {
     u_char *pImage = (u_char*)Tim2GetImage(ph, mipmap);
 
@@ -405,7 +415,8 @@ PR_EXTERN u_int Tim2SetTexel(TIM2_PICTUREHEADER *ph, int mipmap, int x, int y, u
 #if 1
 INCLUDE_ASM("prlib/tim2", Tim2GetTextureColor);
 #else
-PR_EXTERN u_int Tim2GetTextureColor(TIM2_PICTUREHEADER *ph, int mipmap, int clut, int x, int y)
+PR_EXTERN
+u_int Tim2GetTextureColor(TIM2_PICTUREHEADER *ph, int mipmap, int clut, int x, int y)
 {
     if (Tim2GetImage(ph, mipmap) == NULL)
         return 0; // No texture data
@@ -433,7 +444,8 @@ PR_EXTERN u_int Tim2GetTextureColor(TIM2_PICTUREHEADER *ph, int mipmap, int clut
 }
 #endif
 
-PR_EXTERN void Tim2LoadPicture(TIM2_PICTUREHEADER *ph)
+PR_EXTERN
+void Tim2LoadPicture(TIM2_PICTUREHEADER *ph)
 {
     Tim2LoadImage(ph);
     Tim2LoadClut(ph);
@@ -442,7 +454,8 @@ PR_EXTERN void Tim2LoadPicture(TIM2_PICTUREHEADER *ph)
 #if 1 // non-matching
 INCLUDE_ASM("prlib/tim2", Tim2LoadImage);
 #else
-PR_EXTERN void Tim2LoadImage(TIM2_PICTUREHEADER *ph)
+PR_EXTERN
+void Tim2LoadImage(TIM2_PICTUREHEADER *ph)
 {
     int tbw;
 
@@ -516,7 +529,8 @@ PR_EXTERN void Tim2LoadImage(TIM2_PICTUREHEADER *ph)
 }
 #endif
 
-PR_EXTERN u_int Tim2LoadClut(TIM2_PICTUREHEADER *ph)
+PR_EXTERN
+u_int Tim2LoadClut(TIM2_PICTUREHEADER *ph)
 {
     sceGsLoadImage li;
 

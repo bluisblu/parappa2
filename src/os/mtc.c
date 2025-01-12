@@ -59,7 +59,7 @@ static void mtcStackErrorCheck(int level)
     }
 }
 
-void MtcChangeThCtrl(void* x)
+void MtcChangeThCtrl(void *x)
 {
     while (1)
     {
@@ -125,7 +125,7 @@ void MtcQuit(void)
     }
 }
 
-void MtcStart(void* ctrlTh_pp)
+void MtcStart(void *ctrlTh_pp)
 {
     MtcExec(ctrlTh_pp, MTC_TASK_CTRL);
 
@@ -135,7 +135,7 @@ void MtcStart(void* ctrlTh_pp)
     WaitSema(mtcSemaEnd);
 }
 
-void MtcExec(void* prg_pp, long level)
+void MtcExec(void *prg_pp, long level)
 {
     struct ThreadParam *th_pp;
     MTC_TASK_CONB      *mc_pp = &mtcTaskConB[level];

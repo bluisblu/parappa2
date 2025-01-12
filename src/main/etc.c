@@ -207,7 +207,7 @@ PAD_TYPE GetPcode2PadType(PLAYER_CODE player_code)
 {
     int         i;
     PAD_TYPE    ret;
-    GLOBAL_PLY* gl_pp = global_data.global_ply;
+    GLOBAL_PLY *gl_pp = global_data.global_ply;
 
     ret = PAD_UNUSE;
 
@@ -228,7 +228,7 @@ PAD_TYPE GetPcode2PadType(PLAYER_CODE player_code)
 static int TimeCallback(int x)
 {
     int    i;
-    u_int* time = vsync_time;
+    u_int *time = vsync_time;
 
     for (i = 0; i < PR_ARRAYSIZE(vsync_time); i++, time++)
     {

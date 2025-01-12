@@ -356,7 +356,7 @@ void comMakingNo0(CM_STR_CTRL *cmstr_pp)
 
         if (moto_code != saki_code)
         {
-            if ((saki_code == 0) && (moto_code == 0))
+            if (saki_code == 0 && moto_code == 0)
             {
                 comMakeSubChangeKey(cmstr_pp->cm_str_make, cmstr_pp->maxBox, 0, 0, 1);
             }
@@ -528,7 +528,7 @@ void comMakingNo16(CM_STR_CTRL *cmstr_pp)
 
 static void comSelection(LEVEL_VS_ENUM lvl, CM_STR_CTRL *cmstr_pp)
 {
-    void (**comMakeingTbl_tmp)(CM_STR_CTRL* cmstr_pp);
+    void (**comMakeingTbl_tmp)(CM_STR_CTRL *cmstr_pp);
     int tblcnt;
 
     switch (lvl)

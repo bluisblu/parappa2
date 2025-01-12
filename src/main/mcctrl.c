@@ -169,7 +169,7 @@ void mccReqVSOTHSAVEset(VSOTHSAVE *sv)
         return;
     }
 
-    for (i = 0; i < 32; i++)
+    for (i = 0; i < PR_SIZEOF(VSOTHSAVE); i++)
     {
         mc_rep_str_local.vsothsave[mc_rep_str_local.mc_vsoth_cnt][i] = (*sv)[i];
     }
@@ -187,7 +187,7 @@ int mccReqVSOTHSAVEget(VSOTHSAVE *sv)
         return 0;
     }
     
-    for (i = 0; i < 32; i++)
+    for (i = 0; i < PR_SIZEOF(VSOTHSAVE); i++)
     {
         (*sv)[i] = mc_rep_str_local.vsothsave[mc_rep_ctrl.cl_vsoth_cnt][i];
     }

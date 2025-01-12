@@ -478,7 +478,7 @@ void DrawTmpBuffQuit(void *adrs)
 {
     int i;
 
-    for (i = 0; i < 16; i++)
+    for (i = 0; i < PR_ARRAYSIZE(tmp_buf_adrs); i++)
     {
         if (tmp_buf_adrs[i] != NULL)
         {
@@ -1077,8 +1077,10 @@ static void DrawSceneStrInit(SCENESTR *scstr_pp)
 
         if (scstr_pp->scenectrl_pp[i].prg_pp != NULL)
         {
-            /* Call the overlay function pointer (DrawSceneObjData)
-               to initialize the scenes and handles for each object */
+            /* 
+               Call the overlay function pointer (DrawSceneObjData)
+               to initialize the scenes and handles for each object 
+             */
             scstr_pp->scenectrl_pp[i].prg_pp(scstr_pp->scenectrl_pp[i].param_pp, 0, -2, scstr_pp->scenectrl_pp[i].useDisp, scstr_pp->scenectrl_pp[i].drDisp);
         }
     }
@@ -1099,8 +1101,10 @@ static void DrawSceneStrReset(SCENESTR *scstr_pp)
 
             if (scstr_pp->scenectrl_pp[i].prg_pp != NULL)
             {
-                /* Call the overlay function pointer (DrawSceneObjData)
-                   to reset the objects */
+                /* 
+                   Call the overlay function pointer (DrawSceneObjData)
+                   to reset the objects 
+                 */
                 scstr_pp->scenectrl_pp[i].prg_pp(scstr_pp->scenectrl_pp[i].param_pp, 0, -1, 0, 0);
             }
         }

@@ -421,7 +421,7 @@ static int GetModeMaxH(int w, int mode, int *trsize_pp)
     else
         line1_size /= 2;
         
-    ret = 0x7fff0 / line1_size & 0xfffffff0;
+    ret = 0x7fff0 / line1_size & ~15u;
 
     if (trsize_pp)
         *trsize_pp = ret * line1_size;

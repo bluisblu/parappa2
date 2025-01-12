@@ -276,7 +276,7 @@ def disassemble_command(register_name, hex_data):
 
 def main():
     parser = argparse.ArgumentParser(description='ps2gfxdis')
-    parser.add_argument('register_name', type=str, help='The name of the register (e.g., ALPHA_1)')
+    parser.add_argument('register_name', type=str, help='The name of the register (e.g. ALPHA_1)')
     parser.add_argument('data', type=str, help='The hexadecimal data associated with the register')
 
     args = parser.parse_args()

@@ -133,7 +133,7 @@ INCLUDE_ASM("menu/menusub", TsRestoreSaveData);
 
 int DateChgInt(u_int n)
 {
-    // Convert BCD to decimal
+    /* Convert BCD to decimal */
     return 
     (
         ((n & 0xf0) >> 4) * 10 +

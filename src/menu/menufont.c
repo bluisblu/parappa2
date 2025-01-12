@@ -251,11 +251,10 @@ INCLUDE_ASM("menu/menufont", _JPFont_GetSubtCode);
 
 static int _EGFont_GetSubtCode(u_char *str, SUBT_CODE *subt_code, MCODE_DAT *pfnt_ascii)
 {
-    /* s3 19 */ int line_num;
-    /* s2 18 */ MCODE_CHAR *ppMcode;
-    /* s0 16 */ u_char c;
-    /* -0x80(sp) */ u_char dat0;
-    /* -0x7f(sp) */ u_char dat1;
+    int         line_num;
+    MCODE_CHAR *ppMcode;
+    u_char      c;
+    u_char      dat0, dat1;
 
     if (*str == '\0')
         return 0;

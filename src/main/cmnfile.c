@@ -6,7 +6,7 @@ extern char common_ipk_end[];
 
 /* =====================  COMMON FILES OVERVIEW  ===================== */
 /* PaRappa the Rapper 2 stores some of its assets inside of the ELF    */
-/* to reduce loading times -- these are assets use commonly thru the   */
+/* to reduce loading times--these are assets use commonly through the  */
 /* game, like the models for the loading screen.                       */
 /* ------------------------------------------------------------------- */
 /* The files are separated in categories (see CMN_FILE_TYPE_ENUM).     */

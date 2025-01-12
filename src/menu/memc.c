@@ -144,7 +144,7 @@ extern char D_00399878[]; // sdata - "/"
 char* memc_getfilepath(int no)
 {
     extern char tmps1[130];
-    char *fbody;
+    char       *fbody;
 
     fbody = memc_getfilename(no);
     if (fbody == NULL)
