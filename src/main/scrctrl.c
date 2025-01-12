@@ -85,18 +85,44 @@ void ScrTapDbuffCtrlInit(void *data_top, int bk0, int bk1)
     scr_snd_dbuff.sndrec_pp[1] = NULL;
 }
 
+#ifndef NON_MATCHING
 INCLUDE_ASM("main/scrctrl", ScrTapDbuffSet);
+#else /* Function matches, but the sloop bug triggers */
+u_int ScrTapDbuffSet(SNDREC *sndrec_pp)
+{
+    u_int ret;
+    u_int id;
+
+    id = scr_snd_dbuff.next_index & 1;
+    if (scr_snd_dbuff.sndrec_pp[id] == sndrec_pp)
+    {
+        ret = scr_snd_dbuff.next_index;
+        scr_snd_dbuff.next_index++;
+        return ret;
+    }
+
+    if (scr_snd_dbuff.sndrec_pp[id ^ 1] == sndrec_pp)
+    {
+        return id ^ 1;
+    }
+
+    ScrTapDataTrans(sndrec_pp, scr_snd_dbuff.bank[id], scr_snd_dbuff.data_top);
+    ret = id;
+
+    scr_snd_dbuff.sndrec_pp[id] = sndrec_pp;
+    scr_snd_dbuff.next_index++;
+    return ret;
+}
+#endif
 
 void ScrTapDbuffSetSp(SNDREC *sndrec_pp, int id)
 {
-    u_int ret;
+    if (id < 0)
+        return;
 
-    if (id > -1)
-    {
-        scr_snd_dbuff.next_index = id;
-        ScrTapDataTrans(sndrec_pp, scr_snd_dbuff.bank[id & 1 ^ 1], scr_snd_dbuff.data_top);
-        scr_snd_dbuff.sndrec_pp[id & 1 ^ 1] = sndrec_pp;
-    }
+    scr_snd_dbuff.next_index = id;
+    ScrTapDataTrans(sndrec_pp, scr_snd_dbuff.bank[id & 1 ^ 1], scr_snd_dbuff.data_top);
+    scr_snd_dbuff.sndrec_pp[id & 1 ^ 1] = sndrec_pp;
 }
 
 void ScrTapDbuffClear(void)
@@ -113,7 +139,7 @@ void ScrTapCtrlInit(void *data_top)
 
 void ScrTapDataTrans(SNDREC *sndrec_pp, int bank, void *data_top)
 {
-    if (sndrec_pp->bd_num > -1)
+    if (sndrec_pp->bd_num >= 0)
     {
         TapCt(0x8030 | bank, (int)GetIntAdrsCurrent(sndrec_pp->bd_num), GetIntSizeCurrent(sndrec_pp->bd_num));
         TapCt(0x8040 | bank, (int)GetIntAdrsCurrent(sndrec_pp->hd_num), GetIntSizeCurrent(sndrec_pp->hd_num));
@@ -151,14 +177,13 @@ void ScrTapReqStop(int box)
     TapCt(0xe0, box, 0);
 }
 
-
 static void exam_tbl_updownInit(SCORE_INDV_STR *sindv_pp)
 {
     int i;
 
     if (sindv_pp->global_ply != NULL)
     {
-        for (i = 0; i < 25; i++)
+        for (i = 0; i < PR_ARRAYSIZE(sindv_pp->global_ply->exam_tbl_updown); i++)
         {
             sindv_pp->global_ply->exam_tbl_updown[i] = 0;
         }

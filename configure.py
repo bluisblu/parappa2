@@ -158,7 +158,6 @@ def remove_gprel():
                 # Reference found, replace
                 updated_content = re.sub(gp_add_pattern, r'la \1, \2', content)
 
-                # Write the updated content back to the file
                 with open(filepath, "w") as file:
                     file.write(updated_content)
 
@@ -176,10 +175,15 @@ SLOOP_PROBLEMATIC_FUNCS = [
     "_TsCELBackObjDraw.s"
 ]
 
-def patch_branch_instructions(folder: str) -> None:
+def patch_branch_instructions(folder: str, func: str = None) -> None:
+    print(f"(HACK) Applying short loop fix on \"{folder}\"")
     for root, dirs, files in os.walk(folder):
         for filename in files:
             filepath = os.path.join(root, filename)
+
+            # Only patch branches on a specific function.
+            if func and os.path.splitext(filename)[0] != func:
+                continue
 
             # Uncomment to only apply the patch on specific functions
             #
@@ -188,7 +192,6 @@ def patch_branch_instructions(folder: str) -> None:
 
             with open(filepath, "r") as file:
                 content = file.read()
-                #lines = file.readlines()
 
             if re.search(OPCODE_PATTERN, content):
                 # print(f"(HACK) Applying short loop fix on file \"{filename}\"")
@@ -201,14 +204,11 @@ def patch_branch_instructions(folder: str) -> None:
                     content,
                 )
 
-                # Write the updated content back to the file
                 with open(filepath, "w") as file:
                     file.write(content)
 
 def apply_short_loop_fix():
-    print(f"(HACK) Applying short loop fix on \"menu/menusub.c\"")
     patch_branch_instructions("asm/nonmatchings/menu/menusub")
-    print(f"(HACK) Applying short loop fix on \"prlib/shape.cpp\"")
     patch_branch_instructions("asm/nonmatchings/prlib/shape")
 
 EUC_HACK_FILENAME_TABLE = ["TsDrawUPacket.s", "_P3MC_SetBrowsInfo.s"]
@@ -219,7 +219,7 @@ def eucjp_convert():
                 filepath = os.path.join(root, filename)
 
                 if filename in EUC_HACK_FILENAME_TABLE:
-                    print(f"(HACK) Converting {filename}")
+                    print(f"(HACK) Converting {filename} to EUC-JP")
 
                 with open(filepath, "r", encoding="utf-8") as file:
                     content = file.read()
@@ -426,9 +426,9 @@ if __name__ == "__main__":
         action="store_true",
     )
     parser.add_argument(
-        "-noshortloopfix",
+        "-nosloopfix",
         "--no-short-loop-fix",
-        help="Do not patch branch instructions on specific functions to combat a assembler bug",
+        help="Do not patch branch instructions on specific functions to combat an assembler bug",
         action="store_true",
     )
     parser.add_argument(

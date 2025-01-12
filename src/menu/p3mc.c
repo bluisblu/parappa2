@@ -25,7 +25,7 @@ extern int UChkSize[2];
 
 /* bss - static */
 extern char filePath[64];
-extern MEMC_INFO *mcmenu_info;
+extern MEMC_INFO mcmenu_info;
 extern sceMcTblGetDir p3mcTblGetDir[8];
 
 /* sbss - static */
@@ -35,12 +35,29 @@ extern int isFileFlgCash;
 extern u_char McLogFileFlg[80];
 extern u_char McReplayFileFlg[80];
 
+static int   P3MC_GetIconSize(int mode);
 /* static */ char* _P3MC_GetFilePath(int mode, int fileNo);
 static void  _P3MC_dataCheckFunc(P3MC_WORK *pw, P3MCDataCheckFunc funcp);
 static int   _P3MC_CheckUserData(P3MC_WORK *pw);
 /* static */ int   _P3MC_CheckUserDataHead(P3MC_WORK *pw);
 
-INCLUDE_ASM("menu/p3mc", P3MC_GetIconSize);
+static int P3MC_GetIconSize(int mode)
+{
+    int isize;
+
+    switch (mode)
+    {
+    case 2:
+        isize = 0x1e360;
+        break;
+    case 1:
+    default:
+        isize = 0x1ccb0;
+        break;
+    }
+
+    return isize;
+}
 
 INCLUDE_RODATA("menu/p3mc", D_00396180);
 
@@ -51,29 +68,37 @@ static void _P3MC_SetUserDirName(int mode, int fileNo)
     memc_setDirName(_P3MC_GetFilePath(mode, fileNo));
 }
 
-#if 1
+extern char D_00399840[]; /* "LOG???"  */
+extern char D_00399848[]; /* "LOG%03d" */
+extern char D_00399850[]; /* "REP???"  */
+extern char D_00399858[]; /* "REP%03d" */
+extern char D_00399860[]; /* "??????"  */
+
+#ifndef NON_MATCHING /* Requires sdata split to match */
 INCLUDE_ASM("menu/p3mc", _P3MC_GetFilePath);
 #else
-static char* _P3MC_GetFilePath(/* a0 4 */ int mode, /* a2 6 */ int fileNo)
+static char* _P3MC_GetFilePath(int mode, int fileNo)
 {
-    char *addName = &filePath[12];
+    char *addName;
 
-    strcpy(filePath, "BISCPS-15017");
+    strcpy(filePath, "BISCPS-15017"); /* D_003961C0 */
+    addName = &filePath[12];
 
     switch (mode)
     {
     case 1:
-        if (fileNo >= 0)
-            sprintf(addName, "LOG%03d", fileNo);
+        if (fileNo < 0)
+            strcpy(addName, "REP???");
         else
-            strcpy(addName, "LOG???");
+            sprintf(addName, "REP%03d", fileNo);
         break;
     case 2:
-        if (fileNo >= 0)
-            sprintf(addName, "REP%03d", fileNo);
+        if (fileNo < 0)
+            strcpy(addName, "LOG???");
         else
-            strcpy(addName, "REP???");
+            sprintf(addName, "LOG%03d", fileNo);
         break;
+    case 3:
     default:
         strcpy(addName, "??????");
         break;
@@ -97,7 +122,7 @@ INCLUDE_ASM("menu/p3mc", _P3MC_mainfile_chk);
 
 INCLUDE_ASM("menu/p3mc", _P3MC_file_chk);
 
-#if 1
+#ifndef NON_MATCHING
 INCLUDE_ASM("menu/p3mc", P3MC_InitReady);
 #else
 int P3MC_InitReady(void)
@@ -108,17 +133,32 @@ int P3MC_InitReady(void)
     FreeSizeFlg = 0;
 
     memset(&P3MC_Work, 0, sizeof(P3MC_WORK));
-    memset(&mcmenu_info, 0, 0x18);
-    memset(p3mcTblGetDir, 0, 0x200);
+    memset(&mcmenu_info, 0, sizeof(MEMC_INFO));
+    memset(p3mcTblGetDir, 0, sizeof(p3mcTblGetDir));
 
     isFileFlgCash = 0;
 
-    memset(McLogFileFlg, 0, 0x50);
-    memset(McReplayFileFlg, 0, 0x50);
+    memset(McLogFileFlg, 0, sizeof(McLogFileFlg));
+    memset(McReplayFileFlg, 0, sizeof(McReplayFileFlg));
     memc_init();
-    //mcmenu_info.dirfile = p3mcTblGetDir;
-    //mcmenu_info.dirfileMax = 8;
+
+    mcmenu_info.dirfile = p3mcTblGetDir;
+    mcmenu_info.dirfileMax = 8;
     memc_port_info(0, &mcmenu_info);
+
+    re = memc_manager(0);
+
+    if (re == 0x10 || re == 0x6)
+    {
+        P3MC_CheckChangeClear();
+        return -1;
+    }
+
+    if (re == 0x30)
+    {
+        P3MC_CheckChangeClear();
+        return -1;
+    }
 
     return re;
 }
@@ -420,13 +460,40 @@ static int _P3MC_CheckUserData(P3MC_WORK *pw)
         return (strcmp(FooterID, pfoot->footer) != 0);
 }
 
-#if 1
+#ifndef NON_MATCHING
 INCLUDE_ASM("menu/p3mc", _P3MC_CheckUserDataHead);
 #else
 static int _P3MC_CheckUserDataHead(/* s1 17 */ P3MC_WORK *pw)
 {
     /* s0 16 */ USER_HEADER *hed = (USER_HEADER*)pw->dhdl->pMemTop;
 
+    if (strcmp(hed->header, HedderID))
+        return 1;
+    
+    if (strcmp(hed->footer, FooterID))
+        return 1;
+    
+    if (!hed->user.flg)
+        return 0;
+    
+    if (hed->user.fileNo == pw->data_no)
+    {
+        if (hed->user.mode == pw->data_mode)
+        {
+            if (pw->data_stage > 0)
+            {
+                if (hed->user.stageNo != pw->data_stage)
+                    return 1;
+            }
+
+            if (hed->user.name[0] != 0)
+                return (hed->user.name1[0] == 0);
+            else
+                return 0;
+        }
+    }
+
+#if 0
     if (strcmp(hed->header, HedderID) == 0)
     {
         if (strcmp(hed->footer, FooterID) == 0)
@@ -454,5 +521,6 @@ static int _P3MC_CheckUserDataHead(/* s1 17 */ P3MC_WORK *pw)
     }
     
     return 1;
+#endif
 }
 #endif

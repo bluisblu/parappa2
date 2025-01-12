@@ -303,59 +303,59 @@ extern float S5432[4]; /* see SCE's libvu0 */
 
 static void rotcossin(float rot)
 {
-    asm __volatile__
-    ("
-        mtc1        $0, $f0
-        c.olt.s     %0, $f0
-        lwc1        $f0, FLT_003990DC   # li.s $f0, 1.57079637050628662109e0
-        bc1f        _RotCosSin_01
-        add.s       %0, $f0, %0         # rx += (π/2)
-        li          $7, 0x1
-        j           _RotCosSin_02
+    asm
+    (
+        "mtc1        $0, $f0             \n\t"
+        "c.olt.s     %0, $f0             \n\t"
+        "lwc1        $f0, FLT_003990DC   \n\t" /* li.s $f0, 1.57079637050628662109e0 */
+        "bc1f        _RotCosSin_01       \n\t"
+        "add.s       %0, $f0, %0         \n\t" /* rx += (pi/2) */
+        "li          $7, 0x1             \n\t"
+        "j           _RotCosSin_02       \n\t"
 
-_RotCosSin_01:
-        sub.s       %0, $f0, %0         # rx = (π/2)-rx
-        move        $7, $0
+"_RotCosSin_01:                          \n\t"
+        "sub.s       %0, $f0, %0         \n\t" /* rx = (pi/2)-rx */
+        "move        $7, $0              \n\t"
 
-_RotCosSin_02:
-        mfc1        $8, %0
-        qmtc2       $8, vf03
+"_RotCosSin_02:                          \n\t"
+        "mfc1        $8, %0              \n\t"
+        "qmtc2       $8, vf03            \n\t"
 
-        la          $8,   S5432         # Transfer coefficients of S5-S2 to VF05
-        lqc2        vf01, 0($8)         #
+        "la          $8,   S5432         \n\t" /* Transfer coefficients of S5-S2 to VF05 */
+        "lqc2        vf01, 0($8)         \n\t"
 
-        vmr32.w     vf03, vf03          # Copy VF03.x(v) to VF03.w
-        vaddx.x     vf04, vf00, vf03    # Copy VF03.x(v) to VF04.x
-        vmul.x      vf03, vf03, vf03    # Square VF03.x to v^2
-        vmulx.yzw   vf04, vf04, vf00    # VF04.yzw = 0
-        vmulw.xyzw  vf02, vf01, vf03    # Apply VF03.w(v) to S2-S5
-        vmulx.xyzw  vf02, vf02, vf03    # Multiply by VF03.x(v^2)
-        vmulx.xyz   vf02, vf02, vf03    # Multiply by VF03.x(v^2)
-        vaddw.x     vf04, vf04, vf02    # s += k2
-        vmulx.xy    vf02, vf02, vf03    # Multiply by VF03.x(v^2)
-        vaddz.x     vf04, vf04, vf02    # s += z
-        vmulx.x     vf02, vf02, vf03    # Multiply by VF03.x(v^2)
-        vaddy.x     vf04, vf04, vf02    # s += y
-        vaddx.x     vf04, vf04, vf02    # s += x (sin is over)
-        vaddx.xy    vf04, vf19, vf04    # .xy = s (append)
-        vmul.x      vf05, vf04, vf04    # VF05.x = s*s
-        vsubx.w     vf05, vf00, vf05    # VF05.w = 1-(s*s)
+        "vmr32.w     vf03, vf03          \n\t" /* Copy VF03.x(v) to VF03.w */
+        "vaddx.x     vf04, vf00, vf03    \n\t" /* Copy VF03.x(v) to VF04.x */
+        "vmul.x      vf03, vf03, vf03    \n\t" /* Square VF03.x to v^2 */
+        "vmulx.yzw   vf04, vf04, vf00    \n\t" /* VF04.yzw = 0 */
+        "vmulw.xyzw  vf02, vf01, vf03    \n\t" /* Apply VF03.w(v) to S2-S5 */
+        "vmulx.xyzw  vf02, vf02, vf03    \n\t" /* Multiply by VF03.x(v^2) */
+        "vmulx.xyz   vf02, vf02, vf03    \n\t" /* Multiply by VF03.x(v^2) */
+        "vaddw.x     vf04, vf04, vf02    \n\t" /* s += k2 */
+        "vmulx.xy    vf02, vf02, vf03    \n\t" /* Multiply by VF03.x(v^2) */
+        "vaddz.x     vf04, vf04, vf02    \n\t" /* s += z */
+        "vmulx.x     vf02, vf02, vf03    \n\t" /* Multiply by VF03.x(v^2) */
+        "vaddy.x     vf04, vf04, vf02    \n\t" /* s += y */
+        "vaddx.x     vf04, vf04, vf02    \n\t" /* s += x (sin is over) */
+        "vaddx.xy    vf04, vf19, vf04    \n\t" /* .xy = s (append) */
+        "vmul.x      vf05, vf04, vf04    \n\t" /* VF05.x = s*s */
+        "vsubx.w     vf05, vf00, vf05    \n\t" /* VF05.w = 1-(s*s) */
 
-        vsqrt       Q, vf05w            # Q = sqrt(1-s*s) (cos is over)
-        vwaitq
+        "vsqrt       Q, vf05w            \n\t" /* Q = sqrt(1-s*s) (cos is over) */
+        "vwaitq                          \n\t"
         
-        cfc2        $8, $vi22
-        qmtc2       $8, vf05
+        "cfc2        $8, $vi22           \n\t"
+        "qmtc2       $8, vf05            \n\t"
 
-        bne         $7, $0, _rcossin_01
+        "bne         $7, $0, _rcossin_01 \n\t"
 
-        vaddx.x     vf04, vf19, vf05    # VF04.x = s
-        b           _rcossin_02
+        "vaddx.x     vf04, vf19, vf05    \n\t" /* VF04.x = s */
+        "b           _rcossin_02         \n\t"
 
-_rcossin_01:
-        vsubx.x     vf04, vf19, vf05    # VF04.x = s
-_rcossin_02:
-    " :: "f"(rot));
+"_rcossin_01:                            \n\t"
+        "vsubx.x     vf04, vf19, vf05    \n\t" /* VF04.x = s */
+"_rcossin_02:                            \n\t"
+    : : "f"(rot));
 }
 
 void _pkVU0RotMatrixZ(float rz)
@@ -364,18 +364,18 @@ void _pkVU0RotMatrixZ(float rz)
 
     rotcossin(rz);
 
-    asm __volatile__
-    ("
-        vmove.xyzw    vf09, vf00      
-        vmove.zw      vf06, vf19      
-        vmove.zw      vf07, vf19      
-        vsub.zw       vf04, vf04, vf04
-        vmr32.xyzw    vf08, vf09      
-        vaddx.y       vf06, vf19, vf04
-        vaddy.x       vf06, vf19, vf04
-        vsubx.x       vf07, vf19, vf04
-        vaddy.y       vf07, vf19, vf04
-    ");
+    asm
+    (
+        "vmove.xyzw    vf09, vf00       \n\t"
+        "vmove.zw      vf06, vf19       \n\t"
+        "vmove.zw      vf07, vf19       \n\t"
+        "vsub.zw       vf04, vf04, vf04 \n\t"
+        "vmr32.xyzw    vf08, vf09       \n\t"
+        "vaddx.y       vf06, vf19, vf04 \n\t"
+        "vaddy.x       vf06, vf19, vf04 \n\t"
+        "vsubx.x       vf07, vf19, vf04 \n\t"
+        "vaddy.y       vf07, vf19, vf04 \n\t"
+    );
 }
 
 #if 1
@@ -775,7 +775,7 @@ void PkMesh_SetUVWH(PKMESH *mesh, float ux0, float uy0, float uw, float uh)
         for (x = 0; x < (mesh->mw + 1); x++, pt++)
         {
             pt->u = ux0 + ((x * uw) * fmw);
-            pt->v = uy;         
+            pt->v = uy;
         }
     }
 }

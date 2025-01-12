@@ -124,7 +124,7 @@ void MNScene_SetAnimeEnd(MN_SCENE *pshdl)
     int        i;
     MNANM_TBL *panm;
 
-    for (i = 0; i < 10; i++)
+    for (i = 0; i < PR_ARRAYSIZE(pshdl->anime); i++)
     {
         panm = pshdl->anime[i];
 
@@ -226,24 +226,24 @@ int MNScene_ModelDispSw(MN_SCENE *pshdl, int nmdl, int bsw)
 */
 static void _myVu0Length(float *v0, float *v1)
 {
-    asm __volatile__
-    ("
-        lqc2     vf04, 0x0(%1)     # load v1(vf04)
-                                   # vf04 = v1
+    asm
+    (
+        "lqc2     vf04, 0x0(%1)      \n\t" /* Load v1(vf04) */
+                                           /* vf04 = v1     */
 
-        vmul.xyz vf05, vf04, vf04  # vf05.xyz = (vf04.xyz)²
-        vaddy.x  vf05, vf05, vf05y # vf05.x += vf05.y
-        vaddz.x  vf05, vf05, vf05z # vf05.x += vf05.z
+        "vmul.xyz vf05, vf04, vf04   \n\t" /* vf05.xyz = (vf04.xyz)^2 */
+        "vaddy.x  vf05, vf05, vf05y  \n\t" /* vf05.x  += vf05.y       */
+        "vaddz.x  vf05, vf05, vf05z  \n\t" /* vf05.x  += vf05.z       */
 
-        vsqrt    Q, vf05x          # sqrt(vf05.x)
-        vwaitq                     # wait for sqrt
+        "vsqrt    Q, vf05x           \n\t" /* sqrt(vf05.x)  */
+        "vwaitq                      \n\t" /* wait for sqrt */
 
-        vaddq.x  vf05, vf00, Q     # vf05 = Q
-        qmfc2    $8,   vf05        # $t0 = vf05
+        "vaddq.x  vf05, vf00, Q      \n\t" /* vf05 = Q   */
+        "qmfc2    $8,   vf05         \n\t" /* $t0 = vf05 */
 
-        sw       $8,   0x0(%0)     # save v0
-                                   # v0 = $t0
-    " :: "r"(v0), "r"(v1));
+        "sw       $8,   0x0(%0)      \n\t" /* save v0  */
+                                           /* v0 = $t0 */
+    : : "r"(v0), "r"(v1));
 }
 
 static void MnMoveMode_InitRoot(int movNo)
