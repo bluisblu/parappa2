@@ -952,25 +952,25 @@ void CdctrlXTRset(FILE_STR *fstr_pp, u_int usebuf)
     FlushCache(0);
 
     tb_pp = STR(usebuf)->trbox_tr;
-    for (i = 0; i < 16; i++, tb_pp++)
+    for (i = 0; i < PR_ARRAYSIZE(STR(usebuf)->trbox_tr); i++, tb_pp++)
     {
-        if (tb_pp->press_size != 0)
-        {
-            pr_pp = (u_char*)UsrMemEndAlloc(tb_pp->press_size);
-            
-            UsrMemEndFree();
-            FlushCache(0);
+        if (tb_pp->press_size == 0)
+            continue;
 
-            while (!cdctrlReadSub(fstr_pp, tb_pp->read_pos, tb_pp->press_size, (int)pr_pp))
-                MtcWait(1);
+        pr_pp = (u_char*)UsrMemEndAlloc(tb_pp->press_size);
 
-            FlushCache(0);
+        UsrMemEndFree();
+        FlushCache(0);
 
-            printf("dec size[%08x]\n", PackIntGetDecodeSize(pr_pp));
-            printf("dec info trpos[%08x] read_pos[%08x] press_size[%08x]\n", tb_pp->trpos, tb_pp->read_pos, tb_pp->press_size);
-        
-            PackIntDecodeWait(pr_pp, (u_char*)(tb_pp->trpos + usebuf), 230);
-        }
+        while (!cdctrlReadSub(fstr_pp, tb_pp->read_pos, tb_pp->press_size, (int)pr_pp))
+            MtcWait(1);
+
+        FlushCache(0);
+
+        printf("dec size[%08x]\n", PackIntGetDecodeSize(pr_pp));
+        printf("dec info trpos[%08x] read_pos[%08x] press_size[%08x]\n", tb_pp->trpos, tb_pp->read_pos, tb_pp->press_size);
+
+        PackIntDecodeWait(pr_pp, (u_char*)(tb_pp->trpos + usebuf), 230);
     }
 
     FlushCache(0);

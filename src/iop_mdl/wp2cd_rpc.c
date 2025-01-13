@@ -1,5 +1,7 @@
 #include "iop_mdl/wp2cd_rpc.h"
 
+#include <../libcdvd.h>
+
 #define DATA_SIZE_STRING (64)
 #define DATA_SIZE_NORMAL (16)
 
@@ -25,18 +27,11 @@ int WP2Init(void)
     return 1;
 }
 
-/* TODO(poly): Is this really a struct? */
-typedef struct
-{
-    u_char sbuff[32];
-    u_int val;
-} rpcBuff;
-
 int WP2Ctrl(int command, int data0)
 {
     if (command == WP2_OPENFLOC || command == WP2_SEEKFLOC)
     {
-        *(rpcBuff*)sbuff = *(rpcBuff*)data0;
+        *(sceCdlFILE*)sbuff = *(sceCdlFILE*)data0;
 
         strcpy((char*)sbuff, (char*)data0);
         FlushCache(0);

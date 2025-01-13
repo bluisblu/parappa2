@@ -622,7 +622,7 @@ void xtrView(FILE_STR *file_str_pp)
     {
         MtcWait(1);
 
-        if ((pad[0].one & SCE_PADstart) || CdctrlWP2PlayEndCheck() || timer >= 6540)
+        if (pad[0].one & SCE_PADstart || CdctrlWP2PlayEndCheck() || timer >= 6540)
             break;
 
         CdctrlWp2GetSampleTmpBuf();
