@@ -136,7 +136,7 @@ int PrGetDebugParam(int param);
 float PrGetDebugParamFloat(int param);
 
 /* menderer.cpp */
-void  PrDecelerateMenderer(u_int speed);
+void  PrDecelerateMenderer(int speed);
 void  PrRestartMenderer();
 
 void  PrSetMendererRatio(float ratio);

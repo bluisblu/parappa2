@@ -231,4 +231,7 @@ void DrawCtrlInit(EVENTREC *ev_pp, int ctrlTbl, void *dat_top);
 void DrawCtrlQuit(void);
 void DrawCtrlTimeSet(int time);
 
+void MendererCtrlTitle();
+void MendererCtrlTitleDera();
+
 #endif

@@ -1,6 +1,9 @@
 #include "main/scrctrl.h"
 
+#include "main/drawctrl.h"
 #include "main/mbar.h"
+
+#include <prlib/prlib.h>
 
 /* data */
 extern u_int thnum_tbl[4];
@@ -38,6 +41,9 @@ extern TAP_GROUPE_STR tap_groupe_str[5];
 int follow_scr_tap_memory_cnt;
 int follow_scr_tap_memory_cnt_load;
 int commake_str_cnt;
+
+static void bonusScoreDraw(void);
+static void LessonRoundDisp(SCRRJ_LESSON_ROUND_ENUM type);
 
 int GetCurrentTblNumber(void)
 {
@@ -1211,47 +1217,43 @@ void tapReqGroup(TAPCT *tapct_pp, PLAYER_INDEX pindex, int sndId, u_char *tappre
     tap_groupe_str[pindex].tappress_pp = tappress_pp;
 }
 
-INCLUDE_ASM("main/scrctrl", tapReqGroupPoll);
-#if 0
 void tapReqGroupPoll(void)
 {
-    /* s4 20 */ int i;
-    /* s3 19 */ int j;
-    /* s5 21 */ int end_frameT;
-    /* s1 17 */ TAP_GROUPE_STR *tgs_pp = tap_groupe_str;
+    int             i, j;
+    int             end_frameT;
+    TAP_GROUPE_STR *tgs_pp = tap_groupe_str;
 
     for (i = 0; i < 5; i++, tgs_pp++)
     {
         end_frameT = 0;
 
-        if (tgs_pp->tapct_pp != NULL)
+        if (tgs_pp->tapct_pp == NULL)
+            continue;
+        
+        for (j = 0; j < 4; j++)
         {
-            for (j = 0; i < 5; j++)
+            if (tgs_pp->tapct_pp[j].frame == -1)
+                continue;
+            
+            if (tgs_pp->tapct_pp[j].frame == tgs_pp->timer)
             {
-                if (tgs_pp->tapct_pp[j].frame != -1)
-                {
-                    if (tgs_pp->tapct_pp[j].frame == tgs_pp->timer)
-                    {
-                        if (tgs_pp->tapct_pp[j].actor != -1)
-                            DrawTapReqTbl(tgs_pp->tapct_pp[j].actor, i, tgs_pp->tappress_pp);
-                        if (tgs_pp->tapct_pp[j].sound != -1)
-                            ScrTapReq(tgs_pp->sndId, i, tgs_pp->tapct_pp[j].sound);
-                    }
-                }
-                else if (tgs_pp->tapct_pp[j].frame > tgs_pp->timer)
-                {
-                    end_frameT = 1;
-                }
+                if (tgs_pp->tapct_pp[j].actor != -1)
+                    DrawTapReqTbl(tgs_pp->tapct_pp[j].actor, i, tgs_pp->tappress_pp);
+                if (tgs_pp->tapct_pp[j].sound != -1)
+                    ScrTapReq(tgs_pp->sndId, i, tgs_pp->tapct_pp[j].sound);
             }
-
-            if (end_frameT)
-                tgs_pp->timer++;
             else
-                WorkClear(tgs_pp, sizeof(TAP_GROUPE_STR));
+            {
+                end_frameT = (tgs_pp->timer < tgs_pp->tapct_pp[j].frame) ? 1 : end_frameT;
+            }
         }
+
+        if (end_frameT)
+            tgs_pp->timer++;
+        else
+            WorkClear(tgs_pp, sizeof(TAP_GROUPE_STR));
     }
 }
-#endif
 
 INCLUDE_ASM("main/scrctrl", tapEventCheck);
 
@@ -1520,141 +1522,177 @@ void ScrMoveSetSub(SCORE_INDV_STR *sindv_pp, /* s0 16 */ int Pnum, /* s4 20 */ i
 /*      https://decomp.me/scratch/woLno        */
 INCLUDE_ASM("main/scrctrl", ScrExamSetCheck);
 
-INCLUDE_ASM("main/scrctrl", subjobEvent);
-#if 0
-void subjobEvent(/* s1 17 */ SCORE_INDV_STR *sindv_pp, /* s6 22 */ int ctime_next)
+void subjobEvent(SCORE_INDV_STR *sindv_pp, int ctime_next)
 {
-    int i;
-    /* s3 19 */ int j;
-    /* s4 20 */ int cont_job;
-    /* a0 4 */ int drline;
-    /* v0 2 */ int time_tmp;
-    /* s0 16 */ int next_time;
-    /* s0 16 */ //int next_time;
-    /* s0 16 */ //int next_time;
-    /* v1 3 */ SCRDAT *scrdat_pp;
-    /* s0 16 */ //int next_time;
-    /* v0 2 */ SCORE_INDV_STR *cngSindv_pp;
+    int j;
+    int cont_job;
 
-    for (i = 0; i < 5; i++, sindv_pp++)
+    for (j = 0; j < 24; j++)
     {
-        for (j = 0; j < 24; i++)
+        cont_job = 0;
+
+        if (sindv_pp->sjob[j] == -1 || ctime_next < sindv_pp->sjob[j])
+            continue;
+
+        switch (j)
         {
-            cont_job = 0;
+        case SCRSUBJ_CDSND_ON:
+            CdctrlWP2SetVolume(120);
+            break;
+        case SCRSUBJ_CDSND_OFF:
+            CdctrlWP2SetVolume(0);
+            break;
+        case SCRSUBJ_DRAW_CHANGE:
+            ScrLincChangTbl(sindv_pp->useLine);
+            break;
+        case SCRSUBJ_TAP_RESET:
+            break;
+        case SCRSUBJ_EFFECT:
+            TapCt(0xb0, sindv_pp->sjob_data[j][0], sindv_pp->sjob_data[j][1]);
+            break;
+        case SCRSUBJ_REVERS:
+            PR_SCOPE
+            int drline = sindv_pp->retStartLine;
+            int time_tmp;
+            int temp2 = (sindv_pp->sjob_data[j][0] / 2) < ctime_next;
 
-            if (sindv_pp->sjob[j] != -1)
+            if (temp2)
+                drline = sindv_pp->refTartegLine;
+
+            temp2 = sindv_pp->refTargetTime - sindv_pp->refStartTime;
+            time_tmp = temp2 * ctime_next;
+            time_tmp /= sindv_pp->sjob_data[j][0];
+            time_tmp = time_tmp != 0 ? time_tmp : 1;
+            ScrLincChangTblRef(drline, time_tmp + sindv_pp->refStartTime);
+
+            cont_job = 1;
+            PR_SCOPEEND
+            break;
+        case SCRSUBJ_SPU_ON:
+        case SCRSUBJ_SPU_ON2:
+        case SCRSUBJ_SPU_ON3:
+        case SCRSUBJ_SPU_ON4:
+            ScrTapReq(-1, sindv_pp->sjob_data[j][0], sindv_pp->sjob_data[j][1]);
+            break;
+        case SCRSUBJ_TITLE:
+            if (sindv_pp->sjob_data[j][0] == 0)
             {
-                if (sindv_pp->sjob[j] < ctime_next)
+                if (sindv_pp->sjob_data[j][1] == 0)
                 {
-                    switch (j)
-                    {
-                        case SCRSUBJ_CDSND_ON:
-                            CdctrlWP2SetVolume(120);
-                            break;
-                        case SCRSUBJ_CDSND_OFF:
-                            CdctrlWP2SetVolume(0);
-                            break;
-                        case SCRSUBJ_DRAW_CHANGE:
-                            ScrLincChangTbl(sindv_pp->useLine);
-                            break;
-                        case SCRSUBJ_EFFECT:
-                            TapCt(0xB0, sindv_pp->sjob_data[j][0], sindv_pp->sjob_data[j][1]);
-                            break;
-                        case SCRSUBJ_REVERS:
-                            drline = sindv_pp->retStartLine;
-                            if (sindv_pp->sjob_data[j][0] / 2 < ctime_next)
-                                drline = sindv_pp->refTartegLine;
-                            
-                            time_tmp = 1;
-                            cont_job = 1;
-
-                            if ((sindv_pp->refTargetTime - sindv_pp->refStartTime) * (ctime_next / sindv_pp->sjob_data[j][0]))
-                                time_tmp = (sindv_pp->refTargetTime - sindv_pp->refStartTime) * (ctime_next / sindv_pp->sjob_data[j][0]);
-
-                            ScrLincChangTblRef(drline, time_tmp + sindv_pp->refStartTime);
-                            break;
-
-                        case SCRSUBJ_SPU_ON:
-                        case SCRSUBJ_SPU_ON2:
-                        case SCRSUBJ_SPU_ON3:
-                        case SCRSUBJ_SPU_ON4:
-                            ScrTapReq(-1, sindv_pp->sjob_data[j][0], sindv_pp->sjob_data[j][1]);
-                            break;
-
-                        case SCRSUBJ_TITLE:
-                            // TODO
-                            break;
-                        case SCRSUBJ_LOOP:
-                            cont_job = 1;
-                            TimeCallbackTimeSetChanTempo(sindv_pp->useLine, GetLineTempo(sindv_pp->useLine), sindv_pp->sjob_data[j][0]);
-                            break;
-                        case SCRSUBJ_FADEOUT:
-                            cont_job = 1;
-                            fadeoutStartKey = 1;
-                            break;
-                        case SCRSUBJ_ENDLOOP:
-                            gameEndWaitLoop = 1;
-                            break;
-                        case SCRSUBJ_SPUTRANS:
-                            if (sindv_pp->sjob_data[j][0])
-                                ScrTapDbuffSetSp(&score_str.stdat_dat_pp->scr_pp->sndrec_pp[sindv_pp->sjob_data[j][0]], sindv_pp->sndId);
-                            break;
-                        case SCRSUBJ_STOP_MENDERER:
-                        {
-                            int next_time = ScrCtrlIndvNextTime(sindv_pp, 1) - sindv_pp->current_time;
-
-                            PrDecelerateMenderer((((next_time * 3600.0f) + (GetLineTempo(sindv_pp->useLine) * 96.0f * 0.5f)) / (GetLineTempo(sindv_pp->useLine) * 96.0f)));
-                            printf("SCRSUBJ_STOP_MENDERER req\n");
-                            break;
-                        }
-                        case SCRSUBJ_BONUS_GAME:
-                            cont_job = 1LL;
-                            bonusGameCtrl(ctime_next);
-                            break;
-                        case SCRSUBJ_BONUS_GAME_END:
-                            bonusPointSave();
-                            bonusScoreDraw();
-                            break;
-
-                        case SCRSUBJ_LESSON:
-                            LessonRoundDisp(sindv_pp->sjob_data[j][0]);
-                            cont_job = (sindv_pp->sjob_data[j][1] < 180);
-                            break;
-                        case SCRSUBJ_VS_RESET:
-                            cngSindv_pp = GetSindvPcodeLine(PCODE_TEACHER);
-                            if (cngSindv_pp)
-                                cngSindv_pp->global_ply->score = 500;
-                            
-                            vsAnimationReset(1, 500);
-
-                            cngSindv_pp = GetSindvPcodeLine(PCODE_PARA);
-                            if (cngSindv_pp)
-                                cngSindv_pp->global_ply->score = 500;
-                            
-                            vsAnimationReset(0, 500);
-                            break;
-                        case SCRSUBJ_CDSND_READY:
-                            CdctrlWP2Set(&score_str.stdat_dat_pp->sndfile[sindv_pp->sjob_data[j][0]]);
-                            break;
-                        case SCRSUBJ_CDSND_REQ:
-                            CdctrlWP2Play();
-                            CdctrlWP2SetVolume(sindv_pp->sjob_data[j][0]);
-                            break;
-                        case SCRSUBJ_SPU_OFF:
-                            ScrTapReqStop(sindv_pp->sjob_data[j][0]);
-                            break;
-                        case SCRSUBJ_JIMAKU_OFF:
-                            jimakuWakuOff = 1;
-                            break;
-                        default:
-                            break;
-                    }
+                    MendererCtrlTitle();
+                    sindv_pp->sjob_data[j][1] = 1;
+                }
+                if (pad[0].one & SCE_PADstart)
+                {
+                    int next_time = ScrCtrlIndvNextTime(sindv_pp, 2);
+                    TimeCallbackTimeSetChanTempo(sindv_pp->useLine, next_time, GetLineTempo(sindv_pp->useLine));
                 }
             }
+            else if (sindv_pp->sjob_data[j][0] == 2)
+            {
+                if (sindv_pp->sjob_data[j][1] == 0)
+                {
+                    MendererCtrlTitleDera();
+                    sindv_pp->sjob_data[j][1] = 1;
+                }
+                if (pad[0].one & SCE_PADstart)
+                {
+                    int next_time = ScrCtrlIndvNextTime(sindv_pp, 2);
+                    TimeCallbackTimeSetChanTempo(sindv_pp->useLine, next_time, GetLineTempo(sindv_pp->useLine));
+                }
+            } else if (pad[0].one & SCE_PADstart)
+            {
+                if (!titleStartKey)
+                {
+                    titleStartKey = 1;
+                    ScrTapReq(-1, 0, 2);
+                    DrawTapReqTbl(0xfe04, PINDEX_NONE, NULL);
+                }
+            }
+            cont_job = 1;
+            break;
+        case SCRSUBJ_LOOP:
+            PR_SCOPE
+            int next_time = sindv_pp->sjob_data[j][0];
+
+            TimeCallbackTimeSetChanTempo(sindv_pp->useLine, next_time, GetLineTempo(sindv_pp->useLine));
+            cont_job = 1;
+            PR_SCOPEEND
+            break;
+        case SCRSUBJ_FADEOUT:
+            fadeoutStartKey = 1;
+            cont_job = 1;
+            break;
+        case SCRSUBJ_ENDLOOP:
+            gameEndWaitLoop = 1;
+            break;
+        case SCRSUBJ_SPUTRANS:
+            PR_SCOPE
+            int *val = (int*)sindv_pp->sjob_data[j][0];
+            if (*val != 0)
+                ScrTapDbuffSetSp(&score_str.stdat_dat_pp->scr_pp->sndrec_pp[*val], sindv_pp->sndId);
+            PR_SCOPEEND
+            break;
+        case SCRSUBJ_STOP_MENDERER:
+            PR_SCOPE
+            int next_time = ScrCtrlIndvNextTime(sindv_pp, 1) - sindv_pp->current_time;
+
+            PrDecelerateMenderer(((next_time * 3600.0f) + (GetLineTempo(sindv_pp->useLine) * 96.0f * 0.5f)) / (GetLineTempo(sindv_pp->useLine) * 96.0f));
+            printf("SCRSUBJ_STOP_MENDERER req\n");
+            PR_SCOPEEND
+            break;
+        case SCRSUBJ_BONUS_GAME:
+            bonusGameCtrl(ctime_next);
+            cont_job = 1;
+            break;
+        case SCRSUBJ_BONUS_GAME_END:
+            bonusPointSave();
+            bonusScoreDraw();
+            break;
+        case SCRSUBJ_LESSON:
+            PR_SCOPE
+            int time_tmp;
+            LessonRoundDisp(sindv_pp->sjob_data[j][0]);
+
+            time_tmp = sindv_pp->sjob_data[j][1] + 1;
+            sindv_pp->sjob_data[j][1] = time_tmp;
+
+            cont_job = time_tmp < 180;
+            PR_SCOPEEND
+            break;
+        case SCRSUBJ_VS_RESET:
+            PR_SCOPE
+            SCORE_INDV_STR *cngSindv_pp;
+            cngSindv_pp = GetSindvPcodeLine(PCODE_TEACHER);
+            if (cngSindv_pp != NULL)
+                cngSindv_pp->global_ply->score = 500;
+            vsAnimationReset(1, 500);
+            cngSindv_pp = GetSindvPcodeLine(PCODE_PARA);
+            if (cngSindv_pp != NULL)
+                cngSindv_pp->global_ply->score = 500;
+            vsAnimationReset(0, 500);
+            PR_SCOPEEND
+            break;
+        case SCRSUBJ_CDSND_READY:
+            CdctrlWP2Set(&score_str.stdat_dat_pp->sndfile[sindv_pp->sjob_data[j][0]]);
+            break;
+        case SCRSUBJ_CDSND_REQ:
+            CdctrlWP2Play();
+            CdctrlWP2SetVolume(sindv_pp->sjob_data[j][0]);
+            break;
+        case SCRSUBJ_SPU_OFF:
+            ScrTapReqStop(sindv_pp->sjob_data[j][0]);
+            break;
+        case SCRSUBJ_JIMAKU_OFF:
+            jimakuWakuOff = 1;
+            break;
+        }
+
+        if (cont_job == 0) {
+            sindv_pp->sjob[j] = -1;
         }
     }
 }
-#endif
 
 INCLUDE_ASM("main/scrctrl", ScrCtrlIndvJob);
 

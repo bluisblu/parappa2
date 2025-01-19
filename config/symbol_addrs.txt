@@ -1392,6 +1392,12 @@ TsCELBackDraw                       = 0x00137790; // type:func
 _TsCELBackObjDraw                   = 0x00137930; // type:func
 TsHosiPut                           = 0x00137df0; // type:func
 
+tblTex                              = 0x003997bc;
+HOSIObj                             = 0x00399824;
+
+menuPadState                        = 0x01c77ac0; // size:0x20
+TsBGMState                          = 0x01c77c10; // size:0xa0
+
 // menu/p3mc.c
 P3MC_GetIconSize                    = 0x00137f70; // type:func
 P3MC_GetIconPtr                     = 0x00137f98; // type:func
@@ -1438,11 +1444,6 @@ _P3MC_proc                          = 0x0013a940; // type:func
 _P3MC_dataCheckFunc                 = 0x0013ac78; // type:func
 _P3MC_CheckUserData                 = 0x0013ac80; // type:func
 _P3MC_CheckUserDataHead             = 0x0013acc0; // type:func
-
-tblTex                              = 0x003997bc;
-HOSIObj                             = 0x00399824;
-
-menuPadState                        = 0x01c77ac0; // size:0x20
 
 HedderID                            = 0x00399830; // size:0x4
 FooterID                            = 0x00399834; // size:0x4
@@ -1802,6 +1803,7 @@ poolIndex                           = 0x00399944;
 randomPool                          = 0x01c833e0; // size:0x184
 
 // prlib/menderer.cpp
+PrDecelerateMenderer                = 0x0014ec30; // type:func
 PrSetMendererRatio                  = 0x0014f278; // type:func
 PrGetMendererRatio                  = 0x0014f280; // type:func
 PrInitializeMenderer                = 0x0014f2a8; // type:func
