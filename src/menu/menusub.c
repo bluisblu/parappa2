@@ -7,6 +7,7 @@ HOSI_OBJ *HOSIObj;
 
 /* .bss */
 extern TSREPPAD menuPadState[2][4];
+extern BGMSTATE TsBGMState;
 
 static int TsGetMenuPadIsRepeat(int no, int npad)
 {
@@ -37,7 +38,10 @@ INCLUDE_ASM("menu/menusub", tsBGMONEflow);
 
 INCLUDE_ASM("menu/menusub", tsBGMONEPause);
 
-INCLUDE_ASM("menu/menusub", TsBGMInit);
+void TsBGMInit(void)
+{
+    memset(&TsBGMState, 0, sizeof(TsBGMState));
+}
 
 INCLUDE_ASM("menu/menusub", TsBGMPlay);
 
