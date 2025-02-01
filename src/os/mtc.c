@@ -49,41 +49,34 @@ int mtcSemaEnd = 0;
 /* sbss - static */
 static short th_id_Ctrl;
 
-static void mtcStackErrorCheck(int level)
-{
-    if (*(int*)mtcStack[level] != 0x572a8b4c)
-    {
+static void mtcStackErrorCheck(int level) {
+    if (*(int*)mtcStack[level] != 0x572a8b4c) {
         printf("stack over level[%d]\n", level);
-        while (1)
+        while (1) {
             sceGsSyncV(0);
+        }
     }
 }
 
-void MtcChangeThCtrl(void *x)
-{
-    while (1)
-    {
+void MtcChangeThCtrl(void *x) {
+    while (1) {
         mtcCurrentTask++;
 
-        if (mtcCurrentTask > 15)
-        {
+        if (mtcCurrentTask > 15) {
             mtcCurrentTask = 0;
-
-            if (MtcResetCheck() != 0)
+            if (MtcResetCheck() != 0) {
                 SignalSema(mtcSemaEnd);
+            }
         }
 
-        if (mtcTaskConB[mtcCurrentTask].status == MTC_COND_EXEC)
-        {
+        if (mtcTaskConB[mtcCurrentTask].status == MTC_COND_EXEC) {
             SyoriLineCnt(mtcCurrentTask);
             RotateThreadReadyQueue(16);
 
             StartThread(mtcTaskConB[mtcCurrentTask].th_id, 0);
             SleepThread();
-        }
-        else if ((mtcTaskConB[mtcCurrentTask].status == MTC_COND_WAIT) && 
-                 (--mtcTaskConB[mtcCurrentTask].wtime <= 0)) 
-        {
+        } else if ((mtcTaskConB[mtcCurrentTask].status == MTC_COND_WAIT) && 
+                 (--mtcTaskConB[mtcCurrentTask].wtime <= 0)) {
             SyoriLineCnt(mtcCurrentTask);
             RotateThreadReadyQueue(16);
 
@@ -93,8 +86,7 @@ void MtcChangeThCtrl(void *x)
     }
 }
 
-void MtcInit(void)
-{
+void MtcInit(void) {
     PR_CLEAR(mtcTaskConB);
 
     mtcSemaPara.maxCount = 1;
@@ -111,22 +103,19 @@ void MtcInit(void)
     th_id_Ctrl = CreateThread(&th_para_Ctrl);
 }
 
-void MtcQuit(void)
-{
+void MtcQuit(void) {
     int i;
 
     TerminateThread(th_id_Ctrl);
     DeleteThread(th_id_Ctrl);
     DeleteSema(mtcSemaEnd);
 
-    for (i = 0; i < PR_ARRAYSIZE(mtcTaskConB); i++)
-    {
+    for (i = 0; i < PR_ARRAYSIZE(mtcTaskConB); i++) {
         MtcKill(i);
     }
 }
 
-void MtcStart(void *ctrlTh_pp)
-{
+void MtcStart(void *ctrlTh_pp) {
     MtcExec(ctrlTh_pp, MTC_TASK_CTRL);
 
     mtcCurrentTask = -1;
@@ -135,13 +124,11 @@ void MtcStart(void *ctrlTh_pp)
     WaitSema(mtcSemaEnd);
 }
 
-void MtcExec(void *prg_pp, long level)
-{
+void MtcExec(void *prg_pp, long level) {
     struct ThreadParam *th_pp;
     MTC_TASK_CONB      *mc_pp = &mtcTaskConB[level];
 
-    if (mc_pp->status != MTC_COND_KILL)
-    {
+    if (mc_pp->status != MTC_COND_KILL) {
         MtcKill(level);
     }
 
@@ -160,8 +147,7 @@ void MtcExec(void *prg_pp, long level)
     *(int*)mtcStack[level] = 0x572a8b4c;
 }
 
-void MtcWait(long wt)
-{
+void MtcWait(long wt) {
     FlushCache(0);
     mtcStackErrorCheck(mtcCurrentTask);
 
@@ -174,40 +160,37 @@ void MtcWait(long wt)
     SleepThread();
 }
 
-void MtcKill(long level)
-{
+void MtcKill(long level) {
     MTC_TASK_CONB *tcb_pp = &mtcTaskConB[level];
     MTC_COND_ENUM  mtc_f  = tcb_pp->status;
 
     mtc_f |= ~MTC_COND_PAUSE;
 
-    if (mtc_f != MTC_COND_KILL)
-    {
+    if (mtc_f != MTC_COND_KILL) {
         tcb_pp->status = MTC_COND_KILL;
 
-        if (mtc_f != MTC_COND_EXEC)
+        if (mtc_f != MTC_COND_EXEC) {
             TerminateThread(tcb_pp->th_id);
+        }
 
         DeleteThread(tcb_pp->th_id);
     }
 }
 
-void MtcPause(long level)
-{
+void MtcPause(long level) {
     MTC_TASK_CONB *tcb_pp = &mtcTaskConB[level];
 
-    if (tcb_pp->status != 0)
+    if (tcb_pp->status != 0) {
         tcb_pp->status |= MTC_COND_PAUSE;
+    }
 }
 
-void MtcContinue(long level)
-{
+void MtcContinue(long level) {
     MTC_TASK_CONB *tcb_pp = &mtcTaskConB[level];
     tcb_pp->status &= ~MTC_COND_PAUSE;
 }
 
-void MtcExit(void)
-{
+void MtcExit(void) {
     MTC_TASK_CONB *tcb_pp;
     mtcStackErrorCheck(mtcCurrentTask);
 
@@ -219,12 +202,10 @@ void MtcExit(void)
     ExitDeleteThread();
 }
 
-int MtcGetCondition(long level)
-{
+int MtcGetCondition(long level) {
     return mtcTaskConB[level].status;
 }
 
-int MtcResetCheck(void)
-{
+int MtcResetCheck(void) {
     return 0;
 }

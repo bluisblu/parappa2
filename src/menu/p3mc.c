@@ -41,12 +41,10 @@ static void  _P3MC_dataCheckFunc(P3MC_WORK *pw, P3MCDataCheckFunc funcp);
 static int   _P3MC_CheckUserData(P3MC_WORK *pw);
 /* static */ int   _P3MC_CheckUserDataHead(P3MC_WORK *pw);
 
-static int P3MC_GetIconSize(int mode)
-{
+static int P3MC_GetIconSize(int mode) {
     int isize;
 
-    switch (mode)
-    {
+    switch (mode) {
     case 2:
         isize = 0x1e360;
         break;
@@ -172,30 +170,28 @@ INCLUDE_ASM("menu/p3mc", _P3MC_freesize_chk);
 
 INCLUDE_ASM("menu/p3mc", P3MC_CheckChange);
 
-void P3MC_CheckChangeClear(void)
-{
+void P3MC_CheckChangeClear(void) {
     memc_setChangeState(0);
 }
 
-void P3MC_CheckChangeSet(void)
-{
+void P3MC_CheckChangeSet(void) {
     memc_setChangeState(1);
 }
 
-int P3MC_CheckIsNewSave(int mode)
-{
+int P3MC_CheckIsNewSave(int mode) {
     return FreeSizeFlg & mode;
 }
 
 INCLUDE_ASM("menu/p3mc", _P3MC_GetSaveDataSize);
 
-void P3MC_DeleteDataWork(MCRWDATA_HDL *phdl)
-{
-    if (phdl == NULL)
+void P3MC_DeleteDataWork(MCRWDATA_HDL *phdl) {
+    if (phdl == NULL) {
         return;
+    }
     
-    if (phdl->pMemTop != NULL)
+    if (phdl->pMemTop != NULL) {
         free(phdl->pMemTop);
+    }
     
     free(phdl);
 }
@@ -251,37 +247,30 @@ INCLUDE_ASM("menu/p3mc", _P3MCStrNum);
 
 INCLUDE_ASM("menu/p3mc", _P3MC_MemcCheck);
 
-int P3MC_GetUserStart(int mode, P3MC_USRLST *pUsrLst, int bFirst)
-{
+int P3MC_GetUserStart(int mode, P3MC_USRLST *pUsrLst, int bFirst) {
     GETUSER_WORK *pWork;
 
-    if (pUChkWork != NULL)
+    if (pUChkWork != NULL) {
         free(pUChkWork);
+    }
     
     pWork = memalign(16, sizeof(GETUSER_WORK));
     pUChkWork = pWork;
 
     portCheckFlg = 0;
 
-    if (pWork != NULL)
-    {
+    if (pWork != NULL) {
         pWork->bFirst = bFirst;
         pWork->curState = 0;
 
-        if (mode & 1)
-        {
+        if (mode & 1) {
             pWork->curMode = 1;
-        }
-        else if (mode & 2)
-        {
+        } else if (mode & 2) {
             pWork->curMode = 2;
-        }  
-        else
-        {
+        } else {
             printf("P3MC_GetUser Error Mode is unknown!\n");
             pWork->curMode = 1;
         }
-            
 
         pWork->curFno = 0;
         pWork->curUserMode = mode;
@@ -291,10 +280,10 @@ int P3MC_GetUserStart(int mode, P3MC_USRLST *pUsrLst, int bFirst)
     return -1;
 }
 
-void P3MC_GetUserEnd(void)
-{
-    if (pUChkWork != NULL)
+void P3MC_GetUserEnd(void) {
+    if (pUChkWork != NULL) {
         free(pUChkWork);
+    }
 
     pUChkWork = NULL;
 }
@@ -307,47 +296,44 @@ INCLUDE_ASM("menu/p3mc", _P3MC_AddUserBroken);
 
 INCLUDE_ASM("menu/p3mc", P3MC_SortUser);
 
-int P3MC_CheckBrokenUser(P3MC_USRLST *pUser, int mode)
-{
+int P3MC_CheckBrokenUser(P3MC_USRLST *pUser, int mode) {
     int         nmuser;
     USER_DATA **pmuser;
 
     int i;
     int nBrk = 0;
 
-    if (mode & 1)
-    {
+    if (mode & 1) {
         pmuser = pUser->plog_user;
         nmuser = pUser->nLogGet;
 
-        for (i = 0; i < nmuser; i++, pmuser++)
-        {
-            if ((*pmuser)->flg == 2)
+        for (i = 0; i < nmuser; i++, pmuser++) {
+            if ((*pmuser)->flg == 2) {
                 nBrk++;
+            }
         }
     }
 
-    if (mode & 2)
-    {
+    if (mode & 2) {
         pmuser = pUser->prep_user;
         nmuser = pUser->nRepGet;
 
-        for (i = 0; i < nmuser; i++, pmuser++)
-        {
-            if ((*pmuser)->flg == 2)
+        for (i = 0; i < nmuser; i++, pmuser++) {
+            if ((*pmuser)->flg == 2) {
                 nBrk++;
+            }
         }
     }
 
     return nBrk;
 }
 
-void P3MC_OpeningCheckStart(void)
-{
+void P3MC_OpeningCheckStart(void) {
     GETUSER_WORK *pWork;
 
-    if (pUChkWork != NULL)
+    if (pUChkWork != NULL) {
         free(pUChkWork);
+    }
 
     pWork = memalign(16, sizeof(GETUSER_WORK));
     pUChkWork = pWork;
@@ -355,14 +341,15 @@ void P3MC_OpeningCheckStart(void)
     P3MC_CheckChangeSet();
     portCheckFlg = 0;
 
-    if (pWork != NULL)
-        pWork->curState = 0;    
+    if (pWork != NULL) {
+        pWork->curState = 0;
+    }
 }
 
-void P3MC_OpeningCheckEnd(void)
-{
-    if (pUChkWork != NULL)
+void P3MC_OpeningCheckEnd(void) {
+    if (pUChkWork != NULL) {
         free(pUChkWork);
+    }
 
     pUChkWork = NULL;
 }
@@ -407,16 +394,14 @@ INCLUDE_ASM("menu/p3mc", P3MC_LoadCheck);
 
 INCLUDE_ASM("menu/p3mc", _P3MC_loadCheck);
 
-void P3MC_SetUserWorkTime(USER_DATA *puser)
-{
+void P3MC_SetUserWorkTime(USER_DATA *puser) {
     int        err;
     sceCdCLOCK clock;
 
     err = sceCdReadClock(&clock);
     puser->date_pad = rand() % 200;
 
-    if (err != 0 && clock.stat == 0)
-    {
+    if (err != 0 && clock.stat == 0) {
         puser->date_second = clock.second;
         puser->date_minute = clock.minute;
         puser->date_hour   = clock.hour;
@@ -424,9 +409,7 @@ void P3MC_SetUserWorkTime(USER_DATA *puser)
         puser->date_day    = clock.day;
         puser->date_month  = clock.month;
         puser->date_year   = clock.year + 0x2000;
-    }
-    else
-    {
+    } else {
         puser->date_second = 0;
         puser->date_minute = 0;
         puser->date_hour   = 12;
@@ -445,19 +428,18 @@ INCLUDE_ASM("menu/p3mc", _P3MC_SaveCheck);
 
 INCLUDE_ASM("menu/p3mc", _P3MC_proc);
 
-void _P3MC_dataCheckFunc(P3MC_WORK *pw, P3MCDataCheckFunc funcp)
-{
+void _P3MC_dataCheckFunc(P3MC_WORK *pw, P3MCDataCheckFunc funcp) {
     pw->data_cfunc = funcp;
 }
 
-static int _P3MC_CheckUserData(P3MC_WORK *pw)
-{
+static int _P3MC_CheckUserData(P3MC_WORK *pw) {
     USER_FOOTER *pfoot = pw->dhdl->pFoot;
 
-    if (_P3MC_CheckUserDataHead(pw))
+    if (_P3MC_CheckUserDataHead(pw)) {
         return 1;
-    else 
+    } else {
         return (strcmp(FooterID, pfoot->footer) != 0);
+    }
 }
 
 #ifndef NON_MATCHING

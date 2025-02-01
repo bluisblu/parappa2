@@ -18,19 +18,16 @@ static u_char mc_resetTmp[4];
 /* bss - static */
 extern MC_REP_CTRL mc_rep_ctrl;
 
-int setAscii2SjisCode(u_char *saki_pp, u_char *moto_pp)
-{
+int setAscii2SjisCode(u_char *saki_pp, u_char *moto_pp) {
     int    i;
     u_char dat_tmp;
 
     *saki_pp = '\0';
 
-    for (i = 0; i < strlen(moto_pp); i++)
-    {
+    for (i = 0; i < strlen(moto_pp); i++) {
         dat_tmp = moto_pp[i];
 
-        if (dat_tmp < 0x20 || dat_tmp > 0x7f)
-        {
+        if (dat_tmp < 0x20 || dat_tmp > 0x7f) {
             printf("dat over!!\n");
             return 1;
         }
@@ -43,30 +40,25 @@ int setAscii2SjisCode(u_char *saki_pp, u_char *moto_pp)
     return 0;
 }
 
-void mccReqInit(void)
-{
+void mccReqInit(void) {
     WorkClear(&mc_rep_str_local, sizeof(mc_rep_str_local));
     WorkClear(mc_holdTmp, sizeof(mc_holdTmp));
     WorkClear(mc_resetTmp, sizeof(mc_resetTmp));
 }
 
-void mccReqSaveInit(void)
-{   
+void mccReqSaveInit(void) {   
     mc_rep_str_local.scoreN_cnt = 0;
     mc_rep_str_local.levelN_cnt = 0;
     mc_rep_str_local.mc_rep_dat_cnt = 0;
     mc_rep_str_local.mc_vsoth_cnt = 0;
 }
 
-void mccReqCtrlClr(void)
-{
+void mccReqCtrlClr(void) {
     WorkClear(&mc_rep_ctrl, sizeof(mc_rep_ctrl));
 }
 
-void mccReqScrSet(MC_REP_SCR *mcr_scr_pp)
-{
-    if (mc_rep_str_local.scoreN_cnt >= 256)
-    {
+void mccReqScrSet(MC_REP_SCR *mcr_scr_pp) {
+    if (mc_rep_str_local.scoreN_cnt >= 256) {
         printf("score save over!!\n");
         return;
     }
@@ -75,12 +67,11 @@ void mccReqScrSet(MC_REP_SCR *mcr_scr_pp)
     mc_rep_str_local.scoreN_cnt++;
 }
 
-MC_REP_SCR* mccReqScrGet(void)
-{
+MC_REP_SCR* mccReqScrGet(void) {
     MC_REP_SCR *ret;
 
-    if (mc_rep_ctrl.cl_scoreN_cnt >= 256 || mc_rep_ctrl.cl_scoreN_cnt >= mc_rep_str_local.scoreN_cnt)
-    {
+    if (mc_rep_ctrl.cl_scoreN_cnt >= 256 ||
+        mc_rep_ctrl.cl_scoreN_cnt >= mc_rep_str_local.scoreN_cnt) {
         printf("score load over!!\n");
         return NULL;
     }
@@ -90,10 +81,8 @@ MC_REP_SCR* mccReqScrGet(void)
     return ret;
 }
 
-void mccReqLvlSet(u_int lvl)
-{
-    if (mc_rep_str_local.levelN_cnt >= 256)
-    {
+void mccReqLvlSet(u_int lvl) {
+    if (mc_rep_str_local.levelN_cnt >= 256) {
         printf("level save over!!\n");
         return;
     }
@@ -102,12 +91,11 @@ void mccReqLvlSet(u_int lvl)
     mc_rep_str_local.levelN_cnt++;
 }
 
-u_int mccReqLvlGet(void)
-{
+u_int mccReqLvlGet(void) {
     u_int ret;
 
-    if (mc_rep_ctrl.cl_levelN_cnt >= 256 || mc_rep_ctrl.cl_levelN_cnt >= mc_rep_str_local.levelN_cnt)
-    {
+    if (mc_rep_ctrl.cl_levelN_cnt >= 256 ||
+        mc_rep_ctrl.cl_levelN_cnt >= mc_rep_str_local.levelN_cnt) {
         printf("level load over!!\n");
         return 0;
     }
@@ -117,12 +105,10 @@ u_int mccReqLvlGet(void)
     return ret;
 }
 
-void mccReqTapSet(u_int time, u_int useLine, u_int id, PLAYER_ENUM ply)
-{
+void mccReqTapSet(u_int time, u_int useLine, u_int id, PLAYER_ENUM ply) {
     MC_REP_DAT *mcrd_pp;
 
-    if (mc_rep_str_local.mc_rep_dat_cnt >= 2560)
-    {
+    if (mc_rep_str_local.mc_rep_dat_cnt >= 2560) {
         printf("tap save over!!\n");
         return;
     }
@@ -137,11 +123,12 @@ void mccReqTapSet(u_int time, u_int useLine, u_int id, PLAYER_ENUM ply)
     mcrd_pp->resT = 0;
     mcrd_pp->holdT = 0;
 
-    if (mc_resetTmp[ply] != 0)
+    if (mc_resetTmp[ply] != 0) {
         mcrd_pp->resT = 1;
-
-    if (mc_holdTmp[ply] != 0)
+    }
+    if (mc_holdTmp[ply] != 0) {
         mcrd_pp->holdT = 1;
+    }
 
     mc_resetTmp[ply] = 0;
     mc_holdTmp[ply] = 0;
@@ -149,46 +136,39 @@ void mccReqTapSet(u_int time, u_int useLine, u_int id, PLAYER_ENUM ply)
     mc_rep_str_local.mc_rep_dat_cnt++;
 }
 
-void mccReqTapResetSet(PLAYER_ENUM ply)
-{
+void mccReqTapResetSet(PLAYER_ENUM ply) {
     mc_resetTmp[ply] = 1;
 }
 
-void mccReqTapHoldSet(PLAYER_ENUM ply)
-{
+void mccReqTapHoldSet(PLAYER_ENUM ply) {
     mc_holdTmp[ply] = 1;
 }
 
-void mccReqVSOTHSAVEset(VSOTHSAVE *sv)
-{
+void mccReqVSOTHSAVEset(VSOTHSAVE *sv) {
     int i;
 
-    if (mc_rep_str_local.mc_vsoth_cnt >= 100)
-    {
+    if (mc_rep_str_local.mc_vsoth_cnt >= 100) {
         printf("vs oth save over!!\n");
         return;
     }
 
-    for (i = 0; i < PR_SIZEOF(VSOTHSAVE); i++)
-    {
+    for (i = 0; i < PR_SIZEOF(VSOTHSAVE); i++) {
         mc_rep_str_local.vsothsave[mc_rep_str_local.mc_vsoth_cnt][i] = (*sv)[i];
     }
 
     mc_rep_str_local.mc_vsoth_cnt++;
 }
 
-int mccReqVSOTHSAVEget(VSOTHSAVE *sv)
-{
+int mccReqVSOTHSAVEget(VSOTHSAVE *sv) {
     int i;
 
-    if (mc_rep_ctrl.cl_vsoth_cnt >= 100 || mc_rep_ctrl.cl_vsoth_cnt >= mc_rep_str_local.mc_vsoth_cnt)
-    {
+    if (mc_rep_ctrl.cl_vsoth_cnt >= 100 ||
+        mc_rep_ctrl.cl_vsoth_cnt >= mc_rep_str_local.mc_vsoth_cnt) {
         printf("vs oth load over!!\n");
         return 0;
     }
     
-    for (i = 0; i < PR_SIZEOF(VSOTHSAVE); i++)
-    {
+    for (i = 0; i < PR_SIZEOF(VSOTHSAVE); i++) {
         (*sv)[i] = mc_rep_str_local.vsothsave[mc_rep_ctrl.cl_vsoth_cnt][i];
     }
 
@@ -196,39 +176,42 @@ int mccReqVSOTHSAVEget(VSOTHSAVE *sv)
     return 1;
 }
 
-u_short mccReqTapGet(u_int time, u_int useLine, u_int *time_pp, PLAYER_ENUM ply)
-{
+u_short mccReqTapGet(u_int time, u_int useLine, u_int *time_pp, PLAYER_ENUM ply) {
     u_short     ret;
     MC_REP_DAT *mcrd_pp;
     u_int      *rep_cnt;
 
     rep_cnt = &mc_rep_ctrl.cl_mc_rep_dat_cnt[ply];
 
-    while (1)
-    {
-        if (*rep_cnt >= 2560 || *rep_cnt >= mc_rep_str_local.mc_rep_dat_cnt)
+    while (1) {
+        if (*rep_cnt >= 2560 || *rep_cnt >= mc_rep_str_local.mc_rep_dat_cnt) {
             return 0;
+        }
 
         mcrd_pp = &mc_rep_str_local.mc_rep_dat[*rep_cnt];
 
-        if (mcrd_pp->ply == ply)
+        if (mcrd_pp->ply == ply) {
             break;
+        }
 
         (*rep_cnt)++;
     }
 
-    if (mcrd_pp->timeP > time)
+    if (mcrd_pp->timeP > time) {
         return 0;
-
-    if (mcrd_pp->useL != useLine)
+    }
+    if (mcrd_pp->useL != useLine) {
         return 0;
+    }
 
     ret = GetIndex2KeyCode(mcrd_pp->padId);
 
-    if (mcrd_pp->holdT)
+    if (mcrd_pp->holdT) {
         ret |= 0x2000;
-    if (mcrd_pp->resT)
+    }
+    if (mcrd_pp->resT) {
         ret |= 0x8000;
+    }
 
     *time_pp = mcrd_pp->timeP;
     (*rep_cnt)++;
@@ -238,7 +221,7 @@ u_short mccReqTapGet(u_int time, u_int useLine, u_int *time_pp, PLAYER_ENUM ply)
 
 extern const char D_00393800[]; /* rodata - "TAP forward!!\n" */
 
-#if 1
+#ifndef NON_MATCIHNG
 INCLUDE_ASM("main/mcctrl", mccReqTapForward);
 #else
 void mccReqTapForward(/* s5 21 */ u_int time, /* s4 20 */ u_int useLine)
@@ -273,8 +256,9 @@ void mccReqTapForward(/* s5 21 */ u_int time, /* s4 20 */ u_int useLine)
 }
 #endif
 
+#ifndef NON_MATCIHNG
 INCLUDE_ASM("main/mcctrl", mccReqTapForwardOwn);
-#if 0
+#else
 void mccReqTapForwardOwn(/* s3 19 */ u_int time, /* s2 18 */ u_int useLine, /* s4 20 */ int ply)
 {
     /* v1 3 */ MC_REP_DAT *mcrd_pp;
@@ -308,8 +292,7 @@ void mccReqTapForwardOwn(/* s3 19 */ u_int time, /* s2 18 */ u_int useLine, /* s
 }
 #endif
 
-void mccLocalGlobalCopy(void)
-{
+void mccLocalGlobalCopy(void) {
     mc_rep_str = mc_rep_str_local;
 
     mc_rep_str.play_modeS       = game_status.play_modeG;
@@ -319,8 +302,7 @@ void mccLocalGlobalCopy(void)
     mc_rep_str.play_table_modeS = game_status.play_table_modeG;
 }
 
-void mccGlobalLocalCopy(void)
-{
+void mccGlobalLocalCopy(void) {
     mc_rep_str_local = mc_rep_str;
 }
 

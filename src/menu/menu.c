@@ -20,28 +20,23 @@ static int VsLev;
 
 static void P3LogInit(P3LOG_VAL *plog);
 
-static void menuDraw(void *x)
-{
-    while (1)
-    {
+static void menuDraw(void *x) {
+    while (1) {
         TsMenu_Draw();
         MtcWait(1);
     }
 }
 
-static void menuDrawReq(void)
-{
+static void menuDrawReq(void) {
     PrSetFrameRate(60.0f);
     MtcExec(menuDraw, MTC_TASK_07);
 }
 
-static void menuDrawQuit(void)
-{
+static void menuDrawQuit(void) {
     MtcKill(MTC_TASK_07);
 }
 
-int MenuMemCardCheck(void)
-{
+int MenuMemCardCheck(void) {
     bFirst = 1;
     VsLev = 0;
 
@@ -55,8 +50,9 @@ int MenuMemCardCheck(void)
     menuDrawReq();
     MenuMsgInit();
 
-    while (!TsMenuMemcChk_Flow())
+    while (!TsMenuMemcChk_Flow()) {
         MtcWait(1);
+    }
 
     TsMenu_End();
     menuDrawQuit();
@@ -174,7 +170,6 @@ int MenuCtrl(/* s0 16 */ MENU_STR *menu_str_ptr)
 }
 #endif
 
-static void P3LogInit(P3LOG_VAL *plog)
-{
-    memset(plog, 0, sizeof(P3LOG_VAL));
+static void P3LogInit(P3LOG_VAL *plog) {
+    memset(plog, 0, sizeof(*plog));
 }

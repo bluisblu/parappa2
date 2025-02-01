@@ -114,37 +114,33 @@ STDAT_REC stdat_rec[19];
 /* sdata */
 int stdat_rec_num; /* = 14; */
 
-static void stDatFileSearch(FILE_STR *fs_pp)
-{
-    if ((fs_pp != NULL) && (fs_pp->fname != NULL))
-    {
-        while (CdctrlSerch(fs_pp) == 0)
-            MtcWait(1);
+static void stDatFileSearch(FILE_STR *fs_pp) {
+    if (fs_pp == NULL || fs_pp->fname == NULL) {
+        return;
+    }
+
+    while (!CdctrlSerch(fs_pp)) {
+        MtcWait(1);
     }
 }
 
-void stDatFirstFileSearch(void)
-{
+void stDatFirstFileSearch(void) {
     int i, j, k;
 
     stDatFileSearch(&file_str_logo_file);
     stDatFileSearch(&file_str_menu_file);
 
-    for (i = 0; i < 10U; i++)
-    {
+    for (i = 0; i < 10u; i++) {
         stDatFileSearch(&file_str_extra_file[i]);
     }
 
-    for (i = 0; i < stdat_rec_num; i++)
-    {
+    for (i = 0; i < stdat_rec_num; i++) {
         stDatFileSearch(&stdat_rec[i].ovlfile);
 
-        for (j = 0; j < stdat_rec[i].stdat_dat_num; j++)
-        {
+        for (j = 0; j < stdat_rec[i].stdat_dat_num; j++) {
             stDatFileSearch(&stdat_rec[i].stdat_dat_pp[j].intfile);
 
-            for (k = 0; k < 3; k++)
-            {
+            for (k = 0; k < 3; k++) {
                 stDatFileSearch(&stdat_rec[i].stdat_dat_pp[j].sndfile[k]);
             }
         }

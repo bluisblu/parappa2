@@ -45,13 +45,11 @@ int commake_str_cnt;
 static void bonusScoreDraw(void);
 static void LessonRoundDisp(SCRRJ_LESSON_ROUND_ENUM type);
 
-int GetCurrentTblNumber(void)
-{
+int GetCurrentTblNumber(void) {
     return currentTblNumber;
 }
 
-DISP_LEVEL RANK_LEVEL2DISP_LEVEL(RANK_LEVEL lvl)
-{
+DISP_LEVEL RANK_LEVEL2DISP_LEVEL(RANK_LEVEL lvl) {
     DISP_LEVEL lvl_tbl[17] =
     {
         DLVL_COOL,  DLVL_COOL,
@@ -65,8 +63,7 @@ DISP_LEVEL RANK_LEVEL2DISP_LEVEL(RANK_LEVEL lvl)
     return lvl_tbl[lvl];
 }
 
-DISP_LEVEL RANK_LEVEL2DISP_LEVEL_HK(RANK_LEVEL lvl)
-{
+DISP_LEVEL RANK_LEVEL2DISP_LEVEL_HK(RANK_LEVEL lvl) {
     DISP_LEVEL lvl_tbl[15] =
     {
         DLVL_COOL,  DLVL_COOL,
@@ -79,8 +76,7 @@ DISP_LEVEL RANK_LEVEL2DISP_LEVEL_HK(RANK_LEVEL lvl)
     return lvl_tbl[lvl];
 }
 
-void ScrTapDbuffCtrlInit(void *data_top, int bk0, int bk1)
-{
+void ScrTapDbuffCtrlInit(void *data_top, int bk0, int bk1) {
     scr_snd_dbuff.bank[0]      = bk0;
     scr_snd_dbuff.bank[1]      = bk1;
 
@@ -94,21 +90,18 @@ void ScrTapDbuffCtrlInit(void *data_top, int bk0, int bk1)
 #ifndef NON_MATCHING
 INCLUDE_ASM("main/scrctrl", ScrTapDbuffSet);
 #else /* Function matches, but the sloop bug triggers */
-u_int ScrTapDbuffSet(SNDREC *sndrec_pp)
-{
+u_int ScrTapDbuffSet(SNDREC *sndrec_pp) {
     u_int ret;
     u_int id;
 
     id = scr_snd_dbuff.next_index & 1;
-    if (scr_snd_dbuff.sndrec_pp[id] == sndrec_pp)
-    {
+    if (scr_snd_dbuff.sndrec_pp[id] == sndrec_pp) {
         ret = scr_snd_dbuff.next_index;
         scr_snd_dbuff.next_index++;
         return ret;
     }
 
-    if (scr_snd_dbuff.sndrec_pp[id ^ 1] == sndrec_pp)
-    {
+    if (scr_snd_dbuff.sndrec_pp[id ^ 1] == sndrec_pp) {
         return id ^ 1;
     }
 
@@ -121,32 +114,28 @@ u_int ScrTapDbuffSet(SNDREC *sndrec_pp)
 }
 #endif
 
-void ScrTapDbuffSetSp(SNDREC *sndrec_pp, int id)
-{
-    if (id < 0)
+void ScrTapDbuffSetSp(SNDREC *sndrec_pp, int id) {
+    if (id < 0) {
         return;
+    }
 
     scr_snd_dbuff.next_index = id;
     ScrTapDataTrans(sndrec_pp, scr_snd_dbuff.bank[id & 1 ^ 1], scr_snd_dbuff.data_top);
     scr_snd_dbuff.sndrec_pp[id & 1 ^ 1] = sndrec_pp;
 }
 
-void ScrTapDbuffClear(void)
-{
+void ScrTapDbuffClear(void) {
     scr_snd_dbuff.next_index = 0;
     scr_snd_dbuff.sndrec_pp[0] = NULL;
     scr_snd_dbuff.sndrec_pp[1] = NULL;
 }
 
-void ScrTapCtrlInit(void *data_top)
-{
+void ScrTapCtrlInit(void *data_top) {
     ScrTapDbuffCtrlInit(data_top, 1, 2);
 }
 
-void ScrTapDataTrans(SNDREC *sndrec_pp, int bank, void *data_top)
-{
-    if (sndrec_pp->bd_num >= 0)
-    {
+void ScrTapDataTrans(SNDREC *sndrec_pp, int bank, void *data_top) {
+    if (sndrec_pp->bd_num >= 0) {
         TapCt(0x8030 | bank, (int)GetIntAdrsCurrent(sndrec_pp->bd_num), GetIntSizeCurrent(sndrec_pp->bd_num));
         TapCt(0x8040 | bank, (int)GetIntAdrsCurrent(sndrec_pp->hd_num), GetIntSizeCurrent(sndrec_pp->hd_num));
     }
@@ -157,20 +146,19 @@ void ScrTapDataTrans(SNDREC *sndrec_pp, int bank, void *data_top)
     TapCt(0xa0, PR_CONCAT(0x3fff, 0x3fff), 0);
 }
 
-int ScrTapDataTransCheck(void)
-{
+int ScrTapDataTransCheck(void) {
     return TapCt(0x8070, 0, 0);
 }
 
-void ScrTapReq(int id, int box, int num)
-{
+void ScrTapReq(int id, int box, int num) {
     int     use_chan;
     SNDTAP *tp_pp;
 
-    if (id == -1)
+    if (id == -1) {
         use_chan = 0;
-    else
+    } else {
         use_chan = scr_snd_dbuff.bank[id & 1];
+    }
 
     tp_pp = scr_sndtap_pp[use_chan] + num;
 
@@ -178,165 +166,180 @@ void ScrTapReq(int id, int box, int num)
     TapCt(0xd0 | use_chan, box, tp_pp->prg + tp_pp->key * 256);
 }
 
-void ScrTapReqStop(int box)
-{
+void ScrTapReqStop(int box) {
     TapCt(0xe0, box, 0);
 }
 
-static void exam_tbl_updownInit(SCORE_INDV_STR *sindv_pp)
-{
+static void exam_tbl_updownInit(SCORE_INDV_STR *sindv_pp) {
     int i;
 
-    if (sindv_pp->global_ply != NULL)
-    {
-        for (i = 0; i < PR_ARRAYSIZE(sindv_pp->global_ply->exam_tbl_updown); i++)
-        {
-            sindv_pp->global_ply->exam_tbl_updown[i] = 0;
-        }
+    if (sindv_pp->global_ply == NULL) {
+        return;
+    }
+
+    for (i = 0; i < PR_ARRAYSIZE(sindv_pp->global_ply->exam_tbl_updown); i++) {
+        sindv_pp->global_ply->exam_tbl_updown[i] = 0;
     }
 }
 
-static void exam_tbl_updownSet(SCORE_INDV_STR *sindv_pp, int now, int sikiichi /* Threshold */, int oth)
-{
+static void exam_tbl_updownSet(SCORE_INDV_STR *sindv_pp, int now, int sikiichi /* Threshold */, int oth) {
     int hikaku; /* Comparison variable */
 
-    if (sindv_pp->global_ply != NULL)
-    {
-        if (oth >= sikiichi / 2)
-            sindv_pp->global_ply->exam_tbl_updown[0]++;
-        else
-            sindv_pp->global_ply->exam_tbl_updown[0]--;
+    if (sindv_pp->global_ply == NULL) {
+        return;
+    }
 
-        hikaku = sikiichi / 2;
+    if (oth >= sikiichi / 2) {
+        sindv_pp->global_ply->exam_tbl_updown[0]++;
+    } else {
+        sindv_pp->global_ply->exam_tbl_updown[0]--;
+    }
 
-        if (now > hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[1]++;
-        if (now >= hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[2]++;
-        if (now <= hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[3]++;
-        if (now < hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[4]++;
+    hikaku = sikiichi / 2;
 
-        hikaku = oth;
+    if (now > hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[1]++;
+    }
+    if (now >= hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[2]++;
+    }
+    if (now <= hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[3]++;
+    }
+    if (now < hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[4]++;
+    }
 
-        if (now > hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[5]++;
-        if (now >= hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[6]++;
-        if (now <= hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[7]++;
-        if (now < hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[8]++;
+    hikaku = oth;
 
-        hikaku = 0;
+    if (now > hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[5]++;
+    }
+    if (now >= hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[6]++;
+    }
+    if (now <= hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[7]++;
+    }
+    if (now < hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[8]++;
+    }
 
-        if (now > hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[9]++;
-        if (now >= hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[10]++;
-        if (now <= hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[11]++;
-        if (now < hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[12]++;
+    hikaku = 0;
 
-        hikaku = sikiichi;
+    if (now > hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[9]++;
+    }
+    if (now >= hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[10]++;
+    }
+    if (now <= hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[11]++;
+    }
+    if (now < hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[12]++;
+    }
 
-        if (now > hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[13]++;
-        if (now >= hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[14]++;
-        if (now <= hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[15]++;
-        if (now < hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[16]++;
+    hikaku = sikiichi;
 
-        hikaku = (sikiichi - oth) / 2 + oth;
+    if (now > hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[13]++;
+    }
+    if (now >= hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[14]++;
+    }
+    if (now <= hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[15]++;
+    }
+    if (now < hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[16]++;
+    }
 
-        if (now > hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[17]++;
-        if (now >= hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[18]++;
-        if (now <= hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[19]++;
-        if (now < hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[20]++;
+    hikaku = (sikiichi - oth) / 2 + oth;
 
-        hikaku = oth / 2;
+    if (now > hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[17]++;
+    }
+    if (now >= hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[18]++;
+    }
+    if (now <= hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[19]++;
+    }
+    if (now < hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[20]++;
+    }
 
-        if (now > hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[21]++;
-        if (now >= hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[22]++;
-        if (now <= hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[23]++;
-        if (now < hikaku)
-            sindv_pp->global_ply->exam_tbl_updown[24]++;
+    hikaku = oth / 2;
+
+    if (now > hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[21]++;
+    }
+    if (now >= hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[22]++;
+    }
+    if (now <= hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[23]++;
+    }
+    if (now < hikaku) {
+        sindv_pp->global_ply->exam_tbl_updown[24]++;
     }
 }
 
-static int exam_tbl_updownChange(SCORE_INDV_STR *sindv_pp, TAP_CTRL_LEVEL_ENUM clv, TAP_ROUND_ENUM round, int coolf)
-{
+static int exam_tbl_updownChange(SCORE_INDV_STR *sindv_pp, TAP_CTRL_LEVEL_ENUM clv, TAP_ROUND_ENUM round, int coolf) {
     TCL_CTRL *tcl_ctrl_pp;
     int       ret = 0;
     int       udc;
 
-    if (sindv_pp->global_ply == NULL)
+    if (sindv_pp->global_ply == NULL) {
         return 0;
-
-    if (coolf)
-    {
-        tcl_ctrl_pp = &tcl_ctrl[round][32];
     }
-    else
-    {
-        if (sindv_pp->global_ply->exam_tbl_updown[0] < 0)
+
+    if (coolf) {
+        tcl_ctrl_pp = &tcl_ctrl[round][32];
+    } else {
+        if (sindv_pp->global_ply->exam_tbl_updown[0] < 0) {
             tcl_ctrl_pp = &tcl_ctrl[round][clv];
-        else
+        } else {
             tcl_ctrl_pp = &tcl_ctrl[round][clv + TCT_MAX];
+        }
     }
 
     udc = 0;
 
-    if (tcl_ctrl_pp->tcl_do_enum_up != TCL_DO_NONE)
+    if (tcl_ctrl_pp->tcl_do_enum_up != TCL_DO_NONE) {
         udc = sindv_pp->global_ply->exam_tbl_updown[tcl_ctrl_pp->tcl_do_enum_up];
-    if (tcl_ctrl_pp->tcl_do_enum_down != TCL_DO_NONE)
-        udc -= sindv_pp->global_ply->exam_tbl_updown[tcl_ctrl_pp->tcl_do_enum_down];
-
-    if (udc < 0)
-    {
-        if (tcl_ctrl_pp->min < 0)
-        {
-            ret = tcl_ctrl_pp->min;
-        }
-        else
-        {
-            if (udc < -tcl_ctrl_pp->min)
-                ret = -tcl_ctrl_pp->min;
-            else
-                ret = udc;
-        }
     }
-    else if (udc > 0)
-    {
-        if (tcl_ctrl_pp->max < 0)
-        {
-            ret = -tcl_ctrl_pp->max;
-        }
-        else
-        {
-            if (udc > tcl_ctrl_pp->max)
-                ret = tcl_ctrl_pp->max;
-            else
+    if (tcl_ctrl_pp->tcl_do_enum_down != TCL_DO_NONE) {
+        udc -= sindv_pp->global_ply->exam_tbl_updown[tcl_ctrl_pp->tcl_do_enum_down];
+    }
+
+    if (udc < 0) {
+        if (tcl_ctrl_pp->min < 0) {
+            ret = tcl_ctrl_pp->min;
+        } else {
+            if (udc < -tcl_ctrl_pp->min) {
+                ret = -tcl_ctrl_pp->min;
+            } else {
                 ret = udc;
+            }
+        }
+    } else if (udc > 0) {
+        if (tcl_ctrl_pp->max < 0) {
+            ret = -tcl_ctrl_pp->max;
+        } else {
+            if (udc > tcl_ctrl_pp->max) {
+                ret = tcl_ctrl_pp->max;
+            } else {
+                ret = udc;
+            }
         }
     }
 
     return ret;
 }
 
-void vsTapdatSetMemorySave(void)
-{
+void vsTapdatSetMemorySave(void) {
     int        i;
     VSOTHSAVE  vsothsave_tmp;
     TAPDAT    *tapdat_pp;
@@ -345,14 +348,14 @@ void vsTapdatSetMemorySave(void)
 
     WorkClear(vsothsave_tmp, sizeof(vsothsave_tmp));
 
-    for (i = 0; i < vs_tapdat_tmp_cnt; i++, tapdat_pp++)
-    {
+    for (i = 0; i < vs_tapdat_tmp_cnt; i++, tapdat_pp++) {
         int time = tapdat_pp->time / 24;
 
-        if (time >= 32)
+        if (time >= 32) {
             printf("OTH SAVE OVER\n");
-        else
+        } else {
             vsothsave_tmp[time] = *(u_char*)&tapdat_pp->KeyIndex;
+        }
     }
 
     mccReqVSOTHSAVEset(&vsothsave_tmp);
@@ -363,8 +366,7 @@ INCLUDE_ASM("main/scrctrl", vsTapdatSetMemoryLoad);
 
 INCLUDE_ASM("main/scrctrl", vsTapdatSet);
 
-void vsTapdatSetMoto(SCORE_INDV_STR *sindv_pp)
-{
+void vsTapdatSetMoto(SCORE_INDV_STR *sindv_pp) {
     int     i;
     TAPSET *tapset_pp;
     TAPDAT *tapdat_pp;
@@ -375,68 +377,66 @@ void vsTapdatSetMoto(SCORE_INDV_STR *sindv_pp)
     tapset_pp = IndvGetTapSetAdrs(sindv_pp);
     tapdat_pp = tapset_pp->tapdat_pp;
 
-    for (i = 0; i < tapset_pp->tapdat_size; i++, tapdat_pp++)
-    {
-        if (tapdat_pp->KeyIndex != 0)
-        {
-            if (global_data.play_typeL == PLAY_TYPE_ONE)
-                vs_tapdat_tmp[vs_tapdat_tmp_cnt].KeyIndex = 1;
-            else
-                vs_tapdat_tmp[vs_tapdat_tmp_cnt].KeyIndex = tapdat_pp->KeyIndex;
-
-            vs_tapdat_tmp[vs_tapdat_tmp_cnt].time = tapdat_pp->time;
-            vs_tapdat_tmp[vs_tapdat_tmp_cnt].tapct[0].actor = -1;
-            vs_tapdat_tmp[vs_tapdat_tmp_cnt].tapct[0].sound = -1;
-
-            vs_tapdat_tmp_cnt++;
+    for (i = 0; i < tapset_pp->tapdat_size; i++, tapdat_pp++) {
+        if (tapdat_pp->KeyIndex == 0) {
+            continue;
         }
+
+        if (global_data.play_typeL == PLAY_TYPE_ONE) {
+            vs_tapdat_tmp[vs_tapdat_tmp_cnt].KeyIndex = 1;
+        } else {
+            vs_tapdat_tmp[vs_tapdat_tmp_cnt].KeyIndex = tapdat_pp->KeyIndex;
+        }
+
+        vs_tapdat_tmp[vs_tapdat_tmp_cnt].time = tapdat_pp->time;
+        vs_tapdat_tmp[vs_tapdat_tmp_cnt].tapct[0].actor = -1;
+        vs_tapdat_tmp[vs_tapdat_tmp_cnt].tapct[0].sound = -1;
+
+        vs_tapdat_tmp_cnt++;
     }
 }
 
-static void followTapInit(void)
-{
+static void followTapInit(void) {
     follow_scr_tap_memory_cnt = 0;
     follow_scr_tap_memory_cnt_load = 0;
     WorkClear(follow_scr_tap_memory, sizeof(follow_scr_tap_memory));
 }
 
-static void followTapSave(SCORE_INDV_STR *sindv_pp)
-{
+static void followTapSave(SCORE_INDV_STR *sindv_pp) {
     int i;
 
     follow_scr_tap_memory_cnt = 0;
     follow_scr_tap_memory_cnt_load = 0;
 
-    for (i = 0; i < sindv_pp->scr_tap_memory_cnt; i++)
-    {
-        if (sindv_pp->scr_tap_memory[i].onKey)
-        {
+    for (i = 0; i < sindv_pp->scr_tap_memory_cnt; i++) {
+        if (sindv_pp->scr_tap_memory[i].onKey) {
             follow_scr_tap_memory[follow_scr_tap_memory_cnt] = sindv_pp->scr_tap_memory[i];
             follow_scr_tap_memory_cnt++;
         }
     }
 }
 
+#ifndef NON_MATCHING
 INCLUDE_ASM("main/scrctrl", followTapLoad);
-#if 0
-static SCR_TAP_MEMORY* followTapLoad(int pos, int time)
-{
-    if (follow_scr_tap_memory_cnt > pos)
-    {
-        if (follow_scr_tap_memory[pos].ofs_frame > time)
-            return NULL;
-
-        if (follow_scr_tap_memory_cnt_load == pos)
-        {
-            follow_scr_tap_memory_cnt_load = pos + 1;
-            return &follow_scr_tap_memory[pos];
-        }
+#else /* Function matches, but the sloop bug triggers */
+static SCR_TAP_MEMORY* followTapLoad(int pos, int time) {
+    if (follow_scr_tap_memory_cnt <= pos) {
+        return NULL;
     }
+    if (follow_scr_tap_memory[pos].ofs_frame > time) {
+        return NULL;
+    }
+
+    if (follow_scr_tap_memory_cnt_load != pos) {
+        return NULL;
+    }
+    
+    follow_scr_tap_memory_cnt_load = pos + 1;
+    return &follow_scr_tap_memory[pos];
 }
 #endif
 
-static void ScrLincChangTbl(int line)
-{
+static void ScrLincChangTbl(int line) {
     scrJimakuLine = line;
     scrDrawLine   = line;
     scrMbarLine   = line;
@@ -444,8 +444,7 @@ static void ScrLincChangTbl(int line)
     DrawCtrlTblChange(GetDrawLine(line));
 }
 
-static void ScrLincChangTblRef(int line, int ck_time)
-{
+static void ScrLincChangTblRef(int line, int ck_time) {
     // TODO(poly): Flags?
     scrDrawLine |= 0x8000;
     scrMbarLine |= 0x8000;
@@ -454,42 +453,37 @@ static void ScrLincChangTblRef(int line, int ck_time)
     DrawCtrlTblChange(GetDrawLine(line));
 }
 
-void ScrLineSafeRefMode(void)
-{
-    if (scrDrawLine & 0x8000)
-    {
+void ScrLineSafeRefMode(void) {
+    if (scrDrawLine & 0x8000) {
         scrDrawLine &= 0xffff7fff;
         DrawCtrlTblChange(GetDrawLine(scrDrawLine));
     }
 
-    if (scrMbarLine & 0x8000)
-    {
+    if (scrMbarLine & 0x8000) {
         scrMbarLine &= 0xffff7fff;
     }
 }
 
-int ScrDrawTimeGet(int line)
-{
-    if (line & 0x8000)
+int ScrDrawTimeGet(int line) {
+    if (line & 0x8000) {
         return scrRefLineTime;
+    }
 
     return score_str.stdat_dat_pp->scr_pp->scr_ctrl_pp[line].lineTime;
 }
 
-int ScrDrawTimeGetFrame(int line)
-{
-    if (line & 0x8000)
+int ScrDrawTimeGetFrame(int line) {
+    if (line & 0x8000) {
         return (scrRefLineTime * 3600.0f + GetLineTempo(line) * 96.0f * 0.5f) / (GetLineTempo(line) * 96.0f);
+    }
     
     return score_str.stdat_dat_pp->scr_pp->scr_ctrl_pp[line].lineTimeFrame;
 }
 
-void KeyCntClear(int *key_pp)
-{
+void KeyCntClear(int *key_pp) {
     int i;
 
-    for (i = 0; i <= 6; i++, key_pp++)
-    {
+    for (i = 0; i <= 6; i++, key_pp++) {
         *key_pp = -1;
     }
 }
@@ -527,8 +521,7 @@ SCRREC* ScrCtrlCurrentSearch(/* a0 4 */ SCORE_INDV_STR *sindv_pp, /* a3 7 */ int
 }
 #endif
 
-void ScrCtrlIndvInit(STDAT_DAT *sdat_pp)
-{
+void ScrCtrlIndvInit(STDAT_DAT *sdat_pp) {
     int             i, j;
     int             dare;
 
@@ -538,22 +531,18 @@ void ScrCtrlIndvInit(STDAT_DAT *sdat_pp)
     WorkClear(score_indv_str, sizeof(score_indv_str));
     sindv_pp = score_indv_str;
 
-    for (i = 0; i < 5; i++, sindv_pp++)
-    {
+    for (i = 0; i < PR_ARRAYSIZE(score_indv_str); i++, sindv_pp++) {
         dare = -1;
         gply_pp = global_data.global_ply;
         
-        for (j = 0; j < 4; j++)
-        {
-            if (gply_pp[j].player_code == PR_BIT(i))
-            {
+        for (j = 0; j < PR_ARRAYSIZE(global_data.global_ply); j++) {
+            if (gply_pp[j].player_code == PR_BIT(i)) {
                 dare = j;
                 break;
             }
         }
 
-        if (dare >= 0)
-        {
+        if (dare >= 0) {
             KeyCntClear(sindv_pp->keyCnt);
             tapReqGroupTapClear(Pcode2Pindex(sindv_pp->plycode));
 
@@ -571,8 +560,7 @@ void ScrCtrlIndvInit(STDAT_DAT *sdat_pp)
 
             exam_tbl_updownInit(sindv_pp);
 
-            for (j = 0; j < 24; j++)
-            {
+            for (j = 0; j < PR_ARRAYSIZE(sindv_pp->sjob); j++) {
                 sindv_pp->sjob[j] = -1;
             }
 
@@ -581,16 +569,14 @@ void ScrCtrlIndvInit(STDAT_DAT *sdat_pp)
     }
 }
 
-void ScrCtrlExamClear(SCR_EXAM_STR *sexam_pp)
-{
+void ScrCtrlExamClear(SCR_EXAM_STR *sexam_pp) {
     int i;
 
     sexam_pp->exam_enum  = EXAM_NONE;
     sexam_pp->exam_start = -1;
     sexam_pp->exam_do    = EXAM_DO_NON;
 
-    for (i = 0; i < 18; i++)
-    {
+    for (i = 0; i < PR_ARRAYSIZE(sexam_pp->scr_exam_job); i++) {
         sexam_pp->scr_exam_job[i].goto_time = -1;
         sexam_pp->scr_exam_job[i].goto_line = SCRLINE_NODATA;
         sexam_pp->scr_exam_job[i].goto_job_time = -1;
@@ -598,8 +584,7 @@ void ScrCtrlExamClear(SCR_EXAM_STR *sexam_pp)
     }
 }
 
-void ScrCtrlExamClearIndv(SCR_EXAM_STR *sexam_pp)
-{
+void ScrCtrlExamClearIndv(SCR_EXAM_STR *sexam_pp) {
     sexam_pp->exam_do = EXAM_DO_NON;
     sexam_pp->exam_start = -1;
 }
@@ -632,8 +617,7 @@ int ScrCtrlIndvNextTime(/* a0 4 */ SCORE_INDV_STR *sindv_pp, /* a1 5 */ int Ncnt
 INCLUDE_ASM("main/scrctrl", ScrCtrlIndvNextReadLine);
 int ScrCtrlIndvNextReadLine(/* t0 8 */ SCORE_INDV_STR *sindv_pp, /* t2 10 */ int ckf);
 
-int getLvlTblRand(TAPLVL_DAT *taplvl_dat_pp)
-{
+int getLvlTblRand(TAPLVL_DAT *taplvl_dat_pp) {
     int rand_tmp;
     int ret;
     int i;
@@ -643,12 +627,12 @@ int getLvlTblRand(TAPLVL_DAT *taplvl_dat_pp)
     rand_tmp = randMakeMax(100);
     check = 0;
 
-    for (i = 0; i < 17; i++, ret++)
-    {
+    for (i = 0; i < 17; i++, ret++) {
         check += taplvl_dat_pp->per[i];
 
-        if (check > rand_tmp)
+        if (check > rand_tmp) {
             break;
+        }
     }
 
     return ret;
@@ -682,16 +666,16 @@ int tapLevelChangeSub(void);
 }
 #endif
 
-void tapLevelChange(SCORE_INDV_STR *sindv_pp)
-{
+void tapLevelChange(SCORE_INDV_STR *sindv_pp) {
     int add_move;
     int old_num;
 
     int tmp_lv;
     int tmp_hklv;
 
-    if ((sindv_pp->global_ply->flags & GPLAY_TBLCNG_REQ) == 0)
+    if (!(sindv_pp->global_ply->flags & GPLAY_TBLCNG_REQ)) {
         return;
+    }
 
     tmp_lv = exam_tbl_updownChange(sindv_pp, global_data.tap_ctrl_level, global_data.roundL, (RANK_LEVEL2DISP_LEVEL(sindv_pp->global_ply->rank_level) == DLVL_COOL));
 
@@ -705,11 +689,12 @@ void tapLevelChange(SCORE_INDV_STR *sindv_pp)
 
     add_move = tmp_lv + global_data.tap_ctrl_level;
 
-    if (add_move < 0)
+    if (add_move < 0) {
         add_move = TCT_LV00;
-
-    if (add_move > 15)
+    }
+    if (add_move > 15) {
         add_move = TCT_LV15;
+    }
 
     global_data.tap_ctrl_level = add_move;
 
@@ -719,15 +704,11 @@ void tapLevelChange(SCORE_INDV_STR *sindv_pp)
     old_num  = global_data.tapLevel;
     add_move = tapLevelChangeSub();
 
-    if (global_data.demo_flagL != DEMOF_REPLAY)
-    {
-        if (global_data.tapLevelCtrl == LM_AUTO)
-        {
-            if (sindv_pp->scrdat_pp != NULL)
-            {
+    if (global_data.demo_flagL != DEMOF_REPLAY) {
+        if (global_data.tapLevelCtrl == LM_AUTO) {
+            if (sindv_pp->scrdat_pp != NULL) {
                 tmp_hklv = inCmnHook2GameCheck(sindv_pp->scrdat_pp->sndrec_num);
-                if (tmp_hklv >= 0)
-                {
+                if (tmp_hklv >= 0) {
                     add_move = tmp_hklv;
                     global_data.tapLevel = tmp_hklv;
                 }
@@ -735,34 +716,28 @@ void tapLevelChange(SCORE_INDV_STR *sindv_pp)
         }
 
         /* Stage 8 specific logic */
-        if (global_data.play_step == PSTEP_GAME && global_data.play_stageL == 8)
-        {
-            if (sindv_pp->scrdat_pp != NULL)
-            {
-                if ((u_int)(sindv_pp->scrdat_pp->sndrec_num - 24) < 3)
-                {
+        if (global_data.play_step == PSTEP_GAME && global_data.play_stageL == 8) {
+            if (sindv_pp->scrdat_pp != NULL) {
+                if ((u_int)(sindv_pp->scrdat_pp->sndrec_num - 24) < 3) {
                     add_move = old_num;
                     printf("st8 sp same num:%d sndLine:%d\n", old_num, sindv_pp->scrdat_pp->sndrec_num);
                 }
-            }
-            else
-            {
+            } else {
                 add_move = old_num;
                 printf("st8 sp same num:%d\n", old_num);
             }
         }
 
         mccReqLvlSet(add_move);
-    }
-    else
-    {
+    } else {
         add_move = mccReqLvlGet();
     }
 
     global_data.tapLevel = add_move;
 
-    if (old_num != add_move)
+    if (old_num != add_move) {
         selectIndvTapResetPlay(1);
+    }
 
     printf("            after [%d]\n\n", add_move);
 }
@@ -947,94 +922,87 @@ void ScrCtrlIndvNextRead(/* s0 16 */ SCORE_INDV_STR *sindv_pp, /* a1 5 */ int ta
 }
 #endif
 
-void intIndvStatusSet(SCORE_INDV_STR *sindv_pp, u_int CKF, u_int STF, u_int UNF)
-{
-    if (sindv_pp->status & CKF)
+void intIndvStatusSet(SCORE_INDV_STR *sindv_pp, u_int CKF, u_int STF, u_int UNF) {
+    if (sindv_pp->status & CKF) {
         sindv_pp->status = (sindv_pp->status | STF) & ~UNF;
+    }
 }
 
-void allIndvNextContinue(void)
-{
+void allIndvNextContinue(void) {
     int             i;
     SCORE_INDV_STR *sindv_pp = score_indv_str;
 
-    for (i = 0; i < 5; i++, sindv_pp++)
-    {
+    for (i = 0; i < PR_ARRAYSIZE(score_indv_str); i++, sindv_pp++) {
         intIndvStatusSet(sindv_pp, SCS_PAUSE, SCS_PAUSE_END, SCS_PAUSE);
     }
 }
 
-void allIndvGoContinue(void)
-{
+void allIndvGoContinue(void) {
     int             i;
     SCORE_INDV_STR *sindv_pp = score_indv_str;
 
-    for (i = 0; i < 5; i++, sindv_pp++)
-    {
+    for (i = 0; i < PR_ARRAYSIZE(score_indv_str); i++, sindv_pp++) {
         intIndvStatusSet(sindv_pp, SCS_PAUSE_END, 0, SCS_PAUSE_END);
     }
 }
 
-void otherIndvPause(int num)
-{
+void otherIndvPause(int num) {
     int             i;
     SCORE_INDV_STR *sindv_pp = score_indv_str;
 
-    for (i = 0; i < 5; i++, sindv_pp++)
-    {
-        if (i != num)
-            intIndvStatusSet(sindv_pp, SCS_USE, SCS_PAUSE, 0);
-    }
-}
-
-void otherIndvTapReset(int num)
-{
-    int             i;
-    SCORE_INDV_STR *sindv_pp = score_indv_str;
-
-    for (i = 0; i < 5; i++, sindv_pp++)
-    {
-        if (i != num)
-        {
-            if (sindv_pp->status & SCS_USE)
-            {
-                KeyCntClear(sindv_pp->keyCnt);
-                
-                sindv_pp->keyCntCom = 0;
-                sindv_pp->scr_tap_memory_cnt = 0;
-                sindv_pp->scr_tap_vib_on = 0;
-                sindv_pp->cansel_flag = 0;
-                
-                tapReqGroupTapClear(Pcode2Pindex(sindv_pp->plycode));
-            }
+    for (i = 0; i < PR_ARRAYSIZE(score_indv_str); i++, sindv_pp++) {
+        if (i == num) {
+            continue;
         }
+        intIndvStatusSet(sindv_pp, SCS_USE, SCS_PAUSE, 0);
     }
 }
 
-void selectIndvTapResetPlay(int num)
-{
-    SCORE_INDV_STR *sindv_pp = &score_indv_str[num];
-    TAPSET         *tapset_pp;
+void otherIndvTapReset(int num) {
+    int             i;
+    SCORE_INDV_STR *sindv_pp = score_indv_str;
 
-    if (sindv_pp->status & SCS_USE)
-    {
-        tapset_pp = IndvGetTapSetAdrs(sindv_pp);
-        if (tapset_pp != NULL && tapset_pp->coolup != -1)
-        {
+    for (i = 0; i < PR_ARRAYSIZE(score_indv_str); i++, sindv_pp++) {
+        if (i == num) {
+            continue;
+        }
+        if (sindv_pp->status & SCS_USE) {
             KeyCntClear(sindv_pp->keyCnt);
-
+                
             sindv_pp->keyCntCom = 0;
             sindv_pp->scr_tap_memory_cnt = 0;
             sindv_pp->scr_tap_vib_on = 0;
             sindv_pp->cansel_flag = 0;
-
+                
             tapReqGroupTapClear(Pcode2Pindex(sindv_pp->plycode));
         }
     }
 }
 
-void IndivMoveChange(SCORE_INDV_STR *sindv_pp, int goto_time, SCRLINE_ENUM goto_line)
-{
+void selectIndvTapResetPlay(int num) {
+    SCORE_INDV_STR *sindv_pp = &score_indv_str[num];
+    TAPSET         *tapset_pp;
+
+    if (!(sindv_pp->status & SCS_USE)) {
+        return;
+    }
+
+    tapset_pp = IndvGetTapSetAdrs(sindv_pp);
+    if (tapset_pp == NULL || tapset_pp->coolup == -1) {
+        return;
+    }
+
+    KeyCntClear(sindv_pp->keyCnt);
+
+    sindv_pp->keyCntCom = 0;
+    sindv_pp->scr_tap_memory_cnt = 0;
+    sindv_pp->scr_tap_vib_on = 0;
+    sindv_pp->cansel_flag = 0;
+
+    tapReqGroupTapClear(Pcode2Pindex(sindv_pp->plycode));
+}
+
+void IndivMoveChange(SCORE_INDV_STR *sindv_pp, int goto_time, SCRLINE_ENUM goto_line) {
     int j;
 
     KeyCntClear(sindv_pp->keyCnt);
@@ -1043,8 +1011,7 @@ void IndivMoveChange(SCORE_INDV_STR *sindv_pp, int goto_time, SCRLINE_ENUM goto_
     sindv_pp->top_scr_ctrlpp = score_str.stdat_dat_pp->scr_pp->scr_ctrl_pp;
     sindv_pp->current_scrrec_pp = ScrCtrlCurrentSearch(sindv_pp, goto_line, goto_time);
 
-    for (j = 0; j < 24; j++)
-    {
+    for (j = 0; j < PR_ARRAYSIZE(sindv_pp->sjob); j++) {
         sindv_pp->sjob[j] = -1;
     }
 
@@ -1054,15 +1021,12 @@ void IndivMoveChange(SCORE_INDV_STR *sindv_pp, int goto_time, SCRLINE_ENUM goto_
     ScrCtrlIndvNextRead(sindv_pp, 1);
 }
 
-void useIndevAllMove(int goto_time, SCRLINE_ENUM goto_line)
-{
+void useIndevAllMove(int goto_time, SCRLINE_ENUM goto_line) {
     int             i;
     SCORE_INDV_STR *sindv_pp = score_indv_str;
 
-    for (i = 0; i < 5; i++, sindv_pp++)
-    {
-        if (sindv_pp->status & SCS_USE)
-        {
+    for (i = 0; i < PR_ARRAYSIZE(score_indv_str); i++, sindv_pp++) {
+        if (sindv_pp->status & SCS_USE) {
             sindv_pp->plycode = PR_BIT(i);
             sindv_pp->status  = SCS_USE;
 
@@ -1071,16 +1035,15 @@ void useIndevAllMove(int goto_time, SCRLINE_ENUM goto_line)
     }
 }
 
-static int useIndevCodeGet(void)
-{
+static int useIndevCodeGet(void) {
     int             i;
     int             ret      = 0;
     SCORE_INDV_STR *sindv_pp = score_indv_str;
 
-    for (i = 0; i < 5; i++, sindv_pp++)
-    {
-        if (sindv_pp->status & SCS_USE)
+    for (i = 0; i < PR_ARRAYSIZE(score_indv_str); i++, sindv_pp++) {
+        if (sindv_pp->status & SCS_USE) {
             ret |= PR_BIT(i);
+        }
     }
 
     return ret;
@@ -1089,47 +1052,42 @@ static int useIndevCodeGet(void)
 INCLUDE_ASM("main/scrctrl", targetTimeGet);
 int targetTimeGet(/* a0 4 */ int line, /* a1 5 */ int time, /* a2 6 */ int codeAll);
 
-void useIndevSndKill(void)
-{
+void useIndevSndKill(void) {
     int             i;
     SCORE_INDV_STR *sindv_pp = score_indv_str;
 
-    for (i = 0; i < 5; i++, sindv_pp++)
-    {
-        if (sindv_pp->status & SCS_USE)
+    for (i = 0; i < PR_ARRAYSIZE(score_indv_str); i++, sindv_pp++) {
+        if (sindv_pp->status & SCS_USE) {
             TapCt(0xe0, i, 0);
+        }
     }
 }
 
-void useAllClearKeySnd(void)
-{
+void useAllClearKeySnd(void) {
     int i;
 
-    for (i = 0; i < 12; i++)
-    {
+    for (i = 0; i < 12; i++) {
         TapCt(0xe0, i, 0);
     }
 }
 
-int useIndevSndKillOther(int num)
-{
+int useIndevSndKillOther(int num) {
     int             i;
     SCORE_INDV_STR *sindv_pp = score_indv_str;
 
-    for (i = 0; i < 5; i++, sindv_pp++)
-    {
-        if (i != num)
-        {
-            if (sindv_pp->status & SCS_USE)
-                TapCt(0xe0, i, 0);
+    for (i = 0; i < PR_ARRAYSIZE(score_indv_str); i++, sindv_pp++) {
+        if (i == num) {
+            continue;
+        }
+        if (sindv_pp->status & SCS_USE) {
+            TapCt(0xe0, i, 0);
         }
     }
 
     return 0;
 }
 
-int TapKeyCheckNum(TAPSET *tapset_pp, int keyId, int ng_f)
-{
+int TapKeyCheckNum(TAPSET *tapset_pp, int keyId, int ng_f) {
     int     i;
     int     ret;
 
@@ -1138,28 +1096,24 @@ int TapKeyCheckNum(TAPSET *tapset_pp, int keyId, int ng_f)
 
     ret = 0;
 
-    if (ng_f)
-    {
+    if (ng_f) {
         tmp_size      = tapset_pp->tapdatNG_size;
         tmp_tapdat_pp = tapset_pp->tapdatNG_pp;
-    }
-    else
-    {
+    } else {
         tmp_size      = tapset_pp->tapdat_size;
         tmp_tapdat_pp = tapset_pp->tapdat_pp;
     }
 
-    for (i = 0; i < tmp_size; i++)
-    {
-        if (tmp_tapdat_pp[i].KeyIndex == keyId)
+    for (i = 0; i < tmp_size; i++) {
+        if (tmp_tapdat_pp[i].KeyIndex == keyId) {
             ret++;
+        }
     }
 
     return ret;
 }
 
-TAPDAT* TapKeyGetDatPP(TAPSET *tapset_pp, int keyId, int keyCnt, int ng_f, u_char *keyNumSave)
-{
+TAPDAT* TapKeyGetDatPP(TAPSET *tapset_pp, int keyId, int keyCnt, int ng_f, u_char *keyNumSave) {
     int     i;
     int     cnt;
     int     tmp_size;
@@ -1168,23 +1122,17 @@ TAPDAT* TapKeyGetDatPP(TAPSET *tapset_pp, int keyId, int keyCnt, int ng_f, u_cha
     cnt = 0;
     *keyNumSave = 0;
 
-    if (ng_f)
-    {
+    if (ng_f) {
         tmp_size      = tapset_pp->tapdatNG_size;
         tmp_tapdat_pp = tapset_pp->tapdatNG_pp;
-    }
-    else
-    {
+    } else {
         tmp_size      = tapset_pp->tapdat_size;
         tmp_tapdat_pp = tapset_pp->tapdat_pp;
     }
 
-    for (i = 0; i < tmp_size; i++)
-    {
-        if (tmp_tapdat_pp[i].KeyIndex == keyId)
-        {
-            if (cnt == keyCnt)
-            {
+    for (i = 0; i < tmp_size; i++) {
+        if (tmp_tapdat_pp[i].KeyIndex == keyId) {
+            if (cnt == keyCnt) {
                 *keyNumSave = i;
                 return &tmp_tapdat_pp[i];
             }
@@ -1196,20 +1144,18 @@ TAPDAT* TapKeyGetDatPP(TAPSET *tapset_pp, int keyId, int keyCnt, int ng_f, u_cha
     return NULL;
 }
 
-void tapReqGroupInit(void)
-{
+void tapReqGroupInit(void) {
     WorkClear(tap_groupe_str, sizeof(tap_groupe_str));
 }
 
-void tapReqGroupTapClear(PLAYER_INDEX pindex)
-{
+void tapReqGroupTapClear(PLAYER_INDEX pindex) {
     WorkClear(&tap_groupe_str[pindex], sizeof(TAP_GROUPE_STR));
 }
 
-void tapReqGroup(TAPCT *tapct_pp, PLAYER_INDEX pindex, int sndId, u_char *tappress_pp)
-{
-    if (pindex >= PINDEX_MAX)
+void tapReqGroup(TAPCT *tapct_pp, PLAYER_INDEX pindex, int sndId, u_char *tappress_pp) {
+    if (pindex >= PINDEX_MAX) {
         printf("tap group PINDEX over[%d]\n", pindex);
+    }
 
     tap_groupe_str[pindex].timer       = 0;
     tap_groupe_str[pindex].sndId       = sndId;
@@ -1217,56 +1163,54 @@ void tapReqGroup(TAPCT *tapct_pp, PLAYER_INDEX pindex, int sndId, u_char *tappre
     tap_groupe_str[pindex].tappress_pp = tappress_pp;
 }
 
-void tapReqGroupPoll(void)
-{
+void tapReqGroupPoll(void) {
     int             i, j;
     int             end_frameT;
     TAP_GROUPE_STR *tgs_pp = tap_groupe_str;
 
-    for (i = 0; i < 5; i++, tgs_pp++)
-    {
+    for (i = 0; i < PR_ARRAYSIZE(tap_groupe_str); i++, tgs_pp++) {
         end_frameT = 0;
 
-        if (tgs_pp->tapct_pp == NULL)
+        if (tgs_pp->tapct_pp == NULL) {
             continue;
+        }
         
-        for (j = 0; j < 4; j++)
-        {
-            if (tgs_pp->tapct_pp[j].frame == -1)
+        for (j = 0; j < 4; j++) {
+            if (tgs_pp->tapct_pp[j].frame == -1) {
                 continue;
-            
-            if (tgs_pp->tapct_pp[j].frame == tgs_pp->timer)
-            {
-                if (tgs_pp->tapct_pp[j].actor != -1)
-                    DrawTapReqTbl(tgs_pp->tapct_pp[j].actor, i, tgs_pp->tappress_pp);
-                if (tgs_pp->tapct_pp[j].sound != -1)
-                    ScrTapReq(tgs_pp->sndId, i, tgs_pp->tapct_pp[j].sound);
             }
-            else
-            {
+            
+            if (tgs_pp->tapct_pp[j].frame == tgs_pp->timer) {
+                if (tgs_pp->tapct_pp[j].actor != -1) {
+                    DrawTapReqTbl(tgs_pp->tapct_pp[j].actor, i, tgs_pp->tappress_pp);
+                }
+                if (tgs_pp->tapct_pp[j].sound != -1) {
+                    ScrTapReq(tgs_pp->sndId, i, tgs_pp->tapct_pp[j].sound);
+                }
+            } else {
                 end_frameT = (tgs_pp->timer < tgs_pp->tapct_pp[j].frame) ? 1 : end_frameT;
             }
         }
 
-        if (end_frameT)
+        if (end_frameT) {
             tgs_pp->timer++;
-        else
-            WorkClear(tgs_pp, sizeof(TAP_GROUPE_STR));
+        } else {
+            WorkClear(tgs_pp, sizeof(*tgs_pp));
+        }
     }
 }
 
 INCLUDE_ASM("main/scrctrl", tapEventCheck);
 
-static int otehon_all_make(EXAM_CHECK *ec_pp)
-{
+static int otehon_all_make(EXAM_CHECK *ec_pp) {
     int i;
     int ret = 0;
 
-    if (!ec_pp->tapset_pp)
+    if (!ec_pp->tapset_pp) {
         return 0;
+    }
 
-    for (i = 0; i < ec_pp->tapset_pp->tapdat_size; i++)
-    {
+    for (i = 0; i < ec_pp->tapset_pp->tapdat_size; i++) {
         ret |= GetIndex2KeyCode(ec_pp->tapset_pp->tapdat_pp[i].KeyIndex);
     }
 
@@ -1296,8 +1240,7 @@ static int treateTimeChange(/* s0 16 */ int time)
 }
 #endif
 
-static int thnum_get(int p96_num, CK_TH_ENUM ckth)
-{
+static int thnum_get(int p96_num, CK_TH_ENUM ckth) {
     u_int thnum_data;
     int   ck_bit;
     int   ck_dat;
@@ -1308,17 +1251,14 @@ static int thnum_get(int p96_num, CK_TH_ENUM ckth)
     ret_cnt = 0;
     thnum_data = thnum_tbl[ckth];
 
-    for (i = 0; i <= p96_num; i++)
-    {
+    for (i = 0; i <= p96_num; i++) {
         ck_dat = (thnum_data >> (23 - i % 24)) & 1;
         
-        if (ck_bit < 0)
-        {
-            if (ck_dat == 0)
+        if (ck_bit < 0) {
+            if (ck_dat == 0) {
                 ret_cnt = 1;
-        }
-        else if (ck_dat != ck_bit)
-        {
+            }
+        } else if (ck_dat != ck_bit) {
             ret_cnt++;
         }
         
@@ -1328,40 +1268,36 @@ static int thnum_get(int p96_num, CK_TH_ENUM ckth)
     return ret_cnt;
 }
 
-static int MapNormalNumGet(int time)
-{
+static int MapNormalNumGet(int time) {
     return thnum_get(time / 4, CK_TH_NORMAL);
 }
 
 INCLUDE_ASM("main/scrctrl", on_th_make);
 
 /* TODO(poly): Make these static once .data is migrated */
-/* static */ int exh_normal_add(EXAM_CHECK *ec_pp)
-{
+/* static */ int exh_normal_add(EXAM_CHECK *ec_pp) {
     int i;
     int ret = 0;
 
-    for (i = 0; i < ec_pp->ted_num; i++)
-    {
-        if ((ec_pp->ted[i].th_num & 1) == 0)
-        {
-            if (GetIndex2KeyCode(ec_pp->ted[i].key) & ec_pp->otehon_all)
+    for (i = 0; i < ec_pp->ted_num; i++) {
+        if (!(ec_pp->ted[i].th_num & 1)) {
+            if (GetIndex2KeyCode(ec_pp->ted[i].key) & ec_pp->otehon_all) {
                 ret++;
+            }
         }
     }
 
     return ret;
 }
 
-/* static */ int exh_normal_sub(EXAM_CHECK *ec_pp)
-{
+/* static */ int exh_normal_sub(EXAM_CHECK *ec_pp) {
     int i;
     int ret = 0;
 
-    for (i = 0; i < ec_pp->ted_num; i++)
-    {
-        if (GetIndex2KeyCode(ec_pp->ted[i].key) & ec_pp->otehon_all)
+    for (i = 0; i < ec_pp->ted_num; i++) {
+        if (GetIndex2KeyCode(ec_pp->ted[i].key) & ec_pp->otehon_all) {
             ret -= ec_pp->ted[i].th_num & 1;
+        }
     }
 
     return ret;
@@ -1522,20 +1458,18 @@ void ScrMoveSetSub(SCORE_INDV_STR *sindv_pp, /* s0 16 */ int Pnum, /* s4 20 */ i
 /*      https://decomp.me/scratch/woLno        */
 INCLUDE_ASM("main/scrctrl", ScrExamSetCheck);
 
-void subjobEvent(SCORE_INDV_STR *sindv_pp, int ctime_next)
-{
+void subjobEvent(SCORE_INDV_STR *sindv_pp, int ctime_next) {
     int j;
     int cont_job;
 
-    for (j = 0; j < 24; j++)
-    {
+    for (j = 0; j < 24; j++) {
         cont_job = 0;
 
-        if (sindv_pp->sjob[j] == -1 || ctime_next < sindv_pp->sjob[j])
+        if (sindv_pp->sjob[j] == -1 || ctime_next < sindv_pp->sjob[j]) {
             continue;
+        }
 
-        switch (j)
-        {
+        switch (j) {
         case SCRSUBJ_CDSND_ON:
             CdctrlWP2SetVolume(120);
             break;
@@ -1556,8 +1490,9 @@ void subjobEvent(SCORE_INDV_STR *sindv_pp, int ctime_next)
             int time_tmp;
             int temp2 = (sindv_pp->sjob_data[j][0] / 2) < ctime_next;
 
-            if (temp2)
+            if (temp2) {
                 drline = sindv_pp->refTartegLine;
+            }
 
             temp2 = sindv_pp->refTargetTime - sindv_pp->refStartTime;
             time_tmp = temp2 * ctime_next;
@@ -1575,35 +1510,26 @@ void subjobEvent(SCORE_INDV_STR *sindv_pp, int ctime_next)
             ScrTapReq(-1, sindv_pp->sjob_data[j][0], sindv_pp->sjob_data[j][1]);
             break;
         case SCRSUBJ_TITLE:
-            if (sindv_pp->sjob_data[j][0] == 0)
-            {
-                if (sindv_pp->sjob_data[j][1] == 0)
-                {
+            if (sindv_pp->sjob_data[j][0] == 0) {
+                if (sindv_pp->sjob_data[j][1] == 0) {
                     MendererCtrlTitle();
                     sindv_pp->sjob_data[j][1] = 1;
                 }
-                if (pad[0].one & SCE_PADstart)
-                {
+                if (pad[0].one & SCE_PADstart) {
                     int next_time = ScrCtrlIndvNextTime(sindv_pp, 2);
                     TimeCallbackTimeSetChanTempo(sindv_pp->useLine, next_time, GetLineTempo(sindv_pp->useLine));
                 }
-            }
-            else if (sindv_pp->sjob_data[j][0] == 2)
-            {
-                if (sindv_pp->sjob_data[j][1] == 0)
-                {
+            } else if (sindv_pp->sjob_data[j][0] == 2) {
+                if (sindv_pp->sjob_data[j][1] == 0) {
                     MendererCtrlTitleDera();
                     sindv_pp->sjob_data[j][1] = 1;
                 }
-                if (pad[0].one & SCE_PADstart)
-                {
+                if (pad[0].one & SCE_PADstart) {
                     int next_time = ScrCtrlIndvNextTime(sindv_pp, 2);
                     TimeCallbackTimeSetChanTempo(sindv_pp->useLine, next_time, GetLineTempo(sindv_pp->useLine));
                 }
-            } else if (pad[0].one & SCE_PADstart)
-            {
-                if (!titleStartKey)
-                {
+            } else if (pad[0].one & SCE_PADstart) {
+                if (!titleStartKey) {
                     titleStartKey = 1;
                     ScrTapReq(-1, 0, 2);
                     DrawTapReqTbl(0xfe04, PINDEX_NONE, NULL);
@@ -1628,9 +1554,10 @@ void subjobEvent(SCORE_INDV_STR *sindv_pp, int ctime_next)
             break;
         case SCRSUBJ_SPUTRANS:
             PR_SCOPE
-            int *val = (int*)sindv_pp->sjob_data[j][0];
-            if (*val != 0)
-                ScrTapDbuffSetSp(&score_str.stdat_dat_pp->scr_pp->sndrec_pp[*val], sindv_pp->sndId);
+            int *data = (int*)sindv_pp->sjob_data[j][0];
+            if (*data != 0) {
+                ScrTapDbuffSetSp(&score_str.stdat_dat_pp->scr_pp->sndrec_pp[*data], sindv_pp->sndId);
+            }
             PR_SCOPEEND
             break;
         case SCRSUBJ_STOP_MENDERER:
@@ -1663,13 +1590,17 @@ void subjobEvent(SCORE_INDV_STR *sindv_pp, int ctime_next)
         case SCRSUBJ_VS_RESET:
             PR_SCOPE
             SCORE_INDV_STR *cngSindv_pp;
+
             cngSindv_pp = GetSindvPcodeLine(PCODE_TEACHER);
-            if (cngSindv_pp != NULL)
+            if (cngSindv_pp != NULL) {
                 cngSindv_pp->global_ply->score = 500;
+            }
             vsAnimationReset(1, 500);
+
             cngSindv_pp = GetSindvPcodeLine(PCODE_PARA);
-            if (cngSindv_pp != NULL)
+            if (cngSindv_pp != NULL) {
                 cngSindv_pp->global_ply->score = 500;
+            }
             vsAnimationReset(0, 500);
             PR_SCOPEEND
             break;
@@ -1696,33 +1627,30 @@ void subjobEvent(SCORE_INDV_STR *sindv_pp, int ctime_next)
 
 INCLUDE_ASM("main/scrctrl", ScrCtrlIndvJob);
 
-static void ScrTimeRenew(SCR_MAIN *scr_main_pp)
-{
+static void ScrTimeRenew(SCR_MAIN *scr_main_pp) {
     int   i;
     int   samplecnt;
     float tempo;
 
-    for (i = 0; i < scr_main_pp->scr_ctrl_num; i++)
-    {
-        if (scr_main_pp->scr_ctrl_pp[i].gtime_type == GTIME_VSYNC)
-        {
+    for (i = 0; i < scr_main_pp->scr_ctrl_num; i++) {
+        if (scr_main_pp->scr_ctrl_pp[i].gtime_type == GTIME_VSYNC) {
             scr_main_pp->scr_ctrl_pp[i].lineTime =  ((TimeCallbackTimeGetChan(i) * 96.0f * GetLineTempo(i) + 1800.0f)  / 3600.0f);
             scr_main_pp->scr_ctrl_pp[i].lineTime += ((GetLineTempo(i) * 96.0f * scr_main_pp->scr_ctrl_pp[i].ofsCdtime) / 60000.0f);
 
-            if (scr_main_pp->scr_ctrl_pp[i].lineTime < 0)
+            if (scr_main_pp->scr_ctrl_pp[i].lineTime < 0) {
                 scr_main_pp->scr_ctrl_pp[i].lineTime = 0;
+            }
 
             scr_main_pp->scr_ctrl_pp[i].lineTimeFrame = TimeCallbackTimeGetChan(i);
-        }
-        else
-        {
+        } else {
             samplecnt = GlobalSndSampleGet() + ((scr_main_pp->scr_ctrl_pp[i].ofsCdtime * 48) / 256);
 
-            if (global_data.play_step == PSTEP_XTR)
+            if (global_data.play_step == PSTEP_XTR) {
                 samplecnt = CdctrlWp2GetSampleTmp() - getTopSeekPos();
-
-            if (samplecnt < 0)
+            }
+            if (samplecnt < 0) {
                 samplecnt = 0;
+            }
 
             tempo = GetLineTempo(i);
 
@@ -1804,15 +1732,12 @@ void ScrMbarReq(/* s5 21 */ int mbarTime)
 }
 #endif
 
-void allTimeCallbackTimeSetChanTempo(int time)
-{
+void allTimeCallbackTimeSetChanTempo(int time) {
     int       i;
     SCR_MAIN *scr_main_pp = score_str.stdat_dat_pp->scr_pp;
 
-    for (i = 0; i < scr_main_pp->scr_ctrl_num; i++)
-    {
-        if (scr_main_pp->scr_ctrl_pp[i].gtime_type == GTIME_VSYNC)
-        {
+    for (i = 0; i < scr_main_pp->scr_ctrl_num; i++) {
+        if (scr_main_pp->scr_ctrl_pp[i].gtime_type == GTIME_VSYNC) {
             scr_main_pp->scr_ctrl_pp[i].lineTime = time;
             TimeCallbackTimeSetChanTempo(i, time, GetLineTempo(i));
 
@@ -1879,40 +1804,32 @@ static int otehonSetCheck(void)
 }
 #endif
 
-// INCLUDE_RODATA("main/scrctrl", D_00392F70);
 INCLUDE_ASM("main/scrctrl", ScrCtrlMainLoop);
 
-GET_TIME_TYPE GetTimeType(int scr_line)
-{
+GET_TIME_TYPE GetTimeType(int scr_line) {
     return score_str.stdat_dat_pp->scr_pp->scr_ctrl_pp[scr_line].gtime_type;
 }
 
-int GetTimeOfset(int scr_line)
-{
+int GetTimeOfset(int scr_line) {
     return score_str.stdat_dat_pp->scr_pp->scr_ctrl_pp[scr_line].ofsCdtime;
 }
 
-int GetSubtLine(int scr_line)
-{
+int GetSubtLine(int scr_line) {
     return score_str.stdat_dat_pp->scr_pp->scr_ctrl_pp[scr_line].subtLine;
 }
 
-int GetDrawLine(int scr_line)
-{
+int GetDrawLine(int scr_line) {
     return score_str.stdat_dat_pp->scr_pp->scr_ctrl_pp[scr_line].drawLine;
 }
 
-float GetLineTempo(int scr_line)
-{
+float GetLineTempo(int scr_line) {
     return score_str.stdat_dat_pp->scr_pp->scr_ctrl_pp[scr_line].tempo;
 }
 
-void SetLineChannel(int scr_line)
-{
+void SetLineChannel(int scr_line) {
     SCR_CTRL *scr_ctrl_pp = score_str.stdat_dat_pp->scr_pp->scr_ctrl_pp + scr_line;
 
-    if (scr_ctrl_pp->gtime_type != GTIME_VSYNC)
-    {
+    if (scr_ctrl_pp->gtime_type != GTIME_VSYNC) {
         CdctrlWP2SetChannel(scr_ctrl_pp->cdChan[0], scr_ctrl_pp->cdChan[1]);
     }
 }
@@ -1922,60 +1839,49 @@ INCLUDE_ASM("main/scrctrl", SetIndvCdChannel);
 INCLUDE_ASM("main/scrctrl", CheckIndvCdChannel);
 int CheckIndvCdChannel(/* s1 17 */ SCORE_INDV_STR *sindv_pp, /* s0 16 */ u_char *chantmp);
 
-// INCLUDE_RODATA("main/scrctrl", dbg_tbl_msg);
-
 INCLUDE_ASM("main/scrctrl", ScrCtrlInit);
 
-void ScrCtrlQuit(void)
-{
+void ScrCtrlQuit(void) {
     useAllClearKeySnd();
     TapCt(0x120, 0, 0);
 
-    MtcKill(5);
+    MtcKill(MTC_TASK_SCORECTRL);
 }
 
-int ScrCtrlInitCheck(void)
-{
+int ScrCtrlInitCheck(void) {
     return score_str.ready_flag;
 }
 
-void ScrCtrlGoLoop(void)
-{
+void ScrCtrlGoLoop(void) {
     score_str.go_loop_flag = 1;
 }
 
-int ScrEndCheckScore(void)
-{
+int ScrEndCheckScore(void) {
     int             i;
     SCORE_INDV_STR *sindv_pp = score_indv_str;
 
-    for (i = 0; i < 5; i++, sindv_pp++)
-    {
-        if (sindv_pp->status & SCS_USE)
-        {
-            if (sindv_pp->status & SCS_END)
-            {
-                printf("end end end[%d] line time[%d]\n", i, sindv_pp->top_scr_ctrlpp[i].lineTime);
-                return 1;
-            }
+    for (i = 0; i < PR_ARRAYSIZE(score_indv_str); i++, sindv_pp++) {
+        if (!(sindv_pp->status & SCS_USE)) {
+            continue;
+        }
+        if (sindv_pp->status & SCS_END) {
+            printf("end end end[%d] line time[%d]\n", i, sindv_pp->top_scr_ctrlpp[i].lineTime);
+            return 1;
         }
     }
 
     return 0;
 }
 
-int ScrEndCheckTitle(void)
-{
+int ScrEndCheckTitle(void) {
     return titleStartKey;
 }
 
-int ScrEndCheckFadeOut(void)
-{
+int ScrEndCheckFadeOut(void) {
     return fadeoutStartKey;
 }
 
-int ScrEndWaitLoop(void)
-{
+int ScrEndWaitLoop(void) {
     return gameEndWaitLoop;
 }
 
@@ -1988,56 +1894,53 @@ INCLUDE_ASM("main/scrctrl", bonusPointSave);
 INCLUDE_ASM("main/scrctrl", bngTapEventCheck);
 void bngTapEventCheck(/* s1 17 */ SCORE_INDV_STR *sindv_pp, /* t0 8 */ int num, /* s3 19 */ int id);
 
-void bonusGameParaReq(BNG_ACT_P_ENUM actnum)
-{
+void bonusGameParaReq(BNG_ACT_P_ENUM actnum) {
     bngTapEventCheck(score_indv_str + 2, actnum, 0);
 }
 
-static void bonusGameKoamaReq(int kotamaNum, BNG_ACT_K_ENUM actnum)
-{
+static void bonusGameKoamaReq(int kotamaNum, BNG_ACT_K_ENUM actnum) {
     bngTapEventCheck(score_indv_str + 1, actnum + kotamaNum, kotamaNum + 1);
 }
 
-static int bonus_minus_point_sub(int wtime)
-{
-    if (wtime < 8)
+static int bonus_minus_point_sub(int wtime) {
+    if (wtime < 8) {
         return 9;
-    else if (wtime < 13)
+    } else if (wtime < 13) {
         return 13;
-    else if (wtime < 20)
+    } else if (wtime < 20) {
         return 18;
-    else
+    } else {
         return 24;
+    }
 }
 
-static int bonus_pls_point_sub(int wtime)
-{
-    if (wtime < 3)
+static int bonus_pls_point_sub(int wtime) {
+    if (wtime < 3) {
         return 26;
-    else if (wtime < 6)
+    } else if (wtime < 6) {
         return 15;
-    else if (wtime < 9)
+    } else if (wtime < 9) {
         return 9;
-    else
+    } else {
         return 5;
+    }
 }
 
 INCLUDE_ASM("main/scrctrl", bonusGameCtrl);
 
-static u_long hex2dec(u_long data)
-{
+static u_long hex2dec(u_long data) {
     u_long ret = 0;
     u_int  i;
 
-    for (i = 0; data != 0;)
-    {
+    for (i = 0; data != 0;) {
         ret |= (data % 10) << (i * 4);
         data /= 10;
 
         i++;
         
-        if (i >= 16)
+        if (i >= 16) {
             return ret;
+        }
     }
 
     return ret;
@@ -2046,8 +1949,7 @@ static u_long hex2dec(u_long data)
 INCLUDE_ASM("main/scrctrl", bnNumberDisp);
 void bnNumberDisp(sceGifPacket *gif_pp, long score, short x, short y, int keta, int tate, int type);
 
-static void bonusScoreDraw(void)
-{
+static void bonusScoreDraw(void) {
     long         scr_stg;
     long         scr_bn;
     long         scr_add;
@@ -2086,8 +1988,7 @@ static void bonusScoreDraw(void)
     CmnGifADPacketMakeTrans(&bn_gif);
 }
 
-static void set_lero_gifset(sceGifPacket *gifpk_pp, LERO_TIM2_PT *let2_pp, short xp, short yp)
-{
+static void set_lero_gifset(sceGifPacket *gifpk_pp, LERO_TIM2_PT *let2_pp, short xp, short yp) {
     sceGifPkAddGsAD(gifpk_pp, SCE_GS_UV,   SCE_GS_SET_UV(let2_pp->u0 << 4, let2_pp->v0 << 4));
     sceGifPkAddGsAD(gifpk_pp, SCE_GS_XYZ2, SCE_GS_SET_XYZ2((xp + 2048) << 4,
                                                            (yp + 2048) << 4, 1));
@@ -2097,38 +1998,35 @@ static void set_lero_gifset(sceGifPacket *gifpk_pp, LERO_TIM2_PT *let2_pp, short
                                                            (yp + 2048 + let2_pp->h) << 4, 1));
 }
 
-static void LessonRoundDisp(SCRRJ_LESSON_ROUND_ENUM type)
-{
+static void LessonRoundDisp(SCRRJ_LESSON_ROUND_ENUM type) {
     sceGifPacket gifpk;
     TIM2_DAT    *tim2_dat_pp;
     int          i;
 
-    if (type < SCRRJ_LR_MAX)
-    {
-        tim2_dat_pp = lessonTim2InfoGet();
-
-        // Preserve CBP from our TEX0
-        (*(sceGsTex0*)&tim2_dat_pp->GsTex0).CBP = (*(sceGsTex0*)&lessonCl2InfoGet(type)->GsTex0).CBP;
-
-        CmnGifOpenCmnPk(&gifpk);
-        ChangeDrawAreaSetGifTag(DrawGetDrawEnvP(DNUM_DRAW), &gifpk);
-
-        sceGifPkAddGsAD(&gifpk, SCE_GS_TEXFLUSH, 0);
-        sceGifPkAddGsAD(&gifpk, SCE_GS_TEST_1, SCE_GS_SET_TEST_1(1, 6, 0, 0, 0, 0, 1, 1));
-        sceGifPkAddGsAD(&gifpk, SCE_GS_TEXA, 0x8000008000);
-        sceGifPkAddGsAD(&gifpk, SCE_GS_CLAMP_1, 5);
-        sceGifPkAddGsAD(&gifpk, SCE_GS_PABE, 0);
-        sceGifPkAddGsAD(&gifpk, SCE_GS_TEXA, 0x8000008000);
-        sceGifPkAddGsAD(&gifpk, SCE_GS_ALPHA_1, SCE_GS_SET_ALPHA_1(0, 1, 0, 1, 0));
-        sceGifPkAddGsAD(&gifpk, SCE_GS_TEX0_1, tim2_dat_pp->GsTex0);
-        sceGifPkAddGsAD(&gifpk, SCE_GS_TEX1_1, tim2_dat_pp->GsTex1);
-        sceGifPkAddGsAD(&gifpk, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
-
-        for (i = 0; i < 2; i++)
-        {
-            set_lero_gifset(&gifpk, &lero_tim2_pt[lero_pos_str[type][i].tim2_num], lero_pos_str[type][i].posx, lero_pos_str[type][i].posy);
-        }
-
-        CmnGifCloseCmnPk(&gifpk, 2);
+    if (type >= SCRRJ_LR_MAX) {
+        return;
     }
+
+    tim2_dat_pp = lessonTim2InfoGet();
+    (*(sceGsTex0*)&tim2_dat_pp->GsTex0).CBP = (*(sceGsTex0*)&lessonCl2InfoGet(type)->GsTex0).CBP;
+
+    CmnGifOpenCmnPk(&gifpk);
+    ChangeDrawAreaSetGifTag(DrawGetDrawEnvP(DNUM_DRAW), &gifpk);
+
+    sceGifPkAddGsAD(&gifpk, SCE_GS_TEXFLUSH, 0);
+    sceGifPkAddGsAD(&gifpk, SCE_GS_TEST_1, SCE_GS_SET_TEST_1(1, 6, 0, 0, 0, 0, 1, 1));
+    sceGifPkAddGsAD(&gifpk, SCE_GS_TEXA, 0x8000008000);
+    sceGifPkAddGsAD(&gifpk, SCE_GS_CLAMP_1, 5);
+    sceGifPkAddGsAD(&gifpk, SCE_GS_PABE, 0);
+    sceGifPkAddGsAD(&gifpk, SCE_GS_TEXA, 0x8000008000);
+    sceGifPkAddGsAD(&gifpk, SCE_GS_ALPHA_1, SCE_GS_SET_ALPHA_1(0, 1, 0, 1, 0));
+    sceGifPkAddGsAD(&gifpk, SCE_GS_TEX0_1, tim2_dat_pp->GsTex0);
+    sceGifPkAddGsAD(&gifpk, SCE_GS_TEX1_1, tim2_dat_pp->GsTex1);
+    sceGifPkAddGsAD(&gifpk, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
+
+    for (i = 0; i < 2; i++) {
+        set_lero_gifset(&gifpk, &lero_tim2_pt[lero_pos_str[type][i].tim2_num], lero_pos_str[type][i].posx, lero_pos_str[type][i].posy);
+    }
+
+    CmnGifCloseCmnPk(&gifpk, 2);
 }

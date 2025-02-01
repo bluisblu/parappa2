@@ -11,16 +11,15 @@ static USR_MALLOC_STR usr_malloc_str[256];
 
 #define PAD_NUM (2)
 
-void WorkClear(void *clr_adrs, int size)
-{
+void WorkClear(void *clr_adrs, int size) {
     u_char *clr_pp = (u_char*)clr_adrs;
 
-    while (size--)
+    while (size--) {
         *clr_pp++ = 0;
+    }
 }
 
-void GPadInit(void)
-{
+void GPadInit(void) {
     int i;
 
     WorkClear(pad, sizeof(pad));
@@ -28,61 +27,53 @@ void GPadInit(void)
 
     scePadInit(0);
 
-    for (i = 0; i < PAD_NUM; i++)
-    {
-        if (!scePadPortOpen(i, 0, pad_dma_buf[i]))
+    for (i = 0; i < PAD_NUM; i++) {
+        if (!scePadPortOpen(i, 0, pad_dma_buf[i])) {
             printf("ERROR: scePadPortOpen[%d]\n", i);
+        }
     }
 }
 
-void GPadExit(void)
-{
+void GPadExit(void) {
     int i;
 
-    for (i = 0; i < PAD_NUM; i++)
-    {
+    for (i = 0; i < PAD_NUM; i++) {
         scePadPortClose(i, 0);
     }
 
     scePadEnd();
 }
 
-void GPadSysRead(void)
-{
-    int i;
-    int state;
-    int id;
-    int exid;
-    PAD_SYSD *sysP_pp = sysPad;
+void GPadSysRead(void) {
+    int       i;
+    int       state;
+    int       id, exid;
+    PAD_SYSD *sysP_pp;
 
-    for (i = 0; i < PAD_NUM; i++)
-    {
+    sysP_pp = sysPad;
+
+    for (i = 0; i < PAD_NUM; i++) {
         state = scePadGetState(i, 0);
         WorkClear(sysP_pp->rdata, 32);
 
-        switch (state)
-        {
+        switch (state) {
         case scePadStateFindCTP1:
         case scePadStateStable:
-            switch (sysP_pp->phase)
-            {
+            switch (sysP_pp->phase) {
             case 0:
                 id = scePadInfoMode(i, 0, InfoModeCurID, 0);
                 exid = scePadInfoMode(i, 0, InfoModeCurExID, 0);
 
-                if (exid > 0)
+                if (exid > 0) {
                     id = exid;
-
-                if (id == 0)
-                {
-                    WorkClear(sysP_pp, sizeof(PAD_SYSD));
                 }
-                else
-                {
+
+                if (id == 0) {
+                    WorkClear(sysP_pp, sizeof(PAD_SYSD));
+                } else {
                     sysP_pp->pad_id = id;
 
-                    switch (id)
-                    {
+                    switch (id) {
                     case 4:
                         sysP_pp->phase = 40;
                         break;
@@ -97,58 +88,59 @@ void GPadSysRead(void)
 
                 break;
             case 40:
-                if (scePadInfoMode(i, 0, InfoModeIdTable, -1) == 0)
-                {
+                if (scePadInfoMode(i, 0, InfoModeIdTable, -1) == 0) {
                     sysP_pp->phase = 99;
                     break;
                 }
-
                 sysP_pp->phase++;
             case 41:
-                if (scePadSetMainMode(i, 0, 1, 3) == 1)
+                if (scePadSetMainMode(i, 0, 1, 3) == 1) {
                     sysP_pp->phase++;
-                
+                }
                 break;
             case 42:
-                if (scePadGetReqState(i, 0) == scePadReqStateFaild)
+                if (scePadGetReqState(i, 0) == scePadReqStateFaild) {
                     sysP_pp->phase--;
-                if (scePadGetReqState(i, 0) == scePadReqStateComplete)
+                }
+                if (scePadGetReqState(i, 0) == scePadReqStateComplete) {
                     sysP_pp->phase = 0;
+                }
                 break;
             case 70:
-                if (scePadInfoAct(i, 0, -1, 0) == 0)
-                {
+                if (scePadInfoAct(i, 0, -1, 0) == 0) {
                     sysP_pp->phase = 99;
                     break;
                 }
-                
-                if (scePadSetMainMode(i, 0, 1, 3) == 1)
+                if (scePadSetMainMode(i, 0, 1, 3) == 1) {
                     sysP_pp->phase++;
-                
+                    break;
+                }
                 break;
             case 72:
-                if (scePadInfoPressMode(i, 0) == 1)
+                if (scePadInfoPressMode(i, 0) == 1) {
                     sysP_pp->phase = 76;
-                else
+                } else {
                     sysP_pp->phase = 80;
+                }
                 break;
             case 76:
-                if (scePadEnterPressMode(i, 0) == 1)
+                if (scePadEnterPressMode(i, 0) == 1) {
                     sysP_pp->phase++;
-                
+                }
                 break;
             case 71:
             case 77:
-                if (scePadGetReqState(i, 0) == 1)
+                if (scePadGetReqState(i, 0) == 1) {
                     sysP_pp->phase--;
-
-                if (scePadGetReqState(i, 0) == 0)
+                }
+                if (scePadGetReqState(i, 0) == 0) {
                     sysP_pp->phase = 80;
-
+                }
                 break;
             case 80:
-                if (scePadInfoAct(i, 0, -1, 0) == 0)
+                if (scePadInfoAct(i, 0, -1, 0) == 0) {
                     sysP_pp->phase = 99;
+                }
 
                 sysP_pp->act_align[0] = 0;
                 sysP_pp->act_align[1] = 1;
@@ -159,21 +151,24 @@ void GPadSysRead(void)
 
                 WorkClear(sysP_pp->act_direct, 6);
 
-                if (scePadSetActAlign(i, 0, sysP_pp->act_align) == 0)
+                if (scePadSetActAlign(i, 0, sysP_pp->act_align) == 0) {
                     break;
+                }
                 
                 sysP_pp->phase++;
                 break;
             case 81:
-                if (scePadGetReqState(i, 0) == 1)
+                if (scePadGetReqState(i, 0) == 1) {
                     sysP_pp->phase--;
-                if (scePadGetReqState(i, 0) == 0)
+                }
+                if (scePadGetReqState(i, 0) == 0) {
                     sysP_pp->phase = 99;
+                }
                 break;
             default:
-                if (scePadRead(i, 0, (u_char*)sysP_pp) == 0 || scePadInfoAct(i, 0, -1, 0) == 0)
+                if (scePadRead(i, 0, (u_char*)sysP_pp) == 0 || scePadInfoAct(i, 0, -1, 0) == 0) {
                     break;
-                
+                }
                 scePadSetActDirect(i, 0, sysP_pp->act_direct);
                 break;
             }
@@ -189,72 +184,60 @@ void GPadSysRead(void)
     }
 }
 
-void padMakeData(PADD *pad_pp, u_short paddata)
-{
+void padMakeData(PADD *pad_pp, u_short paddata) {
     pad_pp->old = pad_pp->shot;
     pad_pp->shot = paddata;
     pad_pp->one = (pad_pp->old ^ pad_pp->shot) & pad_pp->shot;
     pad_pp->off = (pad_pp->old ^ pad_pp->shot) & ~pad_pp->shot;
 }
 
-void pad0Clear(PADD *pad_pp)
-{
+void pad0Clear(PADD *pad_pp) {
     padMakeData(pad_pp, 0);
 }
 
-void padOneOffBitCLear(PADD *pad_pp)
-{
+void padOneOffBitCLear(PADD *pad_pp) {
     pad_pp->one = 0;
     pad_pp->off = 0;
 }
 
-void padNormalRead(PADD *pad_pp, u_char *rdata_pp)
-{
-    padMakeData(pad_pp, ~((rdata_pp[2] << 8) | rdata_pp[3])); // Swap the endianness 
+void padNormalRead(PADD *pad_pp, u_char *rdata_pp) {
+    padMakeData(pad_pp, ~((rdata_pp[2] << 8) | rdata_pp[3])); /* Swap the endianness */
 }
 
-void padAnaRead(PADD *pad_pp, u_char *rdata_pp)
-{
+void padAnaRead(PADD *pad_pp, u_char *rdata_pp) {
     int i;
     u_char *temp = pad_pp->ana; /* TODO: figure out how to match this without this */
 
     rdata_pp += 4;
 
-    for (i = 0; i < PR_ARRAYSIZE(pad_pp->ana); i++)
-    {
+    for (i = 0; i < PR_ARRAYSIZE(pad_pp->ana); i++) {
         temp[i] = rdata_pp[i];
     }
 }
 
-void padAnaRead0Clear(PADD *pad_pp)
-{
+void padAnaRead0Clear(PADD *pad_pp) {
     int i;
 
-    for (i = 0; i < PR_ARRAYSIZE(pad_pp->ana); i++)
-    {
+    for (i = 0; i < PR_ARRAYSIZE(pad_pp->ana); i++) {
         pad_pp->ana[i] = 0x80;
     }
 }
 
-void padPrsRead(PADD *pad_pp, u_char *rdata_pp)
-{
+void padPrsRead(PADD *pad_pp, u_char *rdata_pp) {
     int i;
     u_char *temp = pad_pp->press; /* TODO: Also figure out how to match this without temp vars */
 
     rdata_pp += 8;
 
-    for (i = 0; i < PR_ARRAYSIZE(pad_pp->press); i++)
-    {
+    for (i = 0; i < PR_ARRAYSIZE(pad_pp->press); i++) {
         temp[i] = rdata_pp[i];
     }
 }
 
-void padPrsRead0Clear(PADD *pad_pp)
-{
+void padPrsRead0Clear(PADD *pad_pp) {
     int i;
 
-    for (i = 0; i < PR_ARRAYSIZE(pad_pp->press); i++)
-    {
+    for (i = 0; i < PR_ARRAYSIZE(pad_pp->press); i++) {
         pad_pp->press[i] = 0;
     }
 }
@@ -278,98 +261,85 @@ void padPrsTreate(PADD *pad_pp)
     };
 
     u_int i;
-    for (i = 0; i < PR_ARRAYSIZEU(pad_pos); i++) 
-    {
-        if (pad_pp->shot & pad_pos[i])
-        {
-            if (pad_pp->press[i])
+    for (i = 0; i < PR_ARRAYSIZEU(pad_pos); i++) {
+        if (pad_pp->shot & pad_pos[i]) {
+            if (pad_pp->press[i]) {
                 continue;
+            }
             pad_pp->press[i] = 1;
-        }
-        else
-        {
-            if (!pad_pp->press[i])
+        } else {
+            if (!pad_pp->press[i]) {
                 continue;
+            }
             pad_pp->press[i] = 0;
         }
     }
 }
 
-void padActSet(PADD *pad_pp, PAD_SYSD *sysPad_pp)
-{
-    if (pad_pp)
-    {
+void padActSet(PADD *pad_pp, PAD_SYSD *sysPad_pp) {
+    if (pad_pp) {
         sysPad_pp->act_direct[0] = pad_pp->padvib[0];
         sysPad_pp->act_direct[1] = pad_pp->padvib[1];
-    }
-    else
-    {
+    } else {
         sysPad_pp->act_direct[0] = 0;
         sysPad_pp->act_direct[1] = 0;
     }
 }
 
-void padActClear(PADD *pad_pp)
-{
+void padActClear(PADD *pad_pp) {
     pad_pp->padvib[0] = 0;
     pad_pp->padvib[1] = 0;
 }
 
-void padAnaMixPad(PADD *pad_pp)
-{
+void padAnaMixPad(PADD *pad_pp) {
     u_short old_shot = pad_pp->mshot;
 
     pad_pp->mshot = pad_pp->shot;
 
     // X axis
-    if (pad_pp->ana[PAD_ANA_LX] < 0x40)
+    if (pad_pp->ana[PAD_ANA_LX] < 0x40) {
         pad_pp->mshot |= SCE_PADLleft;
-
-    if (pad_pp->ana[PAD_ANA_LX] > 0xBF)
+    }
+    if (pad_pp->ana[PAD_ANA_LX] > 0xBF) {
         pad_pp->mshot |= SCE_PADLright;
+    }
 
     // Y axis
-    if (pad_pp->ana[PAD_ANA_LY] < 0x40)
+    if (pad_pp->ana[PAD_ANA_LY] < 0x40) {
         pad_pp->mshot |= SCE_PADLup;
-    
-    if (pad_pp->ana[PAD_ANA_LY] > 0xBF)
+    }
+    if (pad_pp->ana[PAD_ANA_LY] > 0xBF) {
         pad_pp->mshot |= SCE_PADLdown;
+    }
 
     pad_pp->mone = pad_pp->mshot & (old_shot ^ pad_pp->mshot);
 }
 
-void GPadRead(PADD *pad_pp)
-{
-    int i = 0;
+void GPadRead(PADD *pad_pp) {
+    int i;
 
-    while (i < PAD_NUM)
-    {
-        if (sysPad[i].rdata[0] != NULL)
+    for (i = 0; i < PAD_NUM; i++, pad_pp++) {
+        if (sysPad[i].rdata[0] != NULL) {
             pad0Clear(pad_pp);
+        }
 
-        switch (sysPad[i].rdata[1] & 0xF0)
-        {
+        switch (sysPad[i].rdata[1] & 0xf0) {
         case PAD_ENUM_DSHOCK: // DualShock
             padNormalRead(pad_pp, sysPad[i].rdata);
             padAnaRead(pad_pp, sysPad[i].rdata);
 
             // DualShock 2
-            if (sysPad[i].rdata[1] == PAD_ENUM_DSHOCK2)
-            {
+            if (sysPad[i].rdata[1] == PAD_ENUM_DSHOCK2) {
                 padPrsRead(pad_pp, sysPad[i].rdata);
                 pad_pp->padId = PAD_ENUM_DSHOCK2;
-
                 padPrsTreate(pad_pp);
-            }
-            else
-            {
+            } else {
                 padPrsRead0Clear(pad_pp);
                 pad_pp->padId = PAD_ENUM_DSHOCK;
             }
 
             padActSet(pad_pp, &sysPad[i]);
             break;
-
         case PAD_ENUM_NORMAL: // Normal controller
             padNormalRead(pad_pp, sysPad[i].rdata);
             padAnaRead0Clear(pad_pp);
@@ -378,7 +348,6 @@ void GPadRead(PADD *pad_pp)
             pad_pp->padId = PAD_ENUM_NORMAL;
             padActSet(NULL, &sysPad[i]);
             break;
-
         default: // Unknown/bad controller
             pad0Clear(pad_pp);
             padAnaRead0Clear(pad_pp);
@@ -388,14 +357,10 @@ void GPadRead(PADD *pad_pp)
 
         padAnaMixPad(pad_pp);
         padActClear(pad_pp);
-        
-        pad_pp++;
-        i++;
     }
 }
 
-PAD_PRESS_ENUM GetPadbit2PressId(u_short padbit)
-{
+PAD_PRESS_ENUM GetPadbit2PressId(u_short padbit) {
     BIT2PR bit2pr[12] =
     {
         { 0x8000, PAD_PR_Lleft }, { 0x2000, PAD_PR_Lright },
@@ -410,10 +375,8 @@ PAD_PRESS_ENUM GetPadbit2PressId(u_short padbit)
     PAD_PRESS_ENUM ret = PAD_PR_None;
     u_int i;
 
-    for (i = 0; i < 12; i++)
-    {
-        if ((bit2pr[i].bit & padbit) != 0) 
-        {
+    for (i = 0; i < 12; i++) {
+        if ((bit2pr[i].bit & padbit) != 0) {
             ret = bit2pr[i].prn;
             break;
         }
@@ -422,24 +385,22 @@ PAD_PRESS_ENUM GetPadbit2PressId(u_short padbit)
     return ret;
 }
 
-u_char GetPadbit2PressPad(PADD *pad_pp, u_short padbit)
-{
-    if (GetPadbit2PressId(padbit) == PAD_PR_None)
+u_char GetPadbit2PressPad(PADD *pad_pp, u_short padbit) {
+    if (GetPadbit2PressId(padbit) == PAD_PR_None) {
         return 0;
-    else
-        return pad_pp->press[padbit];
+    }
+
+    return pad_pp->press[padbit];
 }
 
-void SetBackColor(u_char R, u_char G, u_char B)
-{
+void SetBackColor(u_char R, u_char G, u_char B) {
     DBufDc.clear0.rgbaq.R = R;
     DBufDc.clear0.rgbaq.G = G;
     DBufDc.clear0.rgbaq.B = B;
     DBufDc.clear1.rgbaq = DBufDc.clear0.rgbaq;
 }
 
-void ChangeDrawArea(sceGsDrawEnv1 *env_pp)
-{
+void ChangeDrawArea(sceGsDrawEnv1 *env_pp) {
     u_long giftag[2] = { SCE_GIF_SET_TAG(0, 1, 0, 0, SCE_GIF_PACKED, 1), SCE_GIF_PACKED_AD };
     sceGifPacket gifpk;
     sceDmaChan *cmnDmaC;
@@ -468,8 +429,7 @@ void ChangeDrawArea(sceGsDrawEnv1 *env_pp)
     sceGsSyncPath(0,0);
 }
 
-void ChangeDrawAreaSetGifTag(sceGsDrawEnv1 *env_pp, sceGifPacket *gifpk_pp)
-{
+void ChangeDrawAreaSetGifTag(sceGsDrawEnv1 *env_pp, sceGifPacket *gifpk_pp) {
     sceGifPkAddGsAD(gifpk_pp, SCE_GS_FRAME_1, *(u_long*)&env_pp->frame1);
     sceGifPkAddGsAD(gifpk_pp, SCE_GS_FRAME_2, *(u_long*)&env_pp->frame1);
     sceGifPkAddGsAD(gifpk_pp, SCE_GS_XYOFFSET_1, *(u_long*)&env_pp->xyoffset1);
@@ -478,8 +438,7 @@ void ChangeDrawAreaSetGifTag(sceGsDrawEnv1 *env_pp, sceGifPacket *gifpk_pp)
     sceGifPkAddGsAD(gifpk_pp, SCE_GS_SCISSOR_2, *(u_long*)&env_pp->scissor1);
 }
 
-void ChangeDrawArea2(sceGsDrawEnv1 *env_pp)
-{
+void ChangeDrawArea2(sceGsDrawEnv1 *env_pp) {
     u_long giftag[2] = { SCE_GIF_SET_TAG(0, 1, 0, 0, SCE_GIF_PACKED, 1), SCE_GIF_PACKED_AD };
     sceGifPacket gifpk;
     sceDmaChan *cmnDmaC;
@@ -505,8 +464,7 @@ void ChangeDrawArea2(sceGsDrawEnv1 *env_pp)
     sceGsSyncPath(0,0);
 }
 
-void ClearFrameBufferGifTag(sceGsFrame *draw_pp, sceGifPacket *gifpk_pp, u_char r, u_char g, u_char b, u_char a)
-{
+void ClearFrameBufferGifTag(sceGsFrame *draw_pp, sceGifPacket *gifpk_pp, u_char r, u_char g, u_char b, u_char a) {
     sceGifPkAddGsAD(gifpk_pp, SCE_GS_TEXFLUSH, 0);
     sceGifPkAddGsAD(gifpk_pp, SCE_GS_FRAME_1, *(u_long*)draw_pp);
     sceGifPkAddGsAD(gifpk_pp, SCE_GS_TEST_1, SCE_GS_SET_TEST_1(1, 0, 0, 1, 0, 0, 1, 1));
@@ -522,8 +480,7 @@ void ClearFrameBufferGifTag(sceGsFrame *draw_pp, sceGifPacket *gifpk_pp, u_char 
 void GGsSetLocalMoveImage(
     sceGsMoveImage *lp, short dbp, short dbw, short dpsm,
     short dx, short dy, short sbp, short sbw,
-    short spsm, short sx, short sy, short w, short h, short dir) 
-{
+    short spsm, short sx, short sy, short w, short h, short dir) {
     lp->giftag.NLOOP = 4;
     lp->giftag.EOP = 1;
     lp->giftag.FLG = 0;
@@ -553,8 +510,7 @@ void GGsSetLocalMoveImage(
     lp->trxdiraddr = SCE_GS_TRXDIR;
 }
 
-void GGsExecLocalMoveImage(sceGsMoveImage *lp)
-{
+void GGsExecLocalMoveImage(sceGsMoveImage *lp) {
     exl_dmatag.qwc = 5;
     exl_dmatag.id = 0;
     exl_dmatag.next = (sceDmaTag*)lp;
@@ -564,35 +520,28 @@ void GGsExecLocalMoveImage(sceGsMoveImage *lp)
     sceDmaSend(sceDmaGetChan(SCE_DMA_GIF), &exl_dmatag);
 }
 
-u_int randMakeMax(u_int max)
-{
+u_int randMakeMax(u_int max) {
     u_int ret = (rand() & 0x7fff) * max;
     return ret >> 15;
 }
 
-static char* ByteStringSub(char *s, unsigned int n)
-{
-    if (n >= 1000)
-    {
+static char* ByteStringSub(char *s, unsigned int n) {
+    if (n >= 1000) {
         s = ByteStringSub(s, n / 1000);
         *s++ = ',';
         return s + sprintf(s, "%03u", n % 1000);
-    }
-    else
-    {
+    } else {
         return s + sprintf(s, "%u", n % 1000);
     }
 }
 
-char* ByteString(unsigned int n)
-{
+char* ByteString(unsigned int n) {
     static char s[50];
     memcpy(ByteStringSub(s, n), "(byte)", 7);
     return s;
 }
 
-u_int ReportHeapUsage(void)
-{
+u_int ReportHeapUsage(void) {
     struct mallinfo malloc_info = mallinfo();
 
     printf("_________________________________________\n");
@@ -607,49 +556,39 @@ u_int ReportHeapUsage(void)
     return malloc_info.uordblks;
 }
 
-void usrMallcInit(void)
-{
+void usrMallcInit(void) {
     WorkClear(usr_malloc_str, sizeof(usr_malloc_str));
 }
 
-void* usrMalloc(u_int size)
-{
+void* usrMalloc(u_int size) {
     void *ret;
     int i;
 
     ret = malloc(size);
-    if (ret == 0) 
-    {
+    if (ret == 0) {
         printf("malloc is NG\n");
         return 0;
     }
-    else
-    {
-        for (i = 0; i < PR_ARRAYSIZE(usr_malloc_str); i++) 
-        {
-            if (usr_malloc_str[i].adrs == 0) 
-            {
-                usr_malloc_str[i].adrs = ret;
-                usr_malloc_str[i].size = size;
-                return ret;
-            }
-        }
 
-        free(ret);
+    for (i = 0; i < PR_ARRAYSIZE(usr_malloc_str); i++) {
+        if (usr_malloc_str[i].adrs == 0) {
+            usr_malloc_str[i].adrs = ret;
+            usr_malloc_str[i].size = size;
+            return ret;
+        }
     }
 
+    free(ret);
     printf("malloc is NG\n");
     return 0;
 }
 
-void usrFree(void *adrs)
-{
+void usrFree(void *adrs) {
     int i;
 
-    for (i = 0; i < PR_ARRAYSIZE(usr_malloc_str); i++) 
-    {
-        if ((usr_malloc_str[i].adrs) && (usr_malloc_str[i].adrs == adrs)) 
-        { 
+    for (i = 0; i < PR_ARRAYSIZE(usr_malloc_str); i++) {
+        if (usr_malloc_str[i].adrs != NULL &&
+            usr_malloc_str[i].adrs == adrs) { 
             free(adrs);
             usr_malloc_str[i].adrs = 0;
             usr_malloc_str[i].size = 0;
@@ -660,17 +599,14 @@ void usrFree(void *adrs)
     printf("free is NG\n");
 }
 
-void usrMallcReport(void)
-{
+void usrMallcReport(void) {
     int i;
     int cnt = 0;
 
     printf("--- usr malloc report ---\n");
 
-    for (i = 0; i < PR_ARRAYSIZE(usr_malloc_str); i++)
-    {
-        if (usr_malloc_str[i].adrs)
-        {
+    for (i = 0; i < PR_ARRAYSIZE(usr_malloc_str); i++) {
+        if (usr_malloc_str[i].adrs) {
             printf(" use  adr[%d] size[%d]\n", usr_malloc_str[i].adrs, usr_malloc_str[i].size);
             cnt++;
         }
@@ -679,12 +615,10 @@ void usrMallcReport(void)
     printf("--- use cnt[%d] ---\n", cnt);
 }
 
-sceGsDrawEnv1* DrawGetDrawEnvP(DNUM_ENUM dnum)
-{
+sceGsDrawEnv1* DrawGetDrawEnvP(DNUM_ENUM dnum) {
     int ret;
 
-    switch (dnum) 
-    {
+    switch (dnum) {
     case DNUM_SHOW:
         ret = (outbuf_idx != 0);
         break;
@@ -713,12 +647,10 @@ sceGsDrawEnv1* DrawGetDrawEnvP(DNUM_ENUM dnum)
     return drawEnvP[ret];
 }
 
-sceGsFrame* DrawGetFrameP(DNUM_ENUM dnum)
-{
+sceGsFrame* DrawGetFrameP(DNUM_ENUM dnum) {
     int ret;
 
-    switch (dnum) 
-    {
+    switch (dnum) {
     case DNUM_SHOW:
         ret = (outbuf_idx != 0);
         break;
@@ -747,22 +679,22 @@ sceGsFrame* DrawGetFrameP(DNUM_ENUM dnum)
     return &drawEnvP[ret]->frame1;
 }
 
-int DrawGetFbpPos(DNUM_ENUM dnum)
-{
+int DrawGetFbpPos(DNUM_ENUM dnum) {
     int ret = 0;
 
     // TODO(poly): figure out what these values mean
-    switch (dnum) 
-    {
+    switch (dnum)  {
     case DNUM_SHOW:
         ret = 70;
-        if (outbuf_idx == 0) 
+        if (outbuf_idx == 0) {
             ret = 0;
+        }
         break;
     case DNUM_DRAW:
         ret = 70;
-        if (outbuf_idx != 0) 
+        if (outbuf_idx != 0) {
             ret = 0;
+        }
         break;
     case DNUM_VRAM0:
         ret = 0;
@@ -784,22 +716,22 @@ int DrawGetFbpPos(DNUM_ENUM dnum)
     return ret;
 }
 
-int DrawGetTbpPos(DNUM_ENUM dnum)
-{
+int DrawGetTbpPos(DNUM_ENUM dnum) {
     int ret = 0;
 
     // TODO(poly): figure out what these values mean
-    switch (dnum)
-    {
+    switch (dnum) {
     case DNUM_SHOW:
         ret = 2240;
-        if (outbuf_idx == 0) 
+        if (outbuf_idx == 0) {
             ret = 0;
+        }
         break;
     case DNUM_DRAW:
         ret = 2240;
-        if (outbuf_idx != 0) 
+        if (outbuf_idx != 0) {
             ret = 0;
+        }
         break;
     case DNUM_VRAM0:
         ret = 0;

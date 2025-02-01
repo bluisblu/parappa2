@@ -42,12 +42,10 @@ VCLR_PARA vclr_para_disp;
 /* sbss - static */
 PR_SCENEHANDLE ldmap_hdl;
 
-void wipeSndReq(SNDTAP_WIPE_ENUM req)
-{
+void wipeSndReq(SNDTAP_WIPE_ENUM req) {
     SNDTAP *sndtap_pp;
 
-    if (req >= STW_MAX)
-    {
+    if (req >= STW_MAX) {
         printf("WIPE SND REQ OVER!![%d]\n", req);
         return;
     }
@@ -59,13 +57,11 @@ void wipeSndReq(SNDTAP_WIPE_ENUM req)
     TapCt(0xd3, 0xf, sndtap_pp->prg + sndtap_pp->key * 256);
 }
 
-void wipeSndStop(void)
-{
+void wipeSndStop(void) {
     TapCt(0xe0, 0xf, 0);
 }
 
-void wipeSndFileTrans(void)
-{
+void wipeSndFileTrans(void) {
     TapCt(0x8033, (int)cmnfGetFileAdrs(74), cmnfGetFileSize(74));
     TapCt(0x8043, (int)cmnfGetFileAdrs(73), cmnfGetFileSize(73));
 
@@ -75,14 +71,12 @@ void wipeSndFileTrans(void)
     TapCt(0x80, PR_CONCAT(0x3fff, 0x3fff), 0);
 }
 
-static void LocalBufCopy(int disp)
-{
+static void LocalBufCopy(int disp) {
     sceGsMoveImage mi;
     short          dbp = 0;
     short          sbp = 0;
 
-    switch (disp)
-    {
+    switch (disp) {
     case 0:
         sbp = DrawGetTbpPos(DNUM_SHOW);
         dbp = DrawGetTbpPos(DNUM_VRAM2);
@@ -114,8 +108,7 @@ static void LocalBufCopy(int disp)
 INCLUDE_ASM("main/wipe", wipeTimeGetInWait);
 int wipeTimeGetInWait(/* a0 4 */ int time, /* a1 5 */ WSHC_ENUM wshc_enum);
 
-static void lddisp_init_pr(void)
-{
+static void lddisp_init_pr(void) {
     LDMAP *ldmap_pp;
     u_int  i;
 
@@ -123,13 +116,11 @@ static void lddisp_init_pr(void)
     ldmap_hdl = PrInitializeScene(&DBufDc.draw01, "wipe recode\0", -1);
 
     ldmap_pp = ldmap;
-    for (i = 0; i < 5; i++, ldmap_pp++)
-    {
+    for (i = 0; i < 5; i++, ldmap_pp++) {
         ldmap_pp->spmHdl = PrInitializeModel(cmnfGetFileAdrs(ldmap_pp->spmmap), ldmap_hdl);
 
         /* Initialize animation */
-        if (ldmap_pp->spamap >= 0)
-        {
+        if (ldmap_pp->spamap >= 0) {
             ldmap_pp->spaHdl = PrInitializeAnimation(cmnfGetFileAdrs(ldmap_pp->spamap));
 
             PrLinkAnimation(ldmap_pp->spmHdl, ldmap_pp->spaHdl);
@@ -137,8 +128,7 @@ static void lddisp_init_pr(void)
         }
 
         /* Initialize position animation */
-        if (ldmap_pp->spamapP >= 0)
-        {
+        if (ldmap_pp->spamapP >= 0) {
             ldmap_pp->spaHdlP = PrInitializeAnimation(cmnfGetFileAdrs(ldmap_pp->spamapP));
 
             PrLinkPositionAnimation(ldmap_pp->spmHdl, ldmap_pp->spaHdlP);
@@ -151,8 +141,7 @@ static void lddisp_init_pr(void)
     PrPreprocessSceneModel(ldmap_hdl);
 }
 
-static void lddisp_draw_quit(int drapP)
-{
+static void lddisp_draw_quit(int drapP) {
     LDMAP *ldmap_pp;
     float  men_tmp;
     u_int  i;
@@ -167,16 +156,12 @@ static void lddisp_draw_quit(int drapP)
     PrWaitRender();
 
     ldmap_pp = ldmap;
-    for (i = 0; i < 5; i++, ldmap_pp++)
-    {
-        if (ldmap_pp->spamap >= 0)
-        {
+    for (i = 0; i < 5; i++, ldmap_pp++) {
+        if (ldmap_pp->spamap >= 0) {
             PrUnlinkAnimation(ldmap_pp->spmHdl);
             PrCleanupAnimation(ldmap_pp->spaHdl);
         }
-
-        if (ldmap_pp->spamapP >= 0)
-        {
+        if (ldmap_pp->spamapP >= 0) {
             PrUnlinkPositionAnimation(ldmap_pp->spmHdl);
             PrCleanupAnimation(ldmap_pp->spaHdlP);
         }
@@ -188,13 +173,11 @@ static void lddisp_draw_quit(int drapP)
     PrSetMendererRatio(men_tmp);
 }
 
-static void lddisp_draw_on(LDMAP_ENUM ldmap_enum)
-{
+static void lddisp_draw_on(LDMAP_ENUM ldmap_enum) {
     PrShowModel(ldmap[ldmap_enum].spmHdl, NULL);
 }
 
-void WipeLoadInDisp(void *x)
-{
+void WipeLoadInDisp(void *x) {
     int timer;
     int firstf;
     int ttmp;
@@ -204,23 +187,20 @@ void WipeLoadInDisp(void *x)
     wipeSndReq(STW_TURN_IN);
     TimeCallbackTimeSetChan(TCBK_CHANNEL_WIPE, 0);
 
-    while (1)
-    {
+    while (1) {
         timer = TimeCallbackTimeGetChan(TCBK_CHANNEL_WIPE);
 
-        if (timer >= 67)
-        {
+        if (timer >= 67) {
             ldmove_rate   = wipeTimeGetInWait(timer - 67, WSHC_LOOP_MOVE);
             ldrecode_rate = wipeTimeGetInWait(timer - 67, timer >= 67);
-        }
-        else
-        {
+        } else {
             ldmove_rate   = wipeTimeGetInWait(timer, WSHC_IN_MOVE);
             ldrecode_rate = wipeTimeGetInWait(timer, timer >= 67);
         }
 
-        if (!loading_wipe_switch)
+        if (!loading_wipe_switch) {
             ldmove_rate = 480 - ldmove_rate;
+        }
 
         ldlogo_rate = timer % 360;
 
@@ -235,23 +215,18 @@ void WipeLoadInDisp(void *x)
         wipe_end_flag = 0;
         timer++;
 
-        if (timer > 67)
-        {
-            if (firstf)
-            {
+        if (timer > 67) {
+            if (firstf) {
                 firstf = 0;
 
                 wipeSndReq(STW_TURN_WAIT);
                 wipe_end_flag = 1;
 
                 TimeCallbackTimeSetChan(TCBK_CHANNEL_WIPE, 67);
-            }
-            else
-            {
+            } else {
                 ttmp = (timer - 67) % 135;
 
-                if (ttmp == 134 || ttmp == 0)
-                {
+                if (ttmp == 134 || ttmp == 0) {
                     wipe_end_flag = 1;
                 }
             }
@@ -272,8 +247,7 @@ INCLUDE_ASM("main/wipe", WipeLoadInDispNR);
 INCLUDE_ASM("main/wipe", WipeLoadOutDispNR);
 void WipeLoadOutDispNR(void);
 #else
-void WipeLoadOutDispNR(void)
-{
+void WipeLoadOutDispNR(void) {
     /* s2 18 */ int timer = 0;
     /* -0xb0(sp) */ sceGifPacket gifpk;
     /* -0xa0(sp) */ FADE_MAKE_STR fade_make_str = D_003995B0;
@@ -283,16 +257,16 @@ void WipeLoadOutDispNR(void)
 
     int tmp = 3840;
 
-    do
-    {
+    do {
         DrawVramClear(&vclr_para, 0, 0, 0, DNUM_ZBUFF);
         DrawVramClear(&vclr_para, 0, 0, 0, DNUM_VRAM2);
 
         ldmove_rate = 360;
         ldrecode_rate = 0;
 
-        if (!loading_wipe_switch)
+        if (!loading_wipe_switch) {
             ldmove_rate = 0;
+        }
 
         lddisp_init_pr();
         lddisp_draw_on(LDMAP_TURN);
@@ -315,16 +289,14 @@ void WipeLoadOutDispNR(void)
 }
 #endif
 
-static void WipeLoadOutDisp(void *x)
-{
+static void WipeLoadOutDisp(void *x) {
     VCLR_PARA vclr_para = {};
     int       timer;
 
     wipeSndReq(STW_TURN_OUT);
     TimeCallbackTimeSetChan(TCBK_CHANNEL_WIPE, 0);
 
-    do
-    {
+    do {
         timer = TimeCallbackTimeGetChan(TCBK_CHANNEL_WIPE);
 
         DrawVramClear(&vclr_para, 0, 0, 0, DNUM_VRAM2);
@@ -339,8 +311,9 @@ static void WipeLoadOutDisp(void *x)
         ldmove_rate = wipeTimeGetInWait(timer, WSHC_OUT_MOVE);
         ldrecode_rate = wipeTimeGetInWait(timer, WSHC_OUT);
 
-        if (!loading_wipe_switch)
+        if (!loading_wipe_switch) {
             ldmove_rate = 480 - ldmove_rate;
+        }
 
         ldlogo_rate = timer % 360;
 
@@ -361,8 +334,7 @@ static void WipeLoadOutDisp(void *x)
     MtcExit();
 }
 
-void WipeInReq(void)
-{
+void WipeInReq(void) {
     loading_wipe_switch ^= 1;
 
     wipe_end_flag = 0;
@@ -378,8 +350,7 @@ void WipeInReq(void)
 INCLUDE_RODATA("main/wipe", D_00393680);
 extern SPR_PRIM D_00393680;
 
-void WipeLoadInDispSame(void *x)
-{
+void WipeLoadInDispSame(void *x) {
     SPR_PRIM spr_prim = D_00393680;
     SPR_DAT  spr_dat  = {};
 
@@ -388,8 +359,7 @@ void WipeLoadInDispSame(void *x)
     wipe_end_flag = 1;
     SprInit();
 
-    while (1)
-    {
+    while (1) {
         SprClear();
         SprPackSet(&spr_dat);
 
@@ -402,8 +372,7 @@ void WipeLoadInDispSame(void *x)
     }
 }
 
-void WipeInReqSame(void)
-{
+void WipeInReqSame(void) {
     wipe_type = WIPE_TYPE_SAME;
     wipe_end_flag = 0;
 
@@ -411,13 +380,11 @@ void WipeInReqSame(void)
     LocalBufCopy(0);
 }
 
-#if 1
+#ifndef NON_MATCIHNG
 INCLUDE_ASM("main/wipe", WipeOutReq);
 #else
-void WipeOutReq(void)
-{
-    switch (wipe_type)
-    {
+void WipeOutReq(void) {
+    switch (wipe_type) {
     case WIPE_TYPE_PARA:
         wipeParaOutReq();
         return;
@@ -438,15 +405,13 @@ void WipeOutReq(void)
 }
 #endif
 
-int WipeEndCheck(void)
-{
+int WipeEndCheck(void) {
     return wipe_end_flag;
 }
 
 extern const char D_003995B8[]; /* .sdata - "wipe" */
 
-void WipeYesNoDispTask(void *x)
-{
+void WipeYesNoDispTask(void *x) {
     void *scn_hdl;
     void *spm_hdl;
     float men_tmp;
@@ -467,8 +432,7 @@ void WipeYesNoDispTask(void *x)
 
     SprInit();
 
-    while (1)
-    {
+    while (1) {
         SprClear();
         SprPackSet(&spr_dat);
 
@@ -500,8 +464,7 @@ void WipeYesNoDispTask(void *x)
     }
 }
 
-void wipeYesNoDispReq(void)
-{
+void wipeYesNoDispReq(void) {
     printf("wipe yes/no req\n");
 
     wipe_type = WIPE_TYPE_YES_NO;
@@ -512,13 +475,11 @@ void wipeYesNoDispReq(void)
     LocalBufCopy(0);
 }
 
-void wipeYesNoDispEnd(void)
-{
+void wipeYesNoDispEnd(void) {
     MtcKill(MTC_TASK_WIPECTRL);
 }
 
-static void WipeInitPrDataPara(sceGsFrame *fr_pp)
-{
+static void WipeInitPrDataPara(sceGsFrame *fr_pp) {
     int fbp;
 
     PrSetFrameRate(60.0f);
@@ -527,10 +488,11 @@ static void WipeInitPrDataPara(sceGsFrame *fr_pp)
     wipe_para_str.scene_hdl = PrInitializeScene(&DBufDc.draw01, "wipe para", fbp);
     wipe_para_str.spm_hdl   = PrInitializeModel(cmnfGetFileAdrs(75), wipe_para_str.scene_hdl);
 
-    if (wipe_para_spa_type) // PaRappa "bye-bye" waving animation
+    if (wipe_para_spa_type) { // PaRappa "bye-bye" waving animation
         wipe_para_str.spa_hdl = PrInitializeAnimation(cmnfGetFileAdrs(76));
-    else
+    } else {
         wipe_para_str.spa_hdl = PrInitializeAnimation(cmnfGetFileAdrs(77));
+    }
 
     PrLinkAnimation(wipe_para_str.spm_hdl, wipe_para_str.spa_hdl);
 
@@ -540,8 +502,7 @@ static void WipeInitPrDataPara(sceGsFrame *fr_pp)
     PrSetSceneFrame(wipe_para_str.scene_hdl, *fr_pp);
 }
 
-static void WipeQuitPrDataPara(void)
-{
+static void WipeQuitPrDataPara(void) {
     PrUnlinkAnimation(wipe_para_str.spm_hdl);
     PrCleanupAnimation(wipe_para_str.spa_hdl);
 
@@ -550,8 +511,7 @@ static void WipeQuitPrDataPara(void)
     PrCleanupScene(wipe_para_str.scene_hdl);
 }
 
-static void WipeDispPrDataPara(int frame, sceGsDrawEnv1 *envPP)
-{
+static void WipeDispPrDataPara(int frame, sceGsDrawEnv1 *envPP) {
     float men_tmp;
     
     men_tmp = PrGetMendererRatio();
@@ -570,23 +530,20 @@ static void WipeDispPrDataPara(int frame, sceGsDrawEnv1 *envPP)
     PrSetMendererRatio(men_tmp);
 }
 
-void WipeParaColorSet(u_char r, u_char g, u_char b)
-{
+void WipeParaColorSet(u_char r, u_char g, u_char b) {
     vclr_para_disp.r = r;
     vclr_para_disp.g = g;
     vclr_para_disp.b = b;
 }
 
-void WipeEnd(void)
-{
+void WipeEnd(void) {
     wipe_end_flag = 1;
   
     MtcKill(MTC_TASK_WIPECTRL);
     wipeSndStop();
 }
 
-static void WipeParaInDisp(void *x)
-{
+static void WipeParaInDisp(void *x) {
     sceGifPacket gifP;
     VCLR_PARA    vclr_para = {};
     
@@ -599,11 +556,9 @@ static void WipeParaInDisp(void *x)
     SprInit();
     TimeCallbackTimeSetChan(TCBK_CHANNEL_WIPE, 0);
 
-    while (1)
-    {
+    while (1) {
         timer = TimeCallbackTimeGetChan(TCBK_CHANNEL_WIPE);
-        if (timer > 60)
-        {
+        if (timer > 60) {
             timer = (timer - 60) % 180 + 60;
         }
 
@@ -641,17 +596,18 @@ static void WipeParaInDisp(void *x)
         SprDisp(&spr_prim);
         SprFlash();
 
-        if (timer > 60)
+        if (timer > 60) {
             wipe_end_flag = 1;
-        if (timer > 238)
+        }
+        if (timer > 238) {
             wipe_end_flag = 2;
+        }
 
         MtcWait(1);
     }
 }
 
-static void WipeParaInDispMove(void *x)
-{
+static void WipeParaInDispMove(void *x) {
     VCLR_PARA vclr_para = {};
 
     SPR_PRIM  spr_prim  = D_00393680;
@@ -663,11 +619,9 @@ static void WipeParaInDispMove(void *x)
     SprInit();
     TimeCallbackTimeSetChan(TCBK_CHANNEL_WIPE, 0);
 
-    while (1)
-    {
+    while (1) {
         timer = TimeCallbackTimeGetChan(TCBK_CHANNEL_WIPE);
-        if (timer > 60)
-        {
+        if (timer > 60) {
             timer = (timer - 60) % 180 + 60;
         }
 
@@ -694,17 +648,18 @@ static void WipeParaInDispMove(void *x)
         SprDisp(&spr_prim);
         SprFlash();
 
-        if (timer > 60)
+        if (timer > 60) {
             wipe_end_flag = 1;
-        if (timer > 238)
+        }
+        if (timer > 238) {
             wipe_end_flag = 2;
+        }
 
         MtcWait(1);
     }
 }
 
-static void WipeParaOutDisp(void *x)
-{
+static void WipeParaOutDisp(void *x) {
     VCLR_PARA vclr_para = {};
 
     SPR_PRIM  spr_prim  = D_00393680;
@@ -715,8 +670,7 @@ static void WipeParaOutDisp(void *x)
 
     SprInit();
 
-    while (1)
-    {
+    while (1) {
         CmnGifFlush();
         CmnGifClear();
 
@@ -746,8 +700,7 @@ static void WipeParaOutDisp(void *x)
 
         DrawVramClear(&vclr_para, 0, 0, 0, DNUM_VRAM2);
 
-        if (timer > 60)
-        {
+        if (timer > 60) {
             timer = 60;
             wipe_end_flag = 1;
             MtcExit();
@@ -757,8 +710,7 @@ static void WipeParaOutDisp(void *x)
     }
 }
 
-void wipeParaInReq(void)
-{
+void wipeParaInReq(void) {
     wipe_end_flag = 0;
     wipe_type = WIPE_TYPE_PARA;
     wipeSndReq(STW_PARAtoMINI);
@@ -770,8 +722,7 @@ void wipeParaInReq(void)
 }
 
 /* Used in the demos - unused on the final version */
-void wipeParaInReqByeBye(void)
-{
+void wipeParaInReqByeBye(void) {
     wipe_end_flag = 0;
     wipe_type = WIPE_TYPE_PARA;
     wipeSndReq(STW_PARAtoMINI);
@@ -782,8 +733,7 @@ void wipeParaInReqByeBye(void)
     LocalBufCopy(0);
 }
 
-void wipeParaInReqMove(void)
-{
+void wipeParaInReqMove(void) {
     wipe_end_flag = 0;
     wipe_type = WIPE_TYPE_PARA;
     wipeSndReq(STW_PARAtoMINI);
@@ -792,8 +742,7 @@ void wipeParaInReqMove(void)
     MtcExec(WipeParaInDispMove, MTC_TASK_WIPECTRL);
 }
 
-void wipeParaOutReq(void)
-{
+void wipeParaOutReq(void) {
     wipe_end_flag = 0;
     wipeSndReq(STW_PARAtoBIG);
 
@@ -808,8 +757,7 @@ INCLUDE_RODATA("main/wipe", D_003936E0);
 
 INCLUDE_RODATA("main/wipe", D_00393700);
 
-static void WipeBoxyInDisp(void *x)
-{
+static void WipeBoxyInDisp(void *x) {
     void *scn_hdl;
     void *scn2_hdl;
     void *spm_hdl;
@@ -832,8 +780,7 @@ static void WipeBoxyInDisp(void *x)
 
     PrSetFrameRate(60.0f);
 
-    while (1)
-    {
+    while (1) {
         men_tmp = PrGetMendererRatio();
 
         PrSetMendererRatio(0.0f);
@@ -861,8 +808,7 @@ static void WipeBoxyInDisp(void *x)
         PrCleanupModel(spm2_hdl);
         PrCleanupScene(scn2_hdl);
 
-        if (animate_frame < 120)
-        {
+        if (animate_frame < 120) {
             u_char alp = ((animate_frame * 128) / 120);
             alp = 128 - alp;
 
@@ -891,10 +837,11 @@ static void WipeBoxyInDisp(void *x)
         PrSetSceneFrame(scn_hdl, *DrawGetFrameP(DNUM_DRAW));
 
         spm_subt_hdl = PrInitializeModel(cmnfGetFileAdrs(43), scn_hdl);
-        if (game_status.subtitle == SUBTITLE_ON)
+        if (game_status.subtitle == SUBTITLE_ON) {
             PrShowModel(spm_subt_hdl, NULL);
-        else
+        } else {
             PrHideModel(spm_subt_hdl);
+        }
 
         PrSetSceneEnv(scn_hdl, DrawGetDrawEnvP(DNUM_DRAW));
 
@@ -910,16 +857,14 @@ static void WipeBoxyInDisp(void *x)
         PrCleanupScene(scn_hdl);
         PrSetMendererRatio(men_tmp);
 
-        if (game_status.subtitle == SUBTITLE_ON)
-        {
+        if (game_status.subtitle == SUBTITLE_ON) {
             /* Print initial practice mode subtitles */
             SubtCtrlPrintBoxyWipe(jimaku_str, 0, animate_frame, game_status.language_type, cmnfGetFileAdrs(80));
         }
 
         animate_frame++;
 
-        if (animate_frame > 400)
-        {
+        if (animate_frame > 400) {
             wipe_end_flag = 1;
             animate_frame = 400;
         }
@@ -928,8 +873,7 @@ static void WipeBoxyInDisp(void *x)
     }
 }
 
-void wipeBoxyInReq(void)
-{
+void wipeBoxyInReq(void) {
     wipe_end_flag = 0;
     wipe_type = WIPE_TYPE_BOXY;
     wipeSndReq(STW_BOXY_IN);
@@ -938,8 +882,7 @@ void wipeBoxyInReq(void)
     MtcExec(WipeBoxyInDisp, MTC_TASK_WIPECTRL);
 }
 
-static void WipeBoxyWaitDisp(void *x)
-{
+static void WipeBoxyWaitDisp(void *x) {
     void *scn_hdl;
     void *spm_hdl;
     void *spa_hdl;
@@ -954,8 +897,7 @@ static void WipeBoxyWaitDisp(void *x)
     animate_frame = 0;
     PrSetFrameRate(60.0f);
 
-    while (1)
-    {
+    while (1) {
         men_tmp = PrGetMendererRatio();
         PrSetMendererRatio(0.0f);
         PrSetFrameRate(60.0f);
@@ -981,10 +923,11 @@ static void WipeBoxyWaitDisp(void *x)
         PrSetSceneFrame(scn_hdl, *DrawGetFrameP(DNUM_DRAW));
 
         spm_subt_hdl = PrInitializeModel(cmnfGetFileAdrs(43), scn_hdl);
-        if (game_status.subtitle == SUBTITLE_ON)
+        if (game_status.subtitle == SUBTITLE_ON) {
             PrShowModel(spm_subt_hdl, NULL);
-        else
+        } else {
             PrHideModel(spm_subt_hdl);
+        }
 
         PrSetSceneEnv(scn_hdl, DrawGetDrawEnvP(DNUM_DRAW));
 
@@ -1010,17 +953,17 @@ static void WipeBoxyWaitDisp(void *x)
         animate_frame++;
         animate_frame %= 96;
 
-        if (animate_frame < 2)
+        if (animate_frame < 2) {
             wipe_end_flag = 1;
-        else
+        } else {
             wipe_end_flag = 0;
+        }
 
         MtcWait(1);
     }
 }
 
-void wipeBoxyWaitReq(void)
-{
+void wipeBoxyWaitReq(void) {
     wipe_end_flag = 0;
     wipe_type = WIPE_TYPE_BOXY_WAIT;
     wipeSndReq(STW_BOXY_WAIT);

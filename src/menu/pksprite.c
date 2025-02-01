@@ -17,10 +17,8 @@ int _PkScrH;
 
 float FLT_003990DC;
 
-static void _tsWorkEnd(TS_WORKMEM *emem)
-{
-    if (emem->isAlloc && emem->top)
-    {
+static void _tsWorkEnd(TS_WORKMEM *emem) {
+    if (emem->isAlloc && emem->top) {
         free(emem->top);
 
         emem->top = NULL;
@@ -60,8 +58,7 @@ static u_int* _tsWorkInit(/* s0 16 */ TS_WORKMEM *emem, /* s2 18 */ u_int *buf, 
 }
 #endif
 
-u_long128* TsInitUPacket(TsUSERPKT *pk, u_long128 *buf, u_int size)
-{
+u_long128* TsInitUPacket(TsUSERPKT *pk, u_long128 *buf, u_int size) {
     u_int      top;
     TsUSERPKT *p;
     u_int      b0, b1; /* Function matches, but we should be using these variables */
@@ -71,12 +68,9 @@ u_long128* TsInitUPacket(TsUSERPKT *pk, u_long128 *buf, u_int size)
     p = pk;
     top = (u_int)_tsWorkInit(&p->mem, (u_int*)buf, size);
 
-    if (top == NULL)
-    {
+    if (top == NULL) {
         return NULL;
-    }
-    else
-    {
+    } else {
         p->size = size / 16;
 
         p->pkt[0].PaketTop = top;
@@ -87,8 +81,7 @@ u_long128* TsInitUPacket(TsUSERPKT *pk, u_long128 *buf, u_int size)
     }
 }
 
-void TsEndUPacket(TsUSERPKT *pk)
-{
+void TsEndUPacket(TsUSERPKT *pk) {
     TsUSERPKT *p = pk;
 
     _tsWorkEnd(&p->mem);
@@ -301,10 +294,8 @@ void PkCGRect_Add(/* t4 12 */ SPR_PKT pk, /* a1 5 */ SPR_PRM *ppspr, /* a2 6 */ 
 
 extern float S5432[4]; /* see SCE's libvu0 */
 
-static void rotcossin(float rot)
-{
-    asm
-    (
+static void rotcossin(float rot) {
+    asm volatile(
         "mtc1        $0, $f0             \n\t"
         "c.olt.s     %0, $f0             \n\t"
         "lwc1        $f0, FLT_003990DC   \n\t" /* li.s $f0, 1.57079637050628662109e0 */
@@ -358,14 +349,14 @@ static void rotcossin(float rot)
     : : "f"(rot));
 }
 
-void _pkVU0RotMatrixZ(float rz)
-{
-    asm("vsub.xyzw    vf19, vf0, vf00");
+void _pkVU0RotMatrixZ(float rz) {
+    asm volatile(
+        "vsub.xyzw     vf19, vf0,  vf00"
+    );
 
     rotcossin(rz);
 
-    asm
-    (
+    asm volatile(
         "vmove.xyzw    vf09, vf00       \n\t"
         "vmove.zw      vf06, vf19       \n\t"
         "vmove.zw      vf07, vf19       \n\t"
@@ -689,23 +680,20 @@ void PkPolyFT4_Add(/* t3 11 */ SPR_PKT pk, /* a1 5 */ SPR_PRM *ppspr, /* a2 6 */
 }
 #endif
 
-PKMESH* PkMesh_Create(int w, int h)
-{
+PKMESH* PkMesh_Create(int w, int h) {
     PKMESH *pmesh = malloc(sizeof(PKMESH));
 
-    if (pmesh == NULL)
+    if (pmesh == NULL) {
         return NULL;
+    }
 
     memset(pmesh, 0, sizeof(PKMESH));
     pmesh->pmspt = malloc(sizeof(PKMSPT) * (w + 1) * (h + 1));
 
-    if (pmesh->pmspt == NULL)
-    {
+    if (pmesh->pmspt == NULL) {
         free(NULL);
         return NULL;
-    }
-    else
-    {
+    } else {
         pmesh->mw = w;
         pmesh->mh = h;
     }
@@ -713,19 +701,18 @@ PKMESH* PkMesh_Create(int w, int h)
     return pmesh;
 }
 
-void PkMesh_Delete(PKMESH *mesh)
-{
-    if (mesh == NULL)
+void PkMesh_Delete(PKMESH *mesh) {
+    if (mesh == NULL) {
         return;
-    
-    if (mesh->pmspt != NULL)
+    }
+    if (mesh->pmspt != NULL) {
         free(mesh->pmspt);
+    }
 
     free(mesh);
 }
 
-void PkMesh_SetXYWH(PKMESH *mesh, float px0, float py0, float sw, float sh)
-{
+void PkMesh_SetXYWH(PKMESH *mesh, float px0, float py0, float sw, float sh) {
     PKMSPT *pt;
     int     x, y;
     float   fmw, fmh;
@@ -742,12 +729,10 @@ void PkMesh_SetXYWH(PKMESH *mesh, float px0, float py0, float sw, float sh)
     fmw = 1.0f / mesh->mw;
     fmh = 1.0f / mesh->mh;
 
-    for (y = 0; y < (mesh->mh + 1); y++)
-    {
+    for (y = 0; y < (mesh->mh + 1); y++) {
         py = py0 + ((y * sh) * fmh);
 
-        for (x = 0; x < (mesh->mw + 1); x++, pt++)
-        {
+        for (x = 0; x < (mesh->mw + 1); x++, pt++) {
             pt->x = px0 + ((x * sw) * fmw);
             pt->y = py;
 
@@ -756,8 +741,7 @@ void PkMesh_SetXYWH(PKMESH *mesh, float px0, float py0, float sw, float sh)
     }
 }
 
-void PkMesh_SetUVWH(PKMESH *mesh, float ux0, float uy0, float uw, float uh)
-{
+void PkMesh_SetUVWH(PKMESH *mesh, float ux0, float uy0, float uw, float uh) {
     PKMSPT *pt;
     int     x, y;
     float   fmw, fmh;
@@ -768,20 +752,17 @@ void PkMesh_SetUVWH(PKMESH *mesh, float ux0, float uy0, float uw, float uh)
     fmw = 1.0f / mesh->mw;
     fmh = 1.0f / mesh->mh;
 
-    for (y = 0; y < (mesh->mh + 1); y++)
-    {
+    for (y = 0; y < (mesh->mh + 1); y++) {
         uy = uy0 + ((y * uh) * fmh);
 
-        for (x = 0; x < (mesh->mw + 1); x++, pt++)
-        {
+        for (x = 0; x < (mesh->mw + 1); x++, pt++) {
             pt->u = ux0 + ((x * uw) * fmw);
             pt->v = uy;
         }
     }
 }
 
-void PkCMesh_Add(SPR_PKT pk, SPR_PRM *spr, PKMESH *mesh)
-{
+void PkCMesh_Add(SPR_PKT pk, SPR_PRM *spr, PKMESH *mesh) {
     int     cidx, lidx;
     int     x, y;
     PKMSPT *pt;
@@ -789,12 +770,10 @@ void PkCMesh_Add(SPR_PKT pk, SPR_PRM *spr, PKMESH *mesh)
     cidx = 0;
     lidx = mesh->mw + 1;
 
-    for (y = 0; y < mesh->mh; y++)
-    {
+    for (y = 0; y < mesh->mh; y++) {
         pt = &mesh->pmspt[cidx];
 
-        for (x = 0; x < mesh->mw; x++, pt++)
-        {
+        for (x = 0; x < mesh->mw; x++, pt++) {
             spr->px0 = pt[0].x + pt[0].ofsx;
             spr->py0 = pt[0].y + pt[0].ofsy;
 
@@ -814,8 +793,7 @@ void PkCMesh_Add(SPR_PKT pk, SPR_PRM *spr, PKMESH *mesh)
     }
 }
 
-void PkFTMesh_Add(SPR_PKT pk, SPR_PRM *spr, PKMESH *mesh)
-{
+void PkFTMesh_Add(SPR_PKT pk, SPR_PRM *spr, PKMESH *mesh) {
     int     cidx, lidx;
     int     x, y;
     PKMSPT *pt;
@@ -823,12 +801,10 @@ void PkFTMesh_Add(SPR_PKT pk, SPR_PRM *spr, PKMESH *mesh)
     cidx = 0;
     lidx = mesh->mw + 1;
 
-    for (y = 0; y < mesh->mh; y++)
-    {
+    for (y = 0; y < mesh->mh; y++) {
         pt = &mesh->pmspt[cidx];
 
-        for (x = 0; x < mesh->mw; x++, pt++)
-        {
+        for (x = 0; x < mesh->mw; x++, pt++) {
             spr->ux  = pt[0].u;
             spr->uy  = pt[0].v;
 

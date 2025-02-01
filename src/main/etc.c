@@ -27,8 +27,7 @@ extern HKL_PKSTR hkl_pkstr[];
 /* bss */
 extern u_int vsync_time[51];
 
-void GlobalInit(void)
-{
+void GlobalInit(void) {
     WorkClear(&game_status, sizeof(game_status));
     WorkClear(&global_data, sizeof(global_data));
 
@@ -49,8 +48,7 @@ void GlobalInit(void)
 
 INCLUDE_ASM("main/etc", clearStageCheck);
 
-void GlobalTimeInit(GLOBAL_DATA *gl_pp)
-{
+void GlobalTimeInit(GLOBAL_DATA *gl_pp) {
     gl_pp->currentTime     = 0;
     gl_pp->cdTime          = 0;
     gl_pp->vsyncTime       = 0;
@@ -59,13 +57,11 @@ void GlobalTimeInit(GLOBAL_DATA *gl_pp)
     gl_pp->Snd_vsyncTime   = 0;
 }
 
-void GlobalSetTempo(GLOBAL_DATA *gl_pp, float tempo)
-{
+void GlobalSetTempo(GLOBAL_DATA *gl_pp, float tempo) {
     gl_pp->tempo = tempo;
 }
 
-void GlobalTimeJobChange(TIME_GET_FLAG tfg)
-{
+void GlobalTimeJobChange(TIME_GET_FLAG tfg) {
     global_data.TimeType = tfg;
     printf("time job change!!![%x]\n", tfg);
 }
@@ -73,13 +69,11 @@ void GlobalTimeJobChange(TIME_GET_FLAG tfg)
 #ifndef NON_MATCHING
 INCLUDE_ASM("main/etc", GlobalTimeJob);
 #else
-void GlobalTimeJob(void)
-{
+void GlobalTimeJob(void) {
     /* Not on STABS, but makes things shorter */
     GLOBAL_DATA *gl_pp = &global_data;
 
-    if (gl_pp->TimeType == FGF_VSYNC)
-    {
+    if (gl_pp->TimeType == FGF_VSYNC) {
         gl_pp->currentTime = TimeCallbackTimeGet();
         gl_pp->vsyncTime = gl_pp->currentTime;
         
@@ -88,9 +82,7 @@ void GlobalTimeJob(void)
 
         gl_pp->Snd_vsyncTime = gl_pp->Snd_currentTime;
         gl_pp->Snd_cdSampleCnt = CdctrlSndTime2WP2sample(gl_pp->tempo, gl_pp->Snd_currentTime);
-    }
-    else if (gl_pp->TimeType == FGF_CD)
-    {
+    } else if (gl_pp->TimeType == FGF_CD) {
         CdctrlWp2GetSampleTmpBuf();
         gl_pp->Snd_currentTime = CdctrlWp2GetSndTimeTmp(gl_pp->tempo);
 
@@ -105,49 +97,45 @@ void GlobalTimeJob(void)
 }
 #endif
 
-int GlobalTimeGet(void)
-{
+int GlobalTimeGet(void) {
     return global_data.currentTime;
 }
 
-int GlobalSndTimeGet(void)
-{
+int GlobalSndTimeGet(void) {
     return global_data.Snd_currentTime;
 }
 
-int GlobalSndSampleGet(void)
-{
+int GlobalSndSampleGet(void) {
     return global_data.Snd_cdSampleCnt;
 }
 
-TAP_ROUND_ENUM GetHatRound(void)
-{
+TAP_ROUND_ENUM GetHatRound(void) {
     TAP_ROUND_ENUM ret = global_data.roundL;
 
-    if (hat_change_enum != HCNG_AUTO)
+    if (hat_change_enum != HCNG_AUTO) {
         return hat_change_enum;
+    }
 
     return ret;
 }
 
-int GlobalMendererUseCheck(void)
-{
+int GlobalMendererUseCheck(void) {
     int ret = 0;
 
-    if (global_data.play_step == PSTEP_GAME || global_data.play_step == PSTEP_SERIAL)
+    if (global_data.play_step == PSTEP_GAME || global_data.play_step == PSTEP_SERIAL) {
         ret = 1;
+    }
     
     return ret;
 }
 
+#ifndef NON_MATCHING
 INCLUDE_ASM("main/etc", GlobalLobcalCopy);
-#if 0
-void GlobalLobcalCopy(void)
-{
+#else
+void GlobalLobcalCopy(void) {
     /* a1 5 */ int demo_rnd;
 
-    if (game_status.demo_flagG == DEMOF_OFF)
-    {
+    if (game_status.demo_flagG == DEMOF_OFF) {
         global_data.play_modeL = game_status.play_modeG;
         global_data.play_typeL = game_status.play_typeG;
         global_data.roundL = game_status.roundG;
@@ -157,9 +145,7 @@ void GlobalLobcalCopy(void)
         global_data.play_table_modeL = game_status.play_table_modeG;
         global_data.level_vs_enumL = game_status.level_vs_enumG;
         
-    }
-    else if (game_status.demo_flagG == DEMOF_DEMO)
-    {
+    } else if (game_status.demo_flagG == DEMOF_DEMO) {
         #if 0
         PVar1 = clearStageCheck();
         PVar3 = P3_STAGE_5;
@@ -176,7 +162,6 @@ void GlobalLobcalCopy(void)
         demo_rnd = clearStageCheck();
         if (demo_rnd > 4)
 
-
         global_data.play_modeL = PLAY_MODE_SINGLE;
         global_data.play_typeL = game_status.play_typeG;
         global_data.roundL = game_status.roundG;
@@ -184,9 +169,7 @@ void GlobalLobcalCopy(void)
         global_data.demo_flagL = DEMOF_DEMO;
 
         global_data.play_table_modeL = PLAY_TABLE_NORMAL;
-    }
-    else
-    {
+    } else {
         global_data.play_modeL = mc_rep_str.play_modeS;
         global_data.play_typeL = mc_rep_str.play_typeS;
         global_data.roundL = mc_rep_str.roundS;
@@ -203,20 +186,17 @@ void GlobalLobcalCopy(void)
 
 INCLUDE_ASM("main/etc", GlobalPlySet);
 
-PAD_TYPE GetPcode2PadType(PLAYER_CODE player_code)
-{
+PAD_TYPE GetPcode2PadType(PLAYER_CODE player_code) {
     int         i;
     PAD_TYPE    ret;
     GLOBAL_PLY *gl_pp = global_data.global_ply;
 
     ret = PAD_UNUSE;
 
-    for (i = 0; i < PR_ARRAYSIZE(global_data.global_ply); i++)
-    {
+    for (i = 0; i < PR_ARRAYSIZE(global_data.global_ply); i++) {
         gl_pp = &global_data.global_ply[i];
 
-        if (gl_pp->player_code & player_code)
-        {
+        if (gl_pp->player_code & player_code) {
             ret = gl_pp->pad_type;
             break;
         }
@@ -225,35 +205,29 @@ PAD_TYPE GetPcode2PadType(PLAYER_CODE player_code)
     return ret;
 }
 
-static int TimeCallback(int x)
-{
+static int TimeCallback(int x) {
     int    i;
     u_int *time = vsync_time;
 
-    for (i = 0; i < PR_ARRAYSIZE(vsync_time); i++, time++)
-    {
+    for (i = 0; i < PR_ARRAYSIZE(vsync_time); i++, time++) {
         (*time)++;
     }
 
     return 1;
 }
 
-void TimeCallbackSet(void)
-{
+void TimeCallbackSet(void) {
     int i;
 
-    for (i = 0; i < PR_ARRAYSIZE(vsync_time); i++)
-    {
+    for (i = 0; i < PR_ARRAYSIZE(vsync_time); i++) {
         vsync_time[i] = 0;
     }
 
     sceGsSyncVCallback(TimeCallback);
 }
 
-u_int TimeCallbackTimeGetChan(int chan)
-{
-    if (chan >= 51)
-    {
+u_int TimeCallbackTimeGetChan(int chan) {
+    if (chan >= 51) {
         printf("Time Callback Channel ERROR!!\n");
         return 0;
     }
@@ -261,10 +235,8 @@ u_int TimeCallbackTimeGetChan(int chan)
     return vsync_time[chan];
 }
 
-void TimeCallbackTimeSetChan(TCBK_CHANNEL_ENUM chan, u_int time)
-{
-    if ((int)chan >= 51)
-    {
+void TimeCallbackTimeSetChan(TCBK_CHANNEL_ENUM chan, u_int time) {
+    if ((int)chan >= 51) {
         printf("Time Callback Channel ERROR!!\n");
         return;
     }
@@ -272,10 +244,8 @@ void TimeCallbackTimeSetChan(TCBK_CHANNEL_ENUM chan, u_int time)
     vsync_time[chan] = time;
 }
 
-void TimeCallbackTimeSetChanTempo(int chan, u_int time, float tempo)
-{
-    if (chan >= 51)
-    {
+void TimeCallbackTimeSetChanTempo(int chan, u_int time, float tempo) {
+    if (chan >= 51) {
         printf("Time Callback Channel ERROR!!\n");
         return;
     }
@@ -288,38 +258,43 @@ void TimeCallbackTimeSetChanTempo(int chan, u_int time, float tempo)
     );
 }
 
-u_int TimeCallbackTimeGet(void)
-{
+u_int TimeCallbackTimeGet(void) {
     return TimeCallbackTimeGetChan(0);
 }
 
-void TimeCallbackTimeSet(u_int time)
-{
+void TimeCallbackTimeSet(u_int time) {
     TimeCallbackTimeSetChan(0, time);
 }
 
 INCLUDE_ASM("main/etc", Pcode2Pindex);
 
-int GetKeyCode2Index(int code)
-{
-    if (code & 0x10)
+int GetKeyCode2Index(int code) {
+    if (code & 0x10) {
         return 1;
-    if (code & 0x20)
+    }
+    if (code & 0x20) {
         return 2;
-    if (code & 0x40)
+    }
+    if (code & 0x40) {
         return 3;
-    if (code & 0x80)
+    }
+    if (code & 0x80) {
         return 4;
+    }
 
-    if (code & 4)
+    if (code & 4) {
         return 5;
-    if (code & 8)
+    }
+    if (code & 8) {
         return 6;
+    }
 
-    if (code & 1)
+    if (code & 1) {
         return 5;
-    if (code & 2)
+    }
+    if (code & 2) {
         return 6;
+    }
 
     return 0;
 }
@@ -328,66 +303,63 @@ INCLUDE_ASM("main/etc", GetIndex2KeyCode);
 
 INCLUDE_ASM("main/etc", GetIndex2PressId);
 
-int GetKeyCode2PressId(int code)
-{
-    if (code & 0x10)
+int GetKeyCode2PressId(int code) {
+    if (code & 0x10) {
         return 4;
-    if (code & 0x20)
+    }
+    if (code & 0x20) {
         return 5;
-    if (code & 0x40)
+    }
+    if (code & 0x40) {
         return 6;
-    if (code & 0x80)
+    }
+    if (code & 0x80) {
         return 7;
+    }
 
-    if (code & 4)
+    if (code & 4) {
         return 8;
-    if (code & 8)
+    }
+    if (code & 8) {
         return 9;
+    }
 
     return -1;
 }
 
-TAP_LINE_LEVEL_ENUM ChangeTapLevel(TAP_LINE_LEVEL_ENUM now_lvl)
-{
+TAP_LINE_LEVEL_ENUM ChangeTapLevel(TAP_LINE_LEVEL_ENUM now_lvl) {
     return now_lvl;
 }
 
-void UsrPrInitScene(void)
-{
+void UsrPrInitScene(void) {
     // Empty
 }
 
-void UsrPrQuitScene(void)
-{
+void UsrPrQuitScene(void) {
     // Empty
 }
 
 INCLUDE_ASM("main/etc", UsrPrSetScene);
 
-void SpuBankSet(void)
-{
+void SpuBankSet(void) {
     int i;
 
-    for (i = 0; i < PR_ARRAYSIZEU(scr_snd_area) - 1; i++)
-    {
+    for (i = 0; i < PR_ARRAYSIZEU(scr_snd_area) - 1; i++) {
         TapCt(0x8010 | i, scr_snd_area[i].spu_adrs, 0);
         TapCt(0x8020 | i, scr_snd_area[i].iop_size, 0);
     }
 }
 
-void SpuBankSetAll(void)
-{
+void SpuBankSetAll(void) {
     int i;
 
-    for (i = 0; i < PR_ARRAYSIZEU(scr_snd_area); i++)
-    {
+    for (i = 0; i < PR_ARRAYSIZEU(scr_snd_area); i++) {
         TapCt(0x8010 | i, scr_snd_area[i].spu_adrs, 0);
         TapCt(0x8020 | i, scr_snd_area[i].iop_size, 0);
     }
 }
 
-void inCmnInit(int stg)
-{
+void inCmnInit(int stg) {
     WorkClear(&ingame_common_str, sizeof(ingame_common_str));
     ingame_common_str.BonusStage = stg;
 }

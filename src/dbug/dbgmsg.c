@@ -16,8 +16,7 @@ extern u_char MSGCOL[3];
 extern u_short MSGSIZE[2];
 extern u_int MSGZPOP;
 
-void DbgMsgInit(void)
-{
+void DbgMsgInit(void) {
     GetTim2Info(&msg8x8data, &tinfo, 1);
     Tim2Load(&tinfo, 0x3fef, 0x3fff);
 
@@ -34,8 +33,7 @@ void DbgMsgInit(void)
     MSGZPOP = 0x7fffff;
 }
 
-void DbgMsgClear(void)
-{
+void DbgMsgClear(void) {
     u_long giftag[2] = { SCE_GIF_SET_TAG(0, 0, 0, 0, SCE_GIF_PACKED, 1), SCE_GIF_PACKED_AD };
 
     sceGifPkReset(&gifPacket);
@@ -57,8 +55,7 @@ void DbgMsgClear(void)
     sceGifPkAddGsAD(&gifPacket, SCE_GS_TEXA, SCE_GS_SET_TEXA(0, 1, 128));
 }
 
-void DbgMsgFlash(void)
-{
+void DbgMsgFlash(void) {
     u_long giftag[2] = { SCE_GIF_SET_TAG(0, 1, 0, 0, SCE_GIF_PACKED, 1), SCE_GIF_PACKED_AD };
 
     sceGifPkCloseGifTag(&gifPacket);
@@ -73,8 +70,7 @@ void DbgMsgFlash(void)
     sceGsSyncPath(0, 0);
 }
 
-void DbgMsgSetColor(u_char r, u_char g, u_char b)
-{
+void DbgMsgSetColor(u_char r, u_char g, u_char b) {
     MSGCOL[0] = r;
     MSGCOL[1] = g;
     MSGCOL[2] = b;
@@ -82,16 +78,13 @@ void DbgMsgSetColor(u_char r, u_char g, u_char b)
     sceGifPkAddGsAD(&gifPacket, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(MSGCOL[0], MSGCOL[1], MSGCOL[2], 128, 0x3f800000));
 }
 
-void DbgMsgSetSize(u_short sw, u_short sh)
-{
+void DbgMsgSetSize(u_short sw, u_short sh) {
     MSGSIZE[0] = (sw << 4);
     MSGSIZE[1] = (sh << 4);
 }
 
-static void msgOutYY(u_char msg, u_short *uv_pp)
-{
-    if (msg < 32)
-    {
+static void msgOutYY(u_char msg, u_short *uv_pp) {
+    if (msg < 32) {
         uv_pp[3] = 0;
         uv_pp[2] = 0;
         uv_pp[1] = 0;
@@ -106,15 +99,13 @@ static void msgOutYY(u_char msg, u_short *uv_pp)
     uv_pp[3] = (((msg >> 4) * 10) + 10);
 }
 
-void DbgMsgPrint(u_char *m_pp, u_short x, u_short y)
-{
+void DbgMsgPrint(u_char *m_pp, u_short x, u_short y) {
     u_short uv_buf[4];
 
     x = x << 4;
     y = y << 4;
 
-    while (*m_pp != '\0')
-    {
+    while (*m_pp != '\0') {
         msgOutYY(*m_pp, uv_buf);
 
         sceGifPkAddGsAD(&gifPacket, SCE_GS_UV, SCE_GS_SET_UV(uv_buf[0] << 4, uv_buf[1] << 4));
@@ -128,15 +119,13 @@ void DbgMsgPrint(u_char *m_pp, u_short x, u_short y)
     }
 }
 
-void DbgMsgPrintUserPkt(u_char *m_pp, u_short x, u_short y, sceGifPacket *usrPacket_pp)
-{
+void DbgMsgPrintUserPkt(u_char *m_pp, u_short x, u_short y, sceGifPacket *usrPacket_pp) {
     u_short uv_buf[4];
 
     x = x << 4;
     y = y << 4;
 
-    while (*m_pp != '\0')
-    {
+    while (*m_pp != '\0') {
         msgOutYY(*m_pp, uv_buf);
 
         sceGifPkAddGsAD(usrPacket_pp, SCE_GS_UV, SCE_GS_SET_UV(uv_buf[0] << 4, uv_buf[1] << 4));
@@ -151,8 +140,7 @@ void DbgMsgPrintUserPkt(u_char *m_pp, u_short x, u_short y, sceGifPacket *usrPac
     }
 }
 
-void DbgMsgClearUserPkt(sceGifPacket *usrPacket_pp)
-{
+void DbgMsgClearUserPkt(sceGifPacket *usrPacket_pp) {
     sceGifPkAddGsAD(usrPacket_pp, SCE_GS_TEXFLUSH, 0);
 
     sceGifPkAddGsAD(usrPacket_pp, SCE_GS_TEX0_1, tinfo.picturH->GsTex0);
@@ -170,12 +158,10 @@ void DbgMsgClearUserPkt(sceGifPacket *usrPacket_pp)
     sceGifPkAddGsAD(usrPacket_pp, SCE_GS_TEXA, SCE_GS_SET_TEXA(0, 1, 128));
 }
 
-void DbgMsgSetColorUserPkt(u_char r, u_char g, u_char b, sceGifPacket *usrPacket_pp)
-{
+void DbgMsgSetColorUserPkt(u_char r, u_char g, u_char b, sceGifPacket *usrPacket_pp) {
     sceGifPkAddGsAD(usrPacket_pp, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(r, g, b, 128, 0x3f800000));
 }
 
-void DbgMsgSetZ(int z)
-{
+void DbgMsgSetZ(int z) {
     MSGZPOP = z;
 }

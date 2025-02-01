@@ -15,26 +15,25 @@ INCLUDE_ASM("main/mbar", examCharSet);
 
 INCLUDE_ASM("main/mbar", clrColorBuffer);
 
-void MbarMemberClear(int stg)
-{
-    if (stg < 6)
+void MbarMemberClear(int stg) {
+    if (stg < 6) {
         clrColorBuffer(59);
-
-    if (stg < 4)
+    }
+    if (stg < 4) {
         clrColorBuffer(58);
-
-    if (stg < 3)
+    }
+    if (stg < 3) {
         clrColorBuffer(57);
-
-    if (stg < 2)
+    }
+    if (stg < 2) {
         clrColorBuffer(56);
-
-    if (stg < 1)
+    }
+    if (stg < 1) {
         clrColorBuffer(55);
+    }
 }
 
-void examCharBasic(EX_CHAR_DISP *ecd_pp, TIM2_DAT *tim2_dat_pp)
-{
+void examCharBasic(EX_CHAR_DISP *ecd_pp, TIM2_DAT *tim2_dat_pp) {
     ecd_pp->GsTex0 = tim2_dat_pp->GsTex0;
     ecd_pp->GsTex1 = tim2_dat_pp->GsTex1;
     ecd_pp->GsRegs = tim2_dat_pp->GsRegs;
@@ -56,39 +55,32 @@ void examCharBasic(EX_CHAR_DISP *ecd_pp, TIM2_DAT *tim2_dat_pp)
     ecd_pp->kido[2] = 128;
 }
 
-void examCharScaleSet(EX_CHAR_DISP *ecd_pp, float scx, float scy)
-{
+void examCharScaleSet(EX_CHAR_DISP *ecd_pp, float scx, float scy) {
     ecd_pp->scalex = ecd_pp->scalex * scx;
     ecd_pp->scaley = ecd_pp->scaley * scy;
 }
 
-void examCharCltSet(EX_CHAR_DISP *ecd_pp, TIM2_DAT *tim2_dat_pp)
-{
+void examCharCltSet(EX_CHAR_DISP *ecd_pp, TIM2_DAT *tim2_dat_pp) {
     ((sceGsTex0*)&ecd_pp->GsTex0)->CBP = ((sceGsTex0*)&tim2_dat_pp->GsTex0)->CBP;
 }
 
-void examCharPosSet(EX_CHAR_DISP *ecd_pp, int xp, int yp)
-{
+void examCharPosSet(EX_CHAR_DISP *ecd_pp, int xp, int yp) {
     ecd_pp->x = (xp << 4) - GS_X_COORD(640);
     ecd_pp->y = (yp << 4) - GS_Y_COORD(224);
 }
 
-void examCharUVWHSet(EX_CHAR_DISP *ecd_pp, u_short u, u_short v, u_short w, u_short h)
-{
+void examCharUVWHSet(EX_CHAR_DISP *ecd_pp, u_short u, u_short v, u_short w, u_short h) {
     ecd_pp->u = u;
     ecd_pp->v = v;
-
     ecd_pp->w = w;
     ecd_pp->h = h;
 }
 
-void examCharAlphaSet(EX_CHAR_DISP *ecd_pp, u_short on_off)
-{
+void examCharAlphaSet(EX_CHAR_DISP *ecd_pp, u_short on_off) {
     ecd_pp->alpha = on_off;
 }
 
-void examCharKidoSet(EX_CHAR_DISP *ecd_pp, u_char rc, u_char gc, u_char bc)
-{
+void examCharKidoSet(EX_CHAR_DISP *ecd_pp, u_char rc, u_char gc, u_char bc) {
     ecd_pp->kido[0] = rc;
     ecd_pp->kido[1] = gc;
     ecd_pp->kido[2] = bc;
@@ -132,12 +124,10 @@ INCLUDE_ASM("main/mbar", metColorSet);
 
 INCLUDE_ASM("main/mbar", metFrameInit);
 
-void conditionFrameInit(void)
-{
+void conditionFrameInit(void) {
     int i;
 
-    for (i = 0; i < PR_ARRAYSIZE(conditionFramCnt); i++)
-    {
+    for (i = 0; i < PR_ARRAYSIZE(conditionFramCnt); i++){
         conditionFramCnt[i] = 60;
     }
 }
@@ -166,19 +156,18 @@ INCLUDE_ASM("main/mbar", examLevelDisp);
 
 INCLUDE_ASM("main/mbar", ExamDispSet);
 
-void ExamDispSubt(void)
-{
+void ExamDispSubt(void) {
     // Empty
 }
 
-void MbarInit(int stg)
-{
+void MbarInit(int stg) {
     mbar_ctrl_stage = stg;
 
-    if (stg == 6)
+    if (stg == 6) {
         mbar_ctrl_stage_selT = 1;
-    else
+    } else {
         mbar_ctrl_stage_selT = stg;
+    }
     
     MbarCharSetSub();
 }
@@ -194,12 +183,10 @@ INCLUDE_RODATA("main/mbar", D_00393450);
 INCLUDE_RODATA("main/mbar", D_00393458);
 
 void MbarReq(MBAR_REQ_ENUM mm_req, TAPSET *ts_pp, int curr_time, SCR_TAP_MEMORY *tm_pp, int tm_cnt, 
-            int lang, int tapdat_size, TAPDAT *tapdat_pp, GUI_CURSOR_ENUM guic)
-{
+             int lang, int tapdat_size, TAPDAT *tapdat_pp, GUI_CURSOR_ENUM guic) {
     PLAYER_INDEX pidx;
 
-    if (ts_pp == NULL)
-    {
+    if (ts_pp == NULL) {
         printf("MbarReq   TAPSET adrs is NULL\n");
         return;
     }
@@ -217,8 +204,7 @@ void MbarReq(MBAR_REQ_ENUM mm_req, TAPSET *ts_pp, int curr_time, SCR_TAP_MEMORY 
     mbar_req_str[pidx].gui_cursor_enum = guic;
 }
 
-void MbarSetCtrlTime(int mctime)
-{
+void MbarSetCtrlTime(int mctime) {
     mbar_ctrl_time = mctime;
 }
 
@@ -244,13 +230,11 @@ INCLUDE_ASM("main/mbar", MbarGetTimeArea);
 
 INCLUDE_ASM("main/mbar", MbarGetTimeArea2);
 
-int MbarGetStartTime(MBAR_REQ_STR *mr_pp)
-{
+int MbarGetStartTime(MBAR_REQ_STR *mr_pp) {
     return ((mr_pp->current_time + mr_pp->tapset_pp->taptimeStart - 24) / 96) * 96;
 }
 
-int MbarGetEndTime(MBAR_REQ_STR *mr_pp)
-{
+int MbarGetEndTime(MBAR_REQ_STR *mr_pp) {
     return (mr_pp->current_time + mr_pp->tapset_pp->taptimeEnd);
 }
 
@@ -258,12 +242,10 @@ INCLUDE_ASM("main/mbar", MbarGetStartTap);
 
 INCLUDE_ASM("main/mbar", MbarSclRotMake);
 
-void MbarGuideLightMake(MBARR_CHR *mbarr_pp, int mbtime)
-{
+void MbarGuideLightMake(MBARR_CHR *mbarr_pp, int mbtime) {
     u_char col = 128;
 
-    if (mbtime < 144u)
-    {
+    if (mbtime < 144u) {
         col = (u_char)(((144 - mbtime) * 128) / 144) + 128;
     }
 

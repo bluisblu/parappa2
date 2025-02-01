@@ -121,13 +121,13 @@ INCLUDE_RODATA("main/main", D_00393860);
 INCLUDE_RODATA("main/main", D_00393880);
 INCLUDE_RODATA("main/main", D_003938A8);
 INCLUDE_RODATA("main/main", D_003938D0);
-
 INCLUDE_RODATA("main/main", D_003938F8);
 
 INCLUDE_RODATA("main/main", D_00393910);
 
+#ifndef NON_MATCHING
 INCLUDE_ASM("main/main", dummyPlay);
-#if 0
+#else
 static void dummyPlay(/* s0 16 */ int retTitle)
 {
     /* s1 17 */ int mode;
@@ -364,8 +364,7 @@ static void dummyPlay(/* s0 16 */ int retTitle)
 extern char D_00393A00[]; /* rodata - "overlay module load in\n" */
 extern char D_00393A18[]; /* rodata - "overlay module load out\n" */
 
-int selPlayDisp(int sel_stage, int sel_disp, int firstf)
-{
+int selPlayDisp(int sel_stage, int sel_disp, int firstf) {
     STDAT_DAT *stdat_dat_pp;
     int        ret = 0;
 
@@ -396,25 +395,25 @@ int selPlayDisp(int sel_stage, int sel_disp, int firstf)
 
     ScrCtrlInit(stdat_dat_pp, (void*)UsrMemGetAdr(0));
     
-    do
+    do {
         MtcWait(1);
-    while (!ScrCtrlInitCheck());
+    } while (!ScrCtrlInitCheck());
 
-    if (!firstf)
-    {
-        while (!WipeEndCheck())
+    if (!firstf) {
+        while (!WipeEndCheck()) {
             MtcWait(1);
+        }
     }
     
-    if (firstf)
-    {
+    if (firstf) {
         FadeCtrlReq(FMODE_BLACK_IN, 120);
     }
 
     ScrCtrlGoLoop();
 
-    if (!firstf)
+    if (!firstf) {
         WipeOutReq();
+    }
 
     PrSetPostureWorkArea(UsrMemAllocNext(), UsrMemAllocEndNext() - UsrMemAllocNext());
     DrawCtrlInit(stdat_dat_pp->ev_pp, global_data.draw_tbl_top, (void*)UsrMemGetAdr(0));
@@ -425,33 +424,29 @@ int selPlayDisp(int sel_stage, int sel_disp, int firstf)
 
     ReportHeapUsage();
 
-    if (firstf)
-    {
+    if (firstf) {
         MtcWait(120);
     }
 
-    while (1)
-    {
+    while (1) {
         MtcWait(1);
 
-        if ((pad[0].one & SCE_PADstart) && WipeEndCheck())
-        {
+        if ((pad[0].one & SCE_PADstart) && WipeEndCheck()) {
             ret = 1;
             break;
         }
 
-        if (ScrEndCheckScore())
+        if (ScrEndCheckScore()) {
             break;
+        }
 
-        if (ScrEndCheckFadeOut() && (global_data.demo_flagL == DEMOF_DEMO))
-        {
+        if (ScrEndCheckFadeOut() && (global_data.demo_flagL == DEMOF_DEMO)) {
             ret = 2;
             break;
         }
     }
 
-    if (ret == 2)
-    {
+    if (ret == 2) {
         CdctrlSndFadeOutWait(120);
         ret = 0;
     }
@@ -465,11 +460,10 @@ int selPlayDisp(int sel_stage, int sel_disp, int firstf)
     return ret;
 }
 
+#ifndef NON_MATCHING
 INCLUDE_ASM("main/main", SpHatChangeSub);
 void SpHatChangeSub(void);
-
-// TODO: fix rodata
-#if 0
+#else // TODO: fix rodata
 static void SpHatChangeSub(void)
 {
     PADD *pad_pp;
@@ -518,16 +512,14 @@ static void SpHatChangeSub(void)
 
 extern char D_003996C0[]; /* sdata  - "DEBUG" */
 
-int selPlayDispTitleDisp(int sel_stage, int sel_disp, int ovl_load)
-{
+int selPlayDispTitleDisp(int sel_stage, int sel_disp, int ovl_load) {
     STDAT_DAT *stdat_dat_pp;
     int        ret = 0;
 
     ReportHeapUsage();
     printf("=== selPlayDisp stg:%d disp:%d ===\n", sel_stage, sel_disp);
 
-    if (ovl_load)
-    {
+    if (ovl_load) {
         printf(D_00393A00);
         CdctrlRead(&stdat_rec[sel_stage].ovlfile, overlay_loadaddr, NULL);
         CdctrlReadWait();
@@ -546,9 +538,9 @@ int selPlayDispTitleDisp(int sel_stage, int sel_disp, int ovl_load)
 
     ScrCtrlInit(stdat_dat_pp, (void*)UsrMemGetAdr(0));
 
-    do
+    do {
         MtcWait(1);
-    while (!ScrCtrlInitCheck());
+    } while (!ScrCtrlInitCheck());
 
     ScrCtrlGoLoop();
     WipeOutReq();
@@ -561,28 +553,25 @@ int selPlayDispTitleDisp(int sel_stage, int sel_disp, int ovl_load)
 
     ReportHeapUsage();
 
-    while (1)
-    {
+    while (1) {
         MtcWait(1);
 
-        if (ScrEndCheckTitle())
-        {
+        if (ScrEndCheckTitle()) {
             ret = 1;
             break;
         }
         
-        if (ScrEndCheckScore())
-        {
+        if (ScrEndCheckScore()) {
             break;
         }
 
         SpHatChangeSub();
 
-        if (pad[0].one & SCE_PADLdown)
+        if (pad[0].one & SCE_PADLdown) {
             dbg_select_str.debug_on ^= 1;
+        }
 
-        if (dbg_select_str.debug_on)
-        {
+        if (dbg_select_str.debug_on) {
             sceGifPacket dbgPk;
 
             DbgMsgInit();
@@ -595,8 +584,9 @@ int selPlayDispTitleDisp(int sel_stage, int sel_disp, int ovl_load)
         }
     }
 
-    if (ret != 0)
+    if (ret != 0) {
         MtcWait(60);
+    }
 
     DrawCtrlQuit();
     CdctrlWP2SetVolume(0);
@@ -605,8 +595,7 @@ int selPlayDispTitleDisp(int sel_stage, int sel_disp, int ovl_load)
     return ret;
 }
 
-void xtrView(FILE_STR *file_str_pp)
-{
+void xtrView(FILE_STR *file_str_pp) {
     int timer;
     int seek_top;
 
@@ -618,12 +607,12 @@ void xtrView(FILE_STR *file_str_pp)
     CdctrlWP2Play();
     CdctrlWP2SetVolume(0x3fff);
 
-    while (1)
-    {
+    while (1) {
         MtcWait(1);
 
-        if (pad[0].one & SCE_PADstart || CdctrlWP2PlayEndCheck() || timer >= 6540)
+        if (pad[0].one & SCE_PADstart || CdctrlWP2PlayEndCheck() || timer >= 6540) {
             break;
+        }
 
         CdctrlWp2GetSampleTmpBuf();
 
@@ -637,8 +626,7 @@ void xtrView(FILE_STR *file_str_pp)
     p3StrQuitSd();
 }
 
-void logoDispOne(SPR_PRIM *sprm_pp, TIM2_DAT *tmd_pp)
-{
+void logoDispOne(SPR_PRIM *sprm_pp, TIM2_DAT *tmd_pp) {
     int timer;
 
     sprm_pp->w = tmd_pp->w;
@@ -646,8 +634,7 @@ void logoDispOne(SPR_PRIM *sprm_pp, TIM2_DAT *tmd_pp)
     FadeCtrlReq(FMODE_BLACK_IN, 30);
 
     timer = 29;
-    while (timer != -1)
-    {
+    while (timer != -1) {
         timer--;
 
         SprClear();
@@ -659,8 +646,7 @@ void logoDispOne(SPR_PRIM *sprm_pp, TIM2_DAT *tmd_pp)
     }
 
     timer = 119;
-    while (timer != -1)
-    {
+    while (timer != -1) {
         timer--;
 
         SprClear();
@@ -674,8 +660,7 @@ void logoDispOne(SPR_PRIM *sprm_pp, TIM2_DAT *tmd_pp)
     FadeCtrlReq(FMODE_BLACK_OUT, 30);
 
     timer = 29;
-    while (timer != -1)
-    {
+    while (timer != -1) {
         timer--;
 
         SprClear();
@@ -696,8 +681,7 @@ INCLUDE_RODATA("main/main", D_00393A48);
 INCLUDE_RODATA("main/main", D_00393A58);
 INCLUDE_RODATA("main/main", D_00393A68);
 
-static void uramenFileSearchTask(void *x)
-{
+static void uramenFileSearchTask(void *x) {
     printf("file search in\n");
     stDatFirstFileSearch();
     printf("file search out\n");
@@ -706,23 +690,22 @@ static void uramenFileSearchTask(void *x)
     MtcExit();
 }
 
-static void uramenFileSearchSet(void)
-{
+static void uramenFileSearchSet(void) {
     uramen_end_flag = 1;
     MtcExec(uramenFileSearchTask, MTC_TASK_03);
 }
 
-static void uramenFileSearchEnd(void)
-{
-    if (uramen_end_flag)
-    {
-        while (uramen_end_flag)
-            MtcWait(1);
+static void uramenFileSearchEnd(void) {
+    if (!uramen_end_flag) {
+        return;
+    }
+
+    while (uramen_end_flag) {
+        MtcWait(1);
     }
 }
 
-void startUpDisp(void)
-{
+void startUpDisp(void) {
     /* Splash screens TIM2 data */
     /* TODO: match .data (see symbol_addrs.txt) */
     extern TIM2_DAT tim2spr_tbl_tmp[2]; /* =
@@ -758,9 +741,6 @@ void startUpDisp(void)
 
 INCLUDE_ASM("main/main", selPlayDispType);
 
-// spr_prim on startUpDisp
-// INCLUDE_RODATA("main/main", D_00393AA0);
-
 INCLUDE_ASM("main/main", selPlayDispSetPlay);
 
 INCLUDE_ASM("main/main", selPlayDispSetPlayOne);
@@ -768,10 +748,9 @@ INCLUDE_ASM("main/main", selPlayDispSetPlayOne);
 INCLUDE_ASM("main/main", gamePlayDisp);
 int gamePlayDisp(void);
 
-void GlobalLobcalCopy();
-
+#ifndef NON_MATCHING
 INCLUDE_ASM("main/main", titleDisp);
-#if 0
+#else
 void titleDisp(/* s1 17 */ int firstf)
 {
     /* s0 16 */ STDAT_DAT *stdat_dat_pp;
@@ -847,22 +826,21 @@ int urawazaKeyCheck(void);
 
 extern char D_003996D0[]; /* sdata - "ura:%d" */
 
-void ura_check(void)
-{
+void ura_check(void) {
     u_char msg_tmp[32];
     int    ret;
 
     DbgMsgInit();
 
-    while (1)
-    {
+    while (1) {
         MtcWait(1);
 
         ret = urawazaKeyCheck();
-        if (ret < 0)
+        if (ret < 0) {
             sprintf(msg_tmp, "ura:NOUSE");
-        else
+        } else {
             sprintf(msg_tmp, D_003996D0, ret);
+        }
 
         DbgMsgClear();
 
@@ -874,9 +852,11 @@ void ura_check(void)
     }
 }
 
+#ifndef NON_MATCHING
 INCLUDE_ASM("main/main", mainStart);
 void mainStart(/* a0 4 */ void *xx);
-#if 0
+#else
+void mainStart(/* a0 4 */ void *xx)
 {
     extern int first_f; /* sdata 3996d8 */
     /* s0 16 */ int retTitle;

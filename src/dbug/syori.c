@@ -1,21 +1,17 @@
 #include "dbug/syori.h"
 
-void SyoriLineInit(int bar_size)
-{
+void SyoriLineInit(int bar_size) {
     // Empty
 }
 
-void SyoriLineReset(void)
-{
+void SyoriLineReset(void) {
     // Empty
 }
 
-int SyoriLineCnt(int num)
-{
+int SyoriLineCnt(int num) {
     return 0;
 }
 
-void SyoriLineDisp(short xp, short yp)
-{
+void SyoriLineDisp(short xp, short yp) {
     // Empty
 }

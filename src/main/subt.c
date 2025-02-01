@@ -15,21 +15,18 @@ static sceGifPacket subtPkSpr;
 static SUBT_CODE subt_code[16];
 static MCODE_DAT *mcode_dat_pp[256];
 
-void SubtInit(void)
-{
+void SubtInit(void) {
     subtSetNum = 0;
 }
 
-void* SubtKanjiSet(void *adrs)
-{
+void* SubtKanjiSet(void *adrs) {
     void *ret = kanji_pp;
 
     kanji_pp = adrs;
     return ret;
 }
 
-void SubtClear(void)
-{
+void SubtClear(void) {
     CmnGifOpenCmnPk(&subtPkSpr);
 
     sceGifPkAddGsAD(&subtPkSpr, SCE_GS_TEXFLUSH, 0);
@@ -41,29 +38,27 @@ void SubtClear(void)
     subtSetNum = 0;
 }
 
-void SubtFlash(void)
-{
-    if (subtSetNum != 0)
+void SubtFlash(void) {
+    if (subtSetNum != 0) {
         CmnGifCloseCmnPk(&subtPkSpr, 9);
+    }
 }
 
-void SubtMcodeSet(int code)
-{
+void SubtMcodeSet(int code) {
     sceGifPkAddGsAD(&subtPkSpr, SCE_GS_TEX0_1, SubtGsTex0[code]);
     sceGifPkAddGsAD(&subtPkSpr, SCE_GS_TEX1_1, SCE_GS_SET_TEX1(0, 0, 0, 1, 1, 0, 0));
     sceGifPkAddGsAD(&subtPkSpr, SCE_GS_TEXA, SCE_GS_SET_TEXA(0, 1, 128));
 }
 
-MCODE_DAT* codeKanjiCheck(u_char dat0, u_char dat1)
-{
+MCODE_DAT* codeKanjiCheck(u_char dat0, u_char dat1) {
     u_short      code     = dat0 | (dat1 << 8);
     MCODE_KANJI *kcode_pp = kanji_pp->mcode_kanji;
     int          i        = 0;
 
-    for (i = 0; i < kanji_pp->mcode_max; i++, kcode_pp++)
-    {
-        if (kcode_pp->code == code)
+    for (i = 0; i < kanji_pp->mcode_max; i++, kcode_pp++) {
+        if (kcode_pp->code == code) {
             return (MCODE_DAT*)(&kcode_pp->u);
+        }
     }
 
     return NULL;
@@ -71,25 +66,21 @@ MCODE_DAT* codeKanjiCheck(u_char dat0, u_char dat1)
 
 /* Same function, matching lines too */
 /* https://github.com/JunkBox-Library/JunkBox_Lib/blob/255f34bccfd0fab817d71730f6b45cab52062ec8/Lib/tools.c#L2579 */
-static void euc2sjis(unsigned char *c1, unsigned char *c2)
-{
-    if (*c1 % 2 == 0)
+static void euc2sjis(unsigned char *c1, unsigned char *c2) {
+    if (*c1 % 2 == 0) {
         *c2 -= 0x02;
-    else
-    {
+    } else {
         *c2 -= 0x61;
-        if (*c2 > 0x7e)
+        if (*c2 > 0x7e) {
             (*c2)++;
+        }
     }
 
-    if (*c1 < 0xdf)
-    {
+    if (*c1 < 0xdf) {
         (*c1)++;
         *c1 /= 2;
         *c1 += 0x30;
-    }
-    else
-    {
+    } else {
         (*c1)++;
         *c1 /= 2;
         *c1 += 0x70;
@@ -192,33 +183,26 @@ void SubtMsgPrint(/* s0 16 */ u_char *msg_pp, /* -0xac(sp) */ int xp, /* -0xa8(s
 }
 #endif
 
-void SubtCtrlInit(void *adrs, int ser_f)
-{
+void SubtCtrlInit(void *adrs, int ser_f) {
     SubtInit();
     SubtKanjiSet(adrs);
 
-    if (ser_f)
-    {
+    if (ser_f) {
         SUBT_POSX = 2048;
         SUBT_POSY = 2122;
-    }    
-    else
-    {
+    } else {
         SUBT_POSX = 2048;
         SUBT_POSY = 2104;
     }
 }
 
-void SubtCtrlPrint(JIMAKU_STR *jstr_pp, int line, int time, int lang)
-{
+void SubtCtrlPrint(JIMAKU_STR *jstr_pp, int line, int time, int lang) {
     JIMAKU_STR *jstr_tmp_pp = &jstr_pp[line];
     int         i;
 
-    for (i = 0; i < jstr_tmp_pp->size; i++)
-    {
-        if ((time >= jstr_tmp_pp->jimaku_dat_pp[i].starTime) 
-         && (time <  jstr_tmp_pp->jimaku_dat_pp[i].endTime))
-        {
+    for (i = 0; i < jstr_tmp_pp->size; i++) {
+        if ((time >= jstr_tmp_pp->jimaku_dat_pp[i].starTime) &&
+            (time <  jstr_tmp_pp->jimaku_dat_pp[i].endTime)) {
             SubtClear();
             SubtMsgPrint(jstr_tmp_pp->jimaku_dat_pp[i].txtData[lang], SUBT_POSX, SUBT_POSY, CHECK_LANG(lang), 0);
             SubtFlash();
@@ -227,25 +211,23 @@ void SubtCtrlPrint(JIMAKU_STR *jstr_pp, int line, int time, int lang)
     }
 }
 
-void SubtTapPrint(u_char *tap_msg_pp, int lang)
-{
+void SubtTapPrint(u_char *tap_msg_pp, int lang) {
     // BUG: should be logical OR instead of bitwise?
-    if (tap_msg_pp == NULL | *tap_msg_pp == '\0')
+    if (tap_msg_pp == NULL | *tap_msg_pp == '\0') {
         return;
+    }
 
     SubtClear();
     SubtMsgPrint(tap_msg_pp, SUBT_POSX, SUBT_POSY, CHECK_LANG(lang), 2);
     SubtFlash();
 }
 
-void SubtMenuCtrlInit(void *adrs)
-{
+void SubtMenuCtrlInit(void *adrs) {
     SubtInit();
     SubtKanjiSet(adrs);
 }
 
-void SubtMenuCtrlPrint(u_char *msg_pp, int xp, int yp, int lang)
-{
+void SubtMenuCtrlPrint(u_char *msg_pp, int xp, int yp, int lang) {
     xp += 1728;
     yp += 1936;
 
@@ -254,39 +236,34 @@ void SubtMenuCtrlPrint(u_char *msg_pp, int xp, int yp, int lang)
     SubtFlash();
 }
 
-int SubtMsgDataKaijyouCnt(u_char *msg_pp, int jap_flag)
-{
+int SubtMsgDataKaijyouCnt(u_char *msg_pp, int jap_flag) {
     u_char *tmp_pp;
     u_char  dat0, dat1;
     int     ret = 1;
 
-    if (*msg_pp == '\0')
+    if (*msg_pp == '\0') {
         return NULL;
-    else
-    {
-        tmp_pp = msg_pp;
+    }
 
-        while (*tmp_pp != '\0')
-        {
-            dat0 = tmp_pp[0];
-            dat1 = tmp_pp[1];
+    tmp_pp = msg_pp;
 
+    while (*tmp_pp != '\0') {
+        dat0 = tmp_pp[0];
+        dat1 = tmp_pp[1];
+
+        tmp_pp++;
+
+        /* New line */
+        if (dat0 == '@') {
+            ret++;
+        } else if (jap_flag) {
+            /* Japanese subt. new line */ 
+            euc2sjis(&dat0, &dat1);
             tmp_pp++;
 
-            /* New line */
-            if (dat0 == '@')
-            {
+            // '@' (SHIFT-JIS)
+            if (dat0 == 0x81 && dat1 == 0x97) {
                 ret++;
-            }
-            /* Japanese subt. new line */
-            else if (jap_flag)
-            {
-                euc2sjis(&dat0, &dat1);
-                tmp_pp++;
-
-                // '@' (SHIFT-JIS)
-                if ( dat0 == 0x81 && dat1 == 0x97 )
-                    ret++;
             }
         }
     }
@@ -294,41 +271,39 @@ int SubtMsgDataKaijyouCnt(u_char *msg_pp, int jap_flag)
     return ret;
 }
 
-u_char* SubtMsgDataPos(u_char *msg_pp, int jap_flag, int pos)
-{
+u_char* SubtMsgDataPos(u_char *msg_pp, int jap_flag, int pos) {
     u_char *tmp_pp;
     u_char  dat0, dat1;
     int     ret = 0;
 
-    if (*msg_pp == '\0')
+    if (*msg_pp == '\0') {
         return NULL;
+    }
 
     tmp_pp = msg_pp;
     
-    while (1)
-    {
-        if (ret == pos)
+    while (1){
+        if (ret == pos) {
             return tmp_pp;
-        
-        if (*tmp_pp == '\0')
+        }
+        if (*tmp_pp == '\0') {
             break;
+        }
 
         dat0 = tmp_pp[0];
         dat1 = tmp_pp[1];
         tmp_pp++;
 
-        if (dat0 == '@')
-        {
+        if (dat0 == '@') {
             // New line
             ret++;
-        }
-        else if (jap_flag)
-        {
+        } else if (jap_flag) {
             euc2sjis(&dat0, &dat1);
 
             // '@' (shift-jis)
-            if (dat0 == 0x81 && dat1 == 0x97)
+            if (dat0 == 0x81 && dat1 == 0x97) {
                 ret++;
+            }
 
             tmp_pp++;
         }
@@ -337,23 +312,24 @@ u_char* SubtMsgDataPos(u_char *msg_pp, int jap_flag, int pos)
     return NULL;
 }
 
-void SubtTapPrintWake(u_char *tap_msg_pp, int lang, int lng, int nowp)
-{
+void SubtTapPrintWake(u_char *tap_msg_pp, int lang, int lng, int nowp) {
     int cntmax;
     int selpos;
 
-    if (nowp < 0)
+    if (nowp < 0) {
         return;
+    }
 
-    if (nowp >= lng)
+    if (nowp >= lng) {
         nowp = lng - 1;
+    }
 
-    if (tap_msg_pp == NULL)
+    if (tap_msg_pp == NULL) {
         return;
+    }
 
     cntmax = SubtMsgDataKaijyouCnt(tap_msg_pp, CHECK_LANG(lang));
-    if (cntmax >= 3)
-    {
+    if (cntmax >= 3) {
         cntmax = ((cntmax + 1) / 2 * nowp) / lng * 2;
         tap_msg_pp = SubtMsgDataPos(tap_msg_pp, CHECK_LANG(lang), cntmax);
     }
@@ -361,25 +337,24 @@ void SubtTapPrintWake(u_char *tap_msg_pp, int lang, int lng, int nowp)
     SubtTapPrint(tap_msg_pp, lang);
 }
 
-void SubtCtrlPrintBoxyWipe(JIMAKU_STR *jstr_pp, int line, int time, int lang, void *code_pp)
-{
+void SubtCtrlPrintBoxyWipe(JIMAKU_STR *jstr_pp, int line, int time, int lang, void *code_pp) {
     int         i;
     int         lang_f;
 
     void       *kanjiset_tmp_pp;
     JIMAKU_STR *jstr_tmp_pp = &jstr_pp[line];
 
-    for (i = 0; i < jstr_tmp_pp->size; i++)
-    {
+    for (i = 0; i < jstr_tmp_pp->size; i++) {
         if ((time >= jstr_tmp_pp->jimaku_dat_pp[i].starTime) &&
-            (time <  jstr_tmp_pp->jimaku_dat_pp[i].endTime))
-        {
+            (time <  jstr_tmp_pp->jimaku_dat_pp[i].endTime)) {
             SubtInit();
             
             kanjiset_tmp_pp = SubtKanjiSet(code_pp);
 
             lang_f = CHECK_LANG(lang);
-            if (lang_f) lang_f = 2;
+            if (lang_f) {
+                lang_f = 2;
+            }
             
             SubtClear();
             SubtMsgPrint(jstr_tmp_pp->jimaku_dat_pp[i].txtData[lang], 2048, 2122, lang_f, 0);

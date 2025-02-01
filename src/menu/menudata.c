@@ -37,8 +37,7 @@ int _BankChan1Stat;
 
 INCLUDE_ASM("menu/menudata", MenuDataGetIconSysHed);
 
-void MenuDataSndInit(void)
-{
+void MenuDataSndInit(void) {
     _BankChan1Req = 0;
     _BankChan1Stat = 0;
 
@@ -46,129 +45,111 @@ void MenuDataSndInit(void)
     TapCt(0x90, PR_CONCAT(0x3fff, 0x3fff), 0);
 }
 
-void MenuDataSndReq(int chanId, int req)
-{
+void MenuDataSndReq(int chanId, int req) {
     SNDTAP *sndtap_pp = &sndtap_menu[req];
 
     TapCt(0xf0, chanId, sndtap_pp->volume);
     TapCt(0xd0, chanId, sndtap_pp->prg + sndtap_pp->key * 256);
 }
 
-void MenuDataSndStop(int chanId)
-{
+void MenuDataSndStop(int chanId) {
     TapCt(0xe0, chanId, 0);
 }
 
-void MenuDataSndQuit(void)
-{
+void MenuDataSndQuit(void) {
     int i;
 
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < 3; i++) {
         TapCt(0x50 | i, 0, 0);
+    }
 }
 
-void MenuDataSndSetVol(int chanId, int req, int vol0)
-{
+void MenuDataSndSetVol(int chanId, int req, int vol0) {
     SNDTAP *sndtap_pp = &sndtap_menu[req];
 
     TapCt(0x130, chanId, sndtap_pp->volume * vol0 >> 8); /* Should be a division rather than a shift? */
 }
 
-MENU_SPU_ENUM MenuDataSndTrans(int bdId, int hdId, MENU_SPU_ENUM trId)
-{
+MENU_SPU_ENUM MenuDataSndTrans(int bdId, int hdId, MENU_SPU_ENUM trId) {
     TapCt(0x8030 | trId, (int)GetIntAdrsCurrent(bdId), (int)GetIntSizeCurrent(bdId));
-    TapCt(0x8040 | trId, (int)GetIntAdrsCurrent(hdId), (int)GetIntSizeCurrent(hdId));
-
+    TapCt(0x8040 | trId, (int)GetIntAdrsCurrent(hdId), (int)GetIntSizeCurrent(hdId)); 
     return trId;
 }
 
-int MenuDataSndTransCheck(void)
-{
+int MenuDataSndTransCheck(void) {
     return TapCt(0x8070, 0, 0);
 }
 
-void MenuDataSndReqChan(int chanId, int req, MENU_SPU_ENUM trId)
-{
+void MenuDataSndReqChan(int chanId, int req, MENU_SPU_ENUM trId) {
     SNDTAP *sndtap_pp = &sndtap_menu[req];
 
     TapCt(0xf0 | trId, chanId, sndtap_pp->volume);
     TapCt(0xd0 | trId, chanId, sndtap_pp->prg + sndtap_pp->key * 256);
 }
 
-void MenuDataSpuVolume(int vol)
-{
-    if (vol << 7 <= 0x3fff)
+void MenuDataSpuVolume(int vol) {
+    if ((vol * 128) <= 0x3fff) {
         vol = vol << 7;
-    else
+    } else {
         vol = 0x3fff;
+    }
 
-    TapCt(0x90, vol << 16 | vol, 0);
+    TapCt(0x90, PR_CONCAT(vol, vol), 0);
 }
 
-void MenuDataDiskVolume(u_int vol)
-{
+void MenuDataDiskVolume(u_int vol) {
     CdctrlWP2SetVolume(vol);
 }
 
-void MenuDataDiskSndReq(MENU_DISKSND_ENUM sndId)
-{
+void MenuDataDiskSndReq(MENU_DISKSND_ENUM sndId) {
     CdctrlWP2Set(&file_str_extra_file[sndId]);
 }
 
-int MenuDataDiskSndReady(void)
-{
+int MenuDataDiskSndReady(void) {
     return CdctrlWP2CheckBuffer();
 }
 
-void MenuDataDiskSndPlay()
-{
+void MenuDataDiskSndPlay() {
     CdctrlWP2Play();
 }
 
-void MenuDataDiskSndEnd()
-{
+void MenuDataDiskSndEnd() {
     CdctrlWp2FileEnd();
 }
 
-void menuDiskSndDebug(void *x)
-{
+void menuDiskSndDebug(void *x) {
     int sndId = MDISK_00;
 
-    while (1)
-    {
-    loop:
-        do
+    while (1) {
+        do {
             MtcWait(1);
-        while (!(pad[1].one & SCE_PADRdown));
+        } while (!(pad[1].one & SCE_PADRdown));
 
         MenuDataDiskSndReq(sndId);
 
-        do
+        do {
             MtcWait(1);
-        while (MenuDataDiskSndReady());
+        } while (MenuDataDiskSndReady());
 
         MenuDataDiskSndPlay();
         MenuDataDiskVolume(128);
 
-        do
+        do {
             MtcWait(1);
-        while (!(pad[1].one & SCE_PADRdown));
+        } while (!(pad[1].one & SCE_PADRdown));
 
         MenuDataDiskSndEnd();
         sndId++;
 
-        if (sndId < MDISK_MAX)
-            goto loop;
-
-        sndId = MDISK_00;
+        if (sndId >= MDISK_MAX) {
+            sndId = MDISK_00;
+        }
     }
 }
 
-int MenuVoiceBankSet(int bnkNo)
-{
+int MenuVoiceBankSet(int bnkNo) {
     _BankChan1Req = bnkNo;
     _BankChan1Stat = 0;
-
     return 0;
 }
 
@@ -199,93 +180,85 @@ void MenuVoicePlayVol(int chanId, int vsetIdx, int vol0)
 }
 #endif
 
-void MenuVoicePlay(int chanId, int vsetIdx)
-{
+void MenuVoicePlay(int chanId, int vsetIdx) {
     MenuVoicePlayVol(chanId, vsetIdx, 0x100);
 }
 
-void MenuVoiceStop(int chanId)
-{
+void MenuVoiceStop(int chanId) {
     TapCt(0xe0, chanId, 0);
 }
 
-void MenuVoiceSetVol(int chanId, int vsetIdx, int vol0)
-{
+void MenuVoiceSetVol(int chanId, int vsetIdx, int vol0) {
     SNDTAP *sndtap_pp = VoiceSet[vsetIdx].pTap;
 
     TapCt(0x130, chanId, (sndtap_pp->volume * vol0) >> 8);
 }
 
-void MenuMsgInit(void)
-{
+void MenuMsgInit(void) {
     SubtMenuCtrlInit(GetIntAdrsCurrent(INTNUM_SUBT_CODE));
     MENUSubtSetKanji(GetIntAdrsCurrent(INTNUM_SUBT_CODE));
 }
 
-void MenuMsgPrintSub(int id, int xp, int yp, int flg)
-{
+void MenuMsgPrintSub(int id, int xp, int yp, int flg) {
     SubtMenuCtrlPrint(mess_menu[id][flg], xp, yp, flg);
 }
 
-void MenuMsgPrintMc(int id, int xp, int yp, int flg)
-{
+void MenuMsgPrintMc(int id, int xp, int yp, int flg) {
     SubtMenuCtrlPrint(mess_mc[id][flg], xp, yp, flg);
 }
 
-char *MenuMsgGetMessageMc(int id, int flg)
-{
+char *MenuMsgGetMessageMc(int id, int flg) {
     return mess_mc[id][flg];
 }
 
-char *MenuMsgGetMessageSub(int id, int flg)
-{
+char *MenuMsgGetMessageSub(int id, int flg) {
     return mess_menu[id][flg];
 }
 
-int MenuRoundTim2Trans(TAP_ROUND_ENUM round)
-{
+int MenuRoundTim2Trans(TAP_ROUND_ENUM round) {
     RT2TRANS_STR *rt2trans_str_pp;
     int           i;
 
-    if (round < TRND_R4)
+    if (round < TRND_R4) {
         hat_change_enum = HCNG_AUTO;
-
-    if (hat_change_enum != HCNG_AUTO)
+    }
+    if (hat_change_enum != HCNG_AUTO) {
         round = hat_change_enum;
-
-    if (round >= TRND_MAX)
+    }
+    if (round >= TRND_MAX) {
         return 1;
+    }
 
     rt2trans_str_pp = &rt2trans_str[round];
-
-    for (i = 0; i < rt2trans_str_pp->num; i++)
+    for (i = 0; i < rt2trans_str_pp->num; i++) {
         Tim2Trans(GetIntAdrsCurrent(rt2trans_str_pp->data_pp[i]));
+    }
 
     return 0;
 }
 
-int MenuStageCl1Trans(int nStage, int nRound)
-{
-    if (nStage > 7u)
+int MenuStageCl1Trans(int nStage, int nRound) {
+    if (nStage > 7u) {
         return 1;
-
-    if (nRound > 3u)
+    }
+    if (nRound > 3u) {
         return 0;
+    }
 
     Tim2Trans(GetIntAdrsCurrent(ocl1_rndTbl[nRound][nStage]));
     return 0;
 }
 
-int MenuCoolCl1Trans(int nStage, int nPos, int nRound)
-{
-    if (nStage > 7u)
+int MenuCoolCl1Trans(int nStage, int nPos, int nRound) {
+    if (nStage > 7u) {
         return 1;
-
-    if (nRound > 3u)
+    }
+    if (nRound > 3u) {
         return 1;
-
-    if (nPos > 3u)
+    }
+    if (nPos > 3u) {
         return 1;
+    }
 
     Tim2Trans(GetIntAdrsCurrent(ocl1_stageTbl[nStage]->fno[nPos][nRound]));
     return 0;

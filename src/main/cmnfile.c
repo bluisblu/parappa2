@@ -114,83 +114,72 @@ extern char common_ipk_end[];
 /*     -> ???                   (ID: 95, offset ???)                   */
 /* =================================================================== */
 
-static CMN_FILE_STR* cmn_file_str_search(CMN_FILE_TYPE_ENUM type)
-{
+static CMN_FILE_STR* cmn_file_str_search(CMN_FILE_TYPE_ENUM type) {
     /* Load the common files array */
     CMN_FILE_STR *cfstr_pp = (CMN_FILE_STR*)common_ipk_start;
 
-    while (1)
-    {
-        if (cfstr_pp->ftype == type)
+    while (1) {
+        if (cfstr_pp->ftype == type) {
             return cfstr_pp;
+        }
 
-        /* Not found... null ptr! */
-        if (cfstr_pp->ftype == CMN_NONE)
+        /* Not found... */
+        if (cfstr_pp->ftype == CMN_NONE) {
             return NULL;
+        }
         
         /* Go through all categories until we find the one we want */
         cfstr_pp = (void*)cfstr_pp + cfstr_pp->f_size;
     }
 }
 
-int cmnfTim2Trans(void)
-{
+int cmnfTim2Trans(void) {
     int           i;
     CMN_FILE_STR *cfstr_pp;
 
     /* Get the VRAM file category */
     cfstr_pp = cmn_file_str_search(CMN_VRAM);
 
-    if (cfstr_pp == NULL)
+    if (cfstr_pp == NULL) {
         return 0;
+    }
 
     /* Transfer all the common textures to VRAM */
-    for (i = 0; i < cfstr_pp->fnum; i++)
-    {
+    for (i = 0; i < cfstr_pp->fnum; i++) {
         Tim2Trans((void*)cfstr_pp + cfstr_pp->adr[i]);
     }
 
     return 1;
 }
 
-void* cmnfGetFileAdrs(int num)
-{
+void* cmnfGetFileAdrs(int num) {
     /* Get the ONMEM file category */
     CMN_FILE_STR *cfstr_pp = cmn_file_str_search(CMN_ONMEM);
     
-    if (cfstr_pp != NULL)
-    {
-        if (num >= cfstr_pp->fnum)
-        {
-            printf("CMN FILE NUM OVER[%d]", num);
-            return NULL;
-        }
-        else
-        {
-            return (void*)cfstr_pp + cfstr_pp->adr[num];
-        }
+    if (cfstr_pp == NULL) {
+        return NULL;
     }
-    
-    return NULL;
+
+    if (num >= cfstr_pp->fnum) {
+        printf("CMN FILE NUM OVER[%d]", num);
+        return NULL;
+    }
+
+    return (void*)cfstr_pp + cfstr_pp->adr[num];
 }
 
-int cmnfGetFileSize(int num)
-{
+int cmnfGetFileSize(int num) {
     /* Get the ONMEM file category */
     CMN_FILE_STR *cfstr_pp = cmn_file_str_search(CMN_ONMEM);
     
-    if (cfstr_pp != NULL)
-    {
-        if (num >= cfstr_pp->fnum)
-        {
-            printf("CMN FILE NUM OVER[%d]", num);
-            return NULL;
-        }
-        else
-        {
-            return cfstr_pp->adr[num + 1] - cfstr_pp->adr[num];
-        }
+    if (cfstr_pp == NULL) {
+        return NULL;
+    }
+
+    if (num >= cfstr_pp->fnum) {
+        printf("CMN FILE NUM OVER[%d]", num);
+        return NULL;
     }
     
-    return 0;
+    return cfstr_pp->adr[num + 1] - cfstr_pp->adr[num];
 }

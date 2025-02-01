@@ -9,8 +9,7 @@ HOSI_OBJ *HOSIObj;
 extern TSREPPAD menuPadState[2][4];
 extern BGMSTATE TsBGMState;
 
-static int TsGetMenuPadIsRepeat(int no, int npad)
-{
+static int TsGetMenuPadIsRepeat(int no, int npad) {
     return (menuPadState[no][npad].state < 2) ^ 1;
 }
 
@@ -38,8 +37,7 @@ INCLUDE_ASM("menu/menusub", tsBGMONEflow);
 
 INCLUDE_ASM("menu/menusub", tsBGMONEPause);
 
-void TsBGMInit(void)
-{
+void TsBGMInit(void) {
     memset(&TsBGMState, 0, sizeof(TsBGMState));
 }
 
@@ -77,19 +75,17 @@ INCLUDE_ASM("menu/menusub", TSNumMov);
 
 INCLUDE_ASM("menu/menusub", TSNumRBack);
 
-static int TSLOOP(int no, int max)
-{
+static int TSLOOP(int no, int max) {
     return (no + max) % max;
 }
 
-static int TSLIMIT(int no, int min, int max)
-{
-    if (no < min)
+static int TSLIMIT(int no, int min, int max) {
+    if (no < min) {
         return min;
-
-    if (no >= max)
+    }
+    if (no >= max) {
         return max - 1;
-    
+    }
     return no;
 }
 
@@ -135,8 +131,7 @@ INCLUDE_ASM("menu/menusub", TsSetSaveData);
 
 INCLUDE_ASM("menu/menusub", TsRestoreSaveData);
 
-int DateChgInt(u_int n)
-{
+int DateChgInt(u_int n) {
     /* Convert BCD to decimal */
     return 
     (
@@ -153,14 +148,10 @@ INCLUDE_ASM("menu/menusub", TsMENU_SetMapScreen);
 
 INCLUDE_ASM("menu/menusub", TsCheckTimeMapChange);
 
-int TsAnimeWait_withKeySkip(u_int tpad, MN_SCENE *scene, int ltim, u_int bnk)
-{
-    if (bnk == -1)
-    {
+int TsAnimeWait_withKeySkip(u_int tpad, MN_SCENE *scene, int ltim, u_int bnk) {
+    if (bnk == -1) {
         return MNScene_isAnime(scene, ltim);
-    }
-    else
-    {
+    } else {
         return MNScene_isAnimeBank(scene, ltim, bnk);
     }
 }
@@ -353,8 +344,7 @@ INCLUDE_ASM("menu/menusub", _PkSubMsgPut);
 
 INCLUDE_ASM("menu/menusub", TsMenu_CleanVram);
 
-void TsMenu_CaptureVram(SPR_PKT pk, SPR_PRM *spr)
-{
+void TsMenu_CaptureVram(SPR_PKT pk, SPR_PRM *spr) {
     PkSprPkt_SetDrawEnv(pk, spr, DrawGetDrawEnvP(DNUM_VRAM2));
     PkSprPkt_SetTexVram(pk, spr, DrawGetDrawEnvP(DNUM_DRAW));
 
@@ -395,21 +385,21 @@ INCLUDE_ASM("menu/menusub", _TsPatSetPrm);
 
 INCLUDE_ASM("menu/menusub", TsPatPut);
 
-static void TsPatGetSize(PATPOS *ppos, int *x, int *y, int *w, int *h)
-{
+static void TsPatGetSize(PATPOS *ppos, int *x, int *y, int *w, int *h) {
     TSTEX_INF *ptex = &tblTex[ppos->texNo];
 
-    if (w != NULL)
+    if (w != NULL) {
         *w = ptex->w;
-
-    if (h != NULL)
+    }
+    if (h != NULL) {
         *h = ptex->h;
-    
-    if (x != NULL)
+    }
+    if (x != NULL) {
         *x = ppos->x + (ptex->w / 2);
-
-    if (y != NULL)
+    }
+    if (y != NULL) {
         *y = ppos->y + (ptex->h / 2);
+    }
 }
 
 INCLUDE_ASM("menu/menusub", TsPatPutRZoom);
@@ -418,18 +408,15 @@ INCLUDE_ASM("menu/menusub", TsPatPutMZoom);
 
 INCLUDE_ASM("menu/menusub", TsPatPutSwing);
 
-static void TsPatPutUneri(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy, int mx, int my, float Crx, float Drt)
-{
+static void TsPatPutUneri(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy, int mx, int my, float Crx, float Drt) {
     _TsPatSetPrm(pk, spr, ppos, ox, oy);
     TsSetPNTransSpr(pk, spr, mx, my, Crx, Drt);
 }
 
 INCLUDE_ASM("menu/menusub", TsCELBackInit);
 
-void TsCELBackEnd(void)
-{
-    if (HOSIObj != NULL)
-    {
+void TsCELBackEnd(void) {
+    if (HOSIObj != NULL) {
         free(HOSIObj);
         HOSIObj = NULL;
     }

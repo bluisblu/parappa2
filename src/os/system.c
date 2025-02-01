@@ -17,12 +17,10 @@ extern sceGsDrawEnv1 drawEnvSp;
 extern sceGsDrawEnv1 drawEnvZbuff;
 extern sceGsDrawEnv1 drawEnvEnd;
 
-int main()
-{
+int main() {
     mallocInit();
 
-    while (1)
-    {
+    while (1) {
         MtcInit();
         initSystem();
 
@@ -48,8 +46,7 @@ static u_char *iop_module[11] =
     "cdrom0:\\IRX\\TAPCTRL.IRX;1",
 };
 
-int SetIopModule(void)
-{
+int SetIopModule(void) {
     u_int i;
 
     sceSifInitRpc(0);
@@ -65,10 +62,8 @@ int SetIopModule(void)
     sceCdInit(0);
     sceCdMmode(SCECdDVD);
 
-    for (i = 0; i < PR_ARRAYSIZEU(iop_module); i++)
-    {
-        if (sceSifLoadModule(iop_module[i], 0, NULL) < 0)
-        {
+    for (i = 0; i < PR_ARRAYSIZEU(iop_module); i++) {
+        if (sceSifLoadModule(iop_module[i], 0, NULL) < 0) {
             printf("Can't load module [%s]\n", iop_module[i]);
             return 1;
         }
@@ -80,8 +75,7 @@ int SetIopModule(void)
 sceGsDBuffDc   DBufDc      = {};
 sceGsDrawEnv1 *drawEnvP[5] = {};
 
-static void firstClrFrameBuffer(void)
-{
+static void firstClrFrameBuffer(void) {
     CLEAR_VRAM_DMA vclr_dma;
 
     vclr_dma.dmatag.qwc = 15;
@@ -109,8 +103,7 @@ static void firstClrFrameBuffer(void)
     sceGsSyncPath(0, 0);
 }
 
-void initSystem(void)
-{
+void initSystem(void) {
     SetIopModule();
 
     sceDevVif0Reset();
@@ -139,17 +132,17 @@ void initSystem(void)
     drawEnvP[1] = &DBufDc.draw01;
 
     drawEnvSp = DBufDc.draw01;
-    drawEnvSp.frame1.FBP = ((SCREEN_WIDTH * 224 * 3) / 64) / 32;
+    drawEnvSp.frame1.FBP = 0xd2;
     drawEnvP[2] = &drawEnvSp;
     sceGsSetHalfOffset(&drawEnvSp, 2048, 2048, 0);
 
     drawEnvZbuff = DBufDc.draw01;
-    drawEnvZbuff.frame1.FBP = (SCREEN_WIDTH * SCREEN_HEIGHT) / 2048;
+    drawEnvZbuff.frame1.FBP = 0x8c;
     drawEnvP[3] = &drawEnvZbuff;
     sceGsSetHalfOffset(&drawEnvZbuff, 2048, 2048, 0);
 
     drawEnvEnd = DBufDc.draw01;
-    drawEnvEnd.frame1.FBP = (SCREEN_WIDTH * (512 * 2)) / 2048;
+    drawEnvEnd.frame1.FBP = 0x140;
     drawEnvP[4] = &drawEnvEnd;
     sceGsSetHalfOffset(&drawEnvEnd, 2048, 2048, 0);
 
@@ -157,13 +150,12 @@ void initSystem(void)
     CmnGifClear();
 
     SyoriLineInit(256);
-    while (sceGsSyncV(0) == 0);
+    while (!sceGsSyncV(0));
 
     usrMallcInit();
 }
 
-void exitSystem(void)
-{
+void exitSystem(void) {
     sceGsSyncPath(0, 0);
     GPadExit();
     sceCdInit(SCECdEXIT);
@@ -172,13 +164,11 @@ void exitSystem(void)
 
 PADD pad[2] = {};
 
-void SetOsFuncAddr(void* func_pp)
-{
+void SetOsFuncAddr(void* func_pp) {
     OsFuncAddr = func_pp;
 }
 
-void osFunc(void)
-{
+void osFunc(void) {
     int total_h_cnt;
 
     rand();
@@ -204,13 +194,10 @@ void osFunc(void)
     outbuf_idx ^= 1;
     CmnGifClear();
 
-    if (outbuf_idx)
-    {
+    if (outbuf_idx) {
         sceGsSetHalfOffset(&DBufDc.draw11, 2048, 2048, oddeven_idx ^ 1);
         sceGsSetHalfOffset2(&DBufDc.draw12, 2048, 2048, oddeven_idx ^ 1);
-    }
-    else
-    {
+    } else {
         sceGsSetHalfOffset(&DBufDc.draw01, 2048, 2048, oddeven_idx ^ 1);
         sceGsSetHalfOffset2(&DBufDc.draw02, 2048, 2048, oddeven_idx ^ 1);
     }
@@ -220,27 +207,25 @@ void osFunc(void)
     // wait for the GIF channel to be available
     while ( *D2_CHCR & D_CHCR_STR_M );
 
-    if (sceGsSyncPath(0, 0))
+    if (sceGsSyncPath(0, 0)) {
         printf("SyncPath timeout \n");
-
-    if (sceGsSwapDBuffDc(&DBufDc, outbuf_idx))
+    }
+    if (sceGsSwapDBuffDc(&DBufDc, outbuf_idx)) {
         printf("swap dma error\n");
+    }
 }
 
-void systemCtrlMain(void *xx)
-{
+void systemCtrlMain(void *xx) {
     MtcExec(mainStart, 1);
     SetOsFuncAddr(osFunc);
 
-    while (1)
-    {
-        (OsFuncAddr)();
+    while (1) {
+        OsFuncAddr();
         MtcWait(1);
     }
 }
 
-static int FullAllocAndFree(void)
-{
+static int FullAllocAndFree(void) {
     int stack_sizeX = _stack_size_addr;
     int endX = _end_addr;
 
@@ -250,8 +235,7 @@ static int FullAllocAndFree(void)
     return heap_size;
 }
 
-void mallocInit(void)
-{
+void mallocInit(void) {
     int size = FullAllocAndFree();
     scePrintf("HEAP SIZE[%08x]\n", size);
 }

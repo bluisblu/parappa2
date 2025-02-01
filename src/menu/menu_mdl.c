@@ -22,18 +22,15 @@ float D_00398F54;
 float D_00398F58;
 float D_00398F5C;
 
-void MNSceneMusicFitTimerClear(void)
-{
+void MNSceneMusicFitTimerClear(void) {
     AMusicFitTime = 0;
 }
 
-void MNSceneMusicFitTimerFrame(void)
-{
+void MNSceneMusicFitTimerFrame(void) {
     AMusicFitTime++;
 }
 
-int MNSceneGetMusicFitTimer(void)
-{
+int MNSceneGetMusicFitTimer(void) {
     return AMusicFitTime;
 }
 
@@ -41,33 +38,32 @@ INCLUDE_ASM("menu/menu_mdl", MNScene_Init);
 
 INCLUDE_ASM("menu/menu_mdl", MNScene_End);
 
-static void SetDrawEnv12(sceGsDrawEnv1 *pdenv)
-{
+static void SetDrawEnv12(sceGsDrawEnv1 *pdenv) {
     DRAWENV_TAG12 denvTag;
 
-    if (pdenv != NULL)
-    {
-        ((u_long*)&denvTag.giftag)[0] = SCE_GIF_SET_TAG(8, 1, 0, SCE_GS_PRIM_POINT, 0, 1);
-        ((u_long*)&denvTag.giftag)[1] = SCE_GIF_PACKED_AD;
-
-        denvTag.denv1 = *pdenv;
-
-        sceGsSyncPath(0, 0);
-        FlushCache(0);
-
-        sceGsPutDrawEnv(&denvTag.giftag);
-        sceGsSyncPath(0, 0);
-
-        denvTag.denv1.frame1addr    = SCE_GS_FRAME_2;
-        denvTag.denv1.zbuf1addr     = SCE_GS_ZBUF_2;
-        denvTag.denv1.xyoffset1addr = SCE_GS_XYOFFSET_2;
-        denvTag.denv1.scissor1addr  = SCE_GS_SCISSOR_2;
-        denvTag.denv1.test1addr     = SCE_GS_TEST_2;
-        FlushCache(0);
-
-        sceGsPutDrawEnv(&denvTag.giftag);
-        sceGsSyncPath(0, 0);
+    if (pdenv == NULL) {
+        return;
     }
+
+    ((u_long*)&denvTag.giftag)[0] = SCE_GIF_SET_TAG(8, 1, 0, SCE_GS_PRIM_POINT, 0, 1);
+    ((u_long*)&denvTag.giftag)[1] = SCE_GIF_PACKED_AD;
+    denvTag.denv1 = *pdenv;
+
+    sceGsSyncPath(0, 0);
+    FlushCache(0);
+
+    sceGsPutDrawEnv(&denvTag.giftag);
+    sceGsSyncPath(0, 0);
+
+    denvTag.denv1.frame1addr    = SCE_GS_FRAME_2;
+    denvTag.denv1.zbuf1addr     = SCE_GS_ZBUF_2;
+    denvTag.denv1.xyoffset1addr = SCE_GS_XYOFFSET_2;
+    denvTag.denv1.scissor1addr  = SCE_GS_SCISSOR_2;
+    denvTag.denv1.test1addr     = SCE_GS_TEST_2;
+    FlushCache(0);
+
+    sceGsPutDrawEnv(&denvTag.giftag);
+    sceGsSyncPath(0, 0);
 }
 
 INCLUDE_ASM("menu/menu_mdl", MNScene_Draw);
@@ -78,29 +74,26 @@ INCLUDE_ASM("menu/menu_mdl", MNScene_SetAnimete);
 
 INCLUDE_ASM("menu/menu_mdl", MNScene_StartAnime);
 
-void MNScene_ContinueAnime(MN_SCENE *pshdl, int no, MNANM_TBL *anime)
-{
+void MNScene_ContinueAnime(MN_SCENE *pshdl, int no, MNANM_TBL *anime) {
     if (anime == NULL)
     {
-        if (no < 11u)
-        {
+        if (no < 11u) {
             pshdl->cntani[no] = NULL;
         }
-    }
-    else
-    {
-        if (no < 0)
+    } else {
+        if (no < 0) {
             no = anime->aTimNo;
-        if (no > 9)
+        }
+        if (no > 9) {
             no = 0;
+        }
 
         pshdl->speed[no]  = anime->aSpeed;
         pshdl->cntani[no] = anime;
     }
 }
 
-void MNScene_StopAnime(MN_SCENE *pshdl,int no)
-{
+void MNScene_StopAnime(MN_SCENE *pshdl,int no) {
     MNScene_StartAnime(pshdl, no, NULL);
     MNScene_ContinueAnime(pshdl, no, NULL);
 }
@@ -111,60 +104,55 @@ INCLUDE_ASM("menu/menu_mdl", MNScene_CopyState);
 
 INCLUDE_ASM("menu/menu_mdl", MNScene_CopyStateMdl);
 
-void MNScene_SetAnimeSpeed(MN_SCENE *pshdl, int nAnime, int speed)
-{
-    if (nAnime >= 10)
+void MNScene_SetAnimeSpeed(MN_SCENE *pshdl, int nAnime, int speed) {
+    if (nAnime >= 10) {
         return;
+    }
 
     pshdl->speed[nAnime] = speed;
 }
 
-void MNScene_SetAnimeEnd(MN_SCENE *pshdl)
-{
+void MNScene_SetAnimeEnd(MN_SCENE *pshdl) {
     int        i;
     MNANM_TBL *panm;
 
-    for (i = 0; i < PR_ARRAYSIZE(pshdl->anime); i++)
-    {
+    for (i = 0; i < PR_ARRAYSIZE(pshdl->anime); i++) {
         panm = pshdl->anime[i];
 
-        if (panm == NULL)
+        if (panm == NULL) {
             continue;
+        }
 
-        if (panm->kind - 1 > 1u)
+        if (panm->kind - 1 > 1u) {
             pshdl->time[i] = panm->etime;
+        }
     }
 
     MNScene_SetAnimete(pshdl);
 }
 
-void MNScene_SetAnimeBankEnd(MN_SCENE *pshdl, u_int bnk)
-{
+void MNScene_SetAnimeBankEnd(MN_SCENE *pshdl, u_int bnk) {
     int        i;
     MNANM_TBL *panm;
 
-    if ((int)bnk >= 0)
-    {
+    if ((int)bnk >= 0) {
         panm = pshdl->anime[bnk];
 
-        if (panm != NULL)
-        {
-            if (panm->kind != 1 && panm->kind != 2)
+        if (panm != NULL) {
+            if (panm->kind != 1 && panm->kind != 2) {
                 pshdl->time[bnk] = panm->etime;
+            }
         }
-    }
-    else
-    {       
-        for (i = 0; i < 10; i++, bnk >>= 1)
-        {
-            if (bnk & 1)
-            {
-                panm = pshdl->anime[i];
+    } else {       
+        for (i = 0; i < 10; i++, bnk >>= 1) {
+            if (!(bnk & 1)) {
+                continue;
+            }
 
-                if (panm != NULL)
-                {
-                    if (panm->kind != 1 && panm->kind != 2)
-                        pshdl->time[i] = panm->etime;
+            panm = pshdl->anime[i];
+            if (panm != NULL) {
+                if (panm->kind != 1 && panm->kind != 2) {
+                    pshdl->time[i] = panm->etime;
                 }
             }
         }
@@ -177,43 +165,40 @@ INCLUDE_ASM("menu/menu_mdl", MNScene_isAnime);
 
 INCLUDE_ASM("menu/menu_mdl", MNScene_isAnimeBank);
 
-int MNScene_isSeniAnime(MN_SCENE *pshdl)
-{
+int MNScene_isSeniAnime(MN_SCENE *pshdl) {
     int      mn;
     MN_HMDL *mdl = pshdl->mdl;
 
-    for (mn = 0; mn < pshdl->nmdl; mn++, mdl++)
-    {
-        if (mdl->bABlend)
+    for (mn = 0; mn < pshdl->nmdl; mn++, mdl++) {
+        if (mdl->bABlend) {
             return 1;
+        }
     }
 
     return 0;
 }
 
-int MNScene_ModelDispSw(MN_SCENE *pshdl, int nmdl, int bsw)
-{
+int MNScene_ModelDispSw(MN_SCENE *pshdl, int nmdl, int bsw) {
     int      ret;
     MN_HMDL *mdl;
 
-    if (pshdl->nmdl <= nmdl)
+    if (pshdl->nmdl <= nmdl) {
         return 0;
+    }
     
     mdl = &pshdl->mdl[nmdl];
 
-    if (mdl->spm == NULL)
+    if (mdl->spm == NULL) {
         return 0;
+    }
 
     ret = mdl->dspSw;
     mdl->dspSw = bsw;
 
-    if (bsw != 0)
-    {
+    if (bsw != 0) {
         PrShowModel(mdl->spm, NULL);
         return ret;
-    }
-    else
-    {
+    } else {
         PrHideModel(mdl->spm);
         return ret;
     }
@@ -224,10 +209,8 @@ int MNScene_ModelDispSw(MN_SCENE *pshdl, int nmdl, int bsw)
        - v0 -> Output vector
        - v1 -> Input vector
 */
-static void _myVu0Length(float *v0, float *v1)
-{
-    asm
-    (
+static void _myVu0Length(float *v0, float *v1) {
+    asm volatile(
         "lqc2     vf04, 0x0(%1)      \n\t" /* Load v1(vf04) */
                                            /* vf04 = v1     */
 
@@ -246,20 +229,18 @@ static void _myVu0Length(float *v0, float *v1)
     : : "r"(v0), "r"(v1));
 }
 
-static void MnMoveMode_InitRoot(int movNo)
-{
+static void MnMoveMode_InitRoot(int movNo) {
     int      i;
 
     PRPROOT *prt;
     PRPOS   *ppos;
     float    flen;
 
-    prt  = &PRP_RootTbl[movNo & ~0x80];
+    prt  = &PRP_RootTbl[movNo & ~128];
     ppos = prt->ppos;
     flen = 0.0f;
 
-    for (i = 1; i < prt->npos; i++)
-    {
+    for (i = 1; i < prt->npos; i++) {
         float flen0;
         sceVu0FVECTOR v0;
         sceVu0FVECTOR v1;
@@ -284,17 +265,18 @@ static void MnMoveMode_InitRoot(int movNo)
 
     ppos->dist = 0.0f;
 
-    if (prt->npos >= 2)
+    if (prt->npos >= 2) {
         ppos->rly = ppos[1].rly;
-    else
+    } else {
         ppos->rly = 0.0f;
+    }
 
-    if (flen == 0.0f)
+    if (flen == 0.0f) {
         flen = 1.0f;
+    }
 
     flen = (1.0f / flen);
-    for (i = 1; i < prt->npos; i++)
-    {
+    for (i = 1; i < prt->npos; i++) {
         ppos[i].dist *= flen;
     }
 }

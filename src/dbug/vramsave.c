@@ -4,21 +4,18 @@
 extern /* static */ TIM2SETINFO tim2setinfo;
 extern sceGsStoreImage gs_simage;
 
-static u_int BekiDat(u_int size)
-{
+static u_int BekiDat(u_int size) {
     u_int mot = 2;
     u_int i;
     
-    for (i = 1; size > mot; i++)
-    {
-        mot = mot << 1;
+    for (i = 1; size > mot; i++) {
+        mot <<= 1;
     }
 
     return i;
 }
 
-void VramSave(u_char *fname, int wsize, int hsize, int id)
-{
+void VramSave(u_char *fname, int wsize, int hsize, int id) {
     int         fd;
     u_char      fname_tmp[64];
     u_long128  *dst1_pp;
@@ -28,8 +25,7 @@ void VramSave(u_char *fname, int wsize, int hsize, int id)
     printf("vram save [%s]\n", fname_tmp);
 
     fd = sceOpen(fname_tmp, SCE_TRUNC | SCE_CREAT | SCE_WRONLY);
-    if (fd < 0)
-    {
+    if (fd < 0) {
         printf("file open error!![%s]\n", fname_tmp);
         return;
     }
@@ -39,8 +35,7 @@ void VramSave(u_char *fname, int wsize, int hsize, int id)
     sceGsSetDefStoreImage(&gs_simage, (id * wsize * hsize) / 64, wsize / 64, 0, 0, 0, wsize, hsize);
     FlushCache(WRITEBACK_DCACHE);
     
-    if (sceGsExecStoreImage(&gs_simage, dst1_pp) < 0)
-    {
+    if (sceGsExecStoreImage(&gs_simage, dst1_pp) < 0) {
         printf("vramsave Timeout error!!\n");
         
         free(dst1_pp);
@@ -60,8 +55,7 @@ void VramSave(u_char *fname, int wsize, int hsize, int id)
     sceWrite(fd, &tim2setinfo, sizeof(tim2setinfo));
     sceLseek(fd, sizeof(tim2setinfo), 0);
 
-    for (i = 0; i < hsize; i++)
-    {
+    for (i = 0; i < hsize; i++) {
         sceWrite(fd, dst1_pp + (i * wsize) / 4, wsize * 4);
         sceWrite(fd, dst1_pp + (i * wsize) / 4, wsize * 4);
     }
@@ -70,8 +64,7 @@ void VramSave(u_char *fname, int wsize, int hsize, int id)
     sceClose(fd);
 }
 
-void VramSaveBMP(u_char *fname, int wsize, int hsize, int id)
-{
+void VramSaveBMP(u_char *fname, int wsize, int hsize, int id) {
     int fd;
     u_char fname_tmp[64];
     
@@ -81,15 +74,13 @@ void VramSaveBMP(u_char *fname, int wsize, int hsize, int id)
     u_char *moto_pp;
     u_char *imgtr_pp;
 
-    int i;
-    int j;
+    int i, j;
     
     sprintf(fname_tmp, "host:%s", fname);
     printf("vram save BMP [%s]\n", fname_tmp);
 
     fd = sceOpen(fname_tmp, SCE_TRUNC | SCE_CREAT | SCE_WRONLY);
-    if (fd < 0)
-    {
+    if (fd < 0) {
         printf("file open error!![%s]\n", fname_tmp);
         return;
     }
@@ -100,8 +91,7 @@ void VramSaveBMP(u_char *fname, int wsize, int hsize, int id)
     sceGsSetDefStoreImage(&gs_simage, (id * wsize * hsize) / 64, wsize / 64, 0, 0, 0, wsize, hsize);
     FlushCache(WRITEBACK_DCACHE);
 
-    if (sceGsExecStoreImage(&gs_simage, (u_long128*)dst1_pp) < 0)
-    {
+    if (sceGsExecStoreImage(&gs_simage, (u_long128*)dst1_pp) < 0) {
         printf("vramsave Timeout error!!\n");
 
         free(tr_pp);
@@ -133,12 +123,10 @@ void VramSaveBMP(u_char *fname, int wsize, int hsize, int id)
     img_pp  = BMP(tr_pp)->imageData;
     moto_pp = dst1_pp;
 
-    for (i = 0; i < hsize; i++)
-    {
+    for (i = 0; i < hsize; i++) {
         imgtr_pp = img_pp + (hsize - i - 1) * 3 * wsize;
 
-        for (j = 0; j < wsize; j++, moto_pp++, imgtr_pp += 3)
-        {
+        for (j = 0; j < wsize; j++, moto_pp++, imgtr_pp += 3) {
             imgtr_pp[2] = *moto_pp++;
             imgtr_pp[1] = *moto_pp++;
             imgtr_pp[0] = *moto_pp++;
@@ -153,8 +141,7 @@ void VramSaveBMP(u_char *fname, int wsize, int hsize, int id)
     sceClose(fd);
 }
 
-void VramSaveBMPDouble(u_char *fname, int wsize, int hsize, int id)
-{
+void VramSaveBMPDouble(u_char *fname, int wsize, int hsize, int id) {
     int    fd;
     u_char fname_tmp[64];
 
@@ -172,8 +159,7 @@ void VramSaveBMPDouble(u_char *fname, int wsize, int hsize, int id)
     printf("vram save BMP Double[%s]\n", fname_tmp);
 
     fd = sceOpen(fname_tmp, SCE_CREAT | SCE_TRUNC | SCE_WRONLY);
-    if (fd < 0)
-    {
+    if (fd < 0) {
         printf("file open error!![%s]\n", fname_tmp);
         return;
     }
@@ -185,9 +171,9 @@ void VramSaveBMPDouble(u_char *fname, int wsize, int hsize, int id)
     sceGsSetDefStoreImage(&gs_simage, (id * wsize * hsize) / 64, wsize / 64, 0, 0, 0, wsize, hsize);
     FlushCache(0);
 
-    if (sceGsExecStoreImage(&gs_simage, (u_long128*)dst1_pp) < 0)
-    {
+    if (sceGsExecStoreImage(&gs_simage, (u_long128*)dst1_pp) < 0) {
         printf("vramsave Timeout error!!\n");
+
         free(tr_pp);
         free(dst1_pp);
         free(dst2_pp);
@@ -200,9 +186,9 @@ void VramSaveBMPDouble(u_char *fname, int wsize, int hsize, int id)
     sceGsSetDefStoreImage(&gs_simage, ((id ^ 1) * wsize * hsize) / 64, wsize / 64, 0, 0, 0, wsize, hsize);
     FlushCache(0);
 
-    if (sceGsExecStoreImage(&gs_simage, (u_long128*)dst2_pp) < 0)
-    {
+    if (sceGsExecStoreImage(&gs_simage, (u_long128*)dst2_pp) < 0) {
         printf("vramsave Timeout error!!\n");
+
         free(tr_pp);
         free(dst1_pp);
         free(dst2_pp);
@@ -236,13 +222,11 @@ void VramSaveBMPDouble(u_char *fname, int wsize, int hsize, int id)
     img2_pp += wsize * 3;
     moto2_pp = dst2_pp;
 
-    for (i = 0; i < hsize; i++)
-    {
+    for (i = 0; i < hsize; i++) {
         imgtr_pp  = img_pp  + (hsize - i - 1) * (wsize * 3) * 2;
         imgtr2_pp = img2_pp + (hsize - i - 1) * (wsize * 3) * 2;
 
-        for (j = 0; j < wsize; j++, moto_pp++, moto2_pp++, imgtr_pp += 3, imgtr2_pp += 3)
-        {
+        for (j = 0; j < wsize; j++, moto_pp++, moto2_pp++, imgtr_pp += 3, imgtr2_pp += 3) {
             imgtr_pp[2] = *moto_pp++;
             imgtr_pp[1] = *moto_pp++;
             imgtr_pp[0] = *moto_pp++;
@@ -262,13 +246,11 @@ void VramSaveBMPDouble(u_char *fname, int wsize, int hsize, int id)
     sceClose(fd);
 }
 
-void VramTmpSave(u_char *save_pp, int wsize, int hsize, int id)
-{
+void VramTmpSave(u_char *save_pp, int wsize, int hsize, int id) {
     sceGsSetDefStoreImage(&gs_simage, (id * wsize * hsize) / 64, wsize / 64, 0, 0, 0, wsize, hsize);
     FlushCache(0);
 
-    if (sceGsExecStoreImage(&gs_simage, (u_long128*)save_pp) < 0)
-    {
+    if (sceGsExecStoreImage(&gs_simage, (u_long128*)save_pp) < 0) {
         printf("vramsave Timeout error!!\n");
         return;
     }
@@ -276,8 +258,7 @@ void VramTmpSave(u_char *save_pp, int wsize, int hsize, int id)
     sceGsSyncPath(0, 0);
 }
 
-void VramTmpSaveOutBMP(u_char *fname, int wsize, int hsize, int id, u_char *dst1_pp, u_char *dst2_pp)
-{
+void VramTmpSaveOutBMP(u_char *fname, int wsize, int hsize, int id, u_char *dst1_pp, u_char *dst2_pp) {
     int    fd;
     u_char fname_tmp[64];
 
@@ -287,15 +268,13 @@ void VramTmpSaveOutBMP(u_char *fname, int wsize, int hsize, int id, u_char *dst1
     u_char *moto_pp,  *moto2_pp;
     u_char *imgtr_pp, *imgtr2_pp;
 
-    int i;
-    int j;
+    int i, j;
 
     sprintf(fname_tmp, "host:%s", fname);
     printf("vram save BMP Double[%s]\n", fname_tmp);
 
     fd = sceOpen(fname_tmp, SCE_TRUNC | SCE_CREAT | SCE_WRONLY);
-    if (fd < 0)
-    {
+    if (fd < 0) {
         printf("file open error!![%s]\n", fname_tmp);
         return;
     }
@@ -327,13 +306,11 @@ void VramTmpSaveOutBMP(u_char *fname, int wsize, int hsize, int id, u_char *dst1
     moto_pp  = dst1_pp;
     moto2_pp = dst2_pp;
     
-    for (i = 0; i < hsize; i++)
-    {
+    for (i = 0; i < hsize; i++) {
         imgtr_pp  = img_pp  + (hsize - i - 1) * (wsize * 3) * 2;
         imgtr2_pp = img2_pp + (hsize - i - 1) * (wsize * 3) * 2;
 
-        for (j = 0; j < wsize; j++, moto_pp++, moto2_pp++, imgtr_pp += 3, imgtr2_pp += 3)
-        {
+        for (j = 0; j < wsize; j++, moto_pp++, moto2_pp++, imgtr_pp += 3, imgtr2_pp += 3) {
             imgtr_pp[2] = *moto_pp++;
             imgtr_pp[1] = *moto_pp++;
             imgtr_pp[0] = *moto_pp++;

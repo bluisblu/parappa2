@@ -8,15 +8,13 @@ static sceGifPacket gifPkSpr;
 
 static sceDmaChan *sprDmaC;
 
-void SprInit(void)
-{
+void SprInit(void) {
     sceGifPkInit(&gifPkSpr, sprPacket);
     sprDmaC = sceDmaGetChan(SCE_DMA_GIF);
     sprSetNum = 0;
 }
 
-void SprClear(void)
-{
+void SprClear(void) {
     u_long giftag[2] = { SCE_GIF_SET_TAG(0, 0, 0, 0, 0, 1), SCE_GIF_PACKED_AD };
 
     sceGifPkReset(&gifPkSpr);
@@ -32,8 +30,7 @@ void SprClear(void)
     sprSetNum = 0;
 }
 
-void SprPackSet(SPR_DAT *spr_pp)
-{
+void SprPackSet(SPR_DAT *spr_pp) {
     sceGifPkAddGsAD(&gifPkSpr, SCE_GS_TEX0_1, spr_pp->GsTex0);
     sceGifPkAddGsAD(&gifPkSpr, SCE_GS_TEX1_1, spr_pp->GsTex1);
 
@@ -47,8 +44,7 @@ void SprFlash(void)
 {
     u_long giftag[2] = { SCE_GIF_SET_TAG(0, 1, 0, 0, 0, 1), SCE_GIF_PACKED_AD };
 
-    if (sprSetNum != 0)
-    {
+    if (sprSetNum != 0) {
         sceGifPkCloseGifTag(&gifPkSpr);
         sceGifPkOpenGifTag(&gifPkSpr, *(u_long128*)giftag);
         sceGifPkCloseGifTag(&gifPkSpr);
@@ -62,13 +58,11 @@ void SprFlash(void)
     }
 }
 
-void SprSetColor(u_char r, u_char g, u_char b, u_char a)
-{
+void SprSetColor(u_char r, u_char g, u_char b, u_char a) {
     sceGifPkAddGsAD(&gifPkSpr, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(r, g, b, a, 0x3f800000));
 }
 
-void SprDatPrint(SPR_DAT *spr_pp)
-{
+void SprDatPrint(SPR_DAT *spr_pp) {
     printf("TBP0[%x] TBW[%x] PSM[%x] TW[%x] TH[%x] TCC[%x] \nTFX[%x] CBP[%x] CPSM[%x] CSM[%x] CSA[%x] CLD[%x]\n\n",
         PR_TEX0(spr_pp).TBP0, PR_TEX0(spr_pp).TBW, PR_TEX0(spr_pp).PSM,  PR_TEX0(spr_pp).TW,  PR_TEX0(spr_pp).TH,  PR_TEX0(spr_pp).TCC,
         PR_TEX0(spr_pp).TFX,  PR_TEX0(spr_pp).CBP, PR_TEX0(spr_pp).CPSM, PR_TEX0(spr_pp).CSM, PR_TEX0(spr_pp).CSA, PR_TEX0(spr_pp).CLD);
@@ -81,8 +75,7 @@ void SprDatPrint(SPR_DAT *spr_pp)
         PR_REGS(spr_pp).ta0,  PR_REGS(spr_pp).aem, PR_REGS(spr_pp).ta1,  PR_REGS(spr_pp).pabe, PR_REGS(spr_pp).fba);
 }
 
-void SprDisp(SPR_PRIM *prm_pp)
-{
+void SprDisp(SPR_PRIM *prm_pp) {
     sceGifPkAddGsAD(&gifPkSpr, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 0, 0, 1, 0, 0));
 
     sceGifPkAddGsAD(&gifPkSpr, SCE_GS_UV, SCE_GS_SET_UV((prm_pp->u + 1) << 4, (prm_pp->v + 1) << 4));
@@ -96,8 +89,7 @@ void SprDisp(SPR_PRIM *prm_pp)
     sprSetNum++;
 }
 
-void SprDispAlp(SPR_PRIM *prm_pp)
-{
+void SprDispAlp(SPR_PRIM *prm_pp) {
     sceGifPkAddGsAD(&gifPkSpr, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
 
     sceGifPkAddGsAD(&gifPkSpr, SCE_GS_UV, SCE_GS_SET_UV((prm_pp->u + 1) << 4, (prm_pp->v + 1) << 4));
@@ -111,36 +103,31 @@ void SprDispAlp(SPR_PRIM *prm_pp)
     sprSetNum++;
 }
 
-void SprDispZABnclr(void)
-{
+void SprDispZABnclr(void) {
     sceGifPkAddGsAD(&gifPkSpr, SCE_GS_TEST_1, SCE_GS_SET_TEST_1(1, 0, 0, 3, 0, 0, 1, SCE_GS_ZALWAYS));
 }
 
-void SprDispZBnclr(void)
-{
+void SprDispZBnclr(void) {
     sceGifPkAddGsAD(&gifPkSpr, SCE_GS_TEST_1, SCE_GS_SET_TEST_1(1, 0, 0, 1, 0, 0, 1, SCE_GS_ZALWAYS));
 }
 
-void SprDispZcheck(void)
-{
+void SprDispZcheck(void) {
     sceGifPkAddGsAD(&gifPkSpr, SCE_GS_TEST_1, SCE_GS_SET_TEST_1(0, 0, 0, 0, 0, 0, 1, SCE_GS_ZGEQUAL));
 }
 
-void SprDispAcheck(int flg)
-{
-    if (flg)
+void SprDispAcheck(int flg) {
+    if (flg) {
         sceGifPkAddGsAD(&gifPkSpr, SCE_GS_TEST_1, SCE_GS_SET_TEST_1(1, 6, 0, 0, 0, 0, 1, SCE_GS_ZALWAYS)); // GREATER ATST register
-    else
+    } else {
         sceGifPkAddGsAD(&gifPkSpr, SCE_GS_TEST_1, SCE_GS_SET_TEST_1(1, 3, 0, 0, 0, 0, 1, SCE_GS_ZALWAYS)); // LEQUAL ATST register
+    }
 }
 
-void SprDispAlphaSet(void)
-{
+void SprDispAlphaSet(void) {
     sceGifPkAddGsAD(&gifPkSpr, SCE_GS_ALPHA_1, SCE_GS_SET_ALPHA_1(0, 1, 0, 1, 0));
 }
 
-void SprBox(SPR_PRIM *prm_pp)
-{
+void SprBox(SPR_PRIM *prm_pp) {
     sceGifPkAddGsAD(&gifPkSpr, SCE_GS_TEST_1, SCE_GS_SET_TEST(1, 1, 0, 0, 0, 0, 1, 1));
     sceGifPkAddGsAD(&gifPkSpr, SCE_GS_ALPHA_1, SCE_GS_SET_ALPHA(1, 2, 0, 0, 0));
     sceGifPkAddGsAD(&gifPkSpr, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 0, 0, 1, 0, 0, 0, 0));
@@ -154,12 +141,10 @@ void SprBox(SPR_PRIM *prm_pp)
     sprSetNum++;
 }
 
-void SprWindow(u_int x, u_int y, u_int w, u_int h)
-{
+void SprWindow(u_int x, u_int y, u_int w, u_int h) {
     sceGifPkAddGsAD(&gifPkSpr, SCE_GS_SCISSOR_1, SCE_GS_SET_SCISSOR_1(x, (x + w) - 1, y, (y + h) - 1));
 }
 
-void SprWindowDf(void)
-{
+void SprWindowDf(void) {
     SprWindow(0, 0, 640, 224);
 }
