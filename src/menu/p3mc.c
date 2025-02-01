@@ -112,8 +112,6 @@ INCLUDE_ASM("menu/p3mc", _P3MC_ASC2SJIS);
 
 INCLUDE_ASM("menu/p3mc", _P3MC_UserName_ASC2SJIS);
 
-INCLUDE_RODATA("menu/p3mc", D_003961C0);
-
 INCLUDE_ASM("menu/p3mc", _P3MC_SetBrowsInfo);
 
 INCLUDE_ASM("menu/p3mc", _P3MC_mainfile_chk);
@@ -292,6 +290,12 @@ INCLUDE_ASM("menu/p3mc", P3MC_GetUserCheck);
 
 INCLUDE_ASM("menu/p3mc", P3MC_AddUser);
 
+INCLUDE_RODATA("menu/p3mc", D_00396420);
+
+INCLUDE_RODATA("menu/p3mc", D_00396448);
+
+INCLUDE_RODATA("menu/p3mc", D_00396470);
+
 INCLUDE_ASM("menu/p3mc", _P3MC_AddUserBroken);
 
 INCLUDE_ASM("menu/p3mc", P3MC_SortUser);
@@ -353,14 +357,6 @@ void P3MC_OpeningCheckEnd(void) {
 
     pUChkWork = NULL;
 }
-
-INCLUDE_RODATA("menu/p3mc", D_00396420);
-
-INCLUDE_RODATA("menu/p3mc", D_00396448);
-
-INCLUDE_RODATA("menu/p3mc", D_00396470);
-
-INCLUDE_RODATA("menu/p3mc", D_00396498);
 
 INCLUDE_ASM("menu/p3mc", P3MC_OpeningCheck);
 

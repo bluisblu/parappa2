@@ -2029,3 +2029,6 @@ strcpy                              = 0x00171aa0; // type:func
 
 // ee/gcc/src/newlib/libc/machine/r5900/strlen.S
 strlen                              = 0x00171bb4; // type:func
+
+// -- Temoporary symbols --
+D_003938F8                          = 0x003938f8; // type:s32
