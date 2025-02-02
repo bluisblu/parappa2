@@ -1957,6 +1957,8 @@ sceSifLoadModule                    = 0x00160a60; // type:func
 
 // libvu0.c
 sceVu0SubVector                     = 0x001618b0; // type:func
+sceVu0UnitMatrix                    = 0x001619a0; // type:func
+sceVu0RotMatrixY                    = 0x00161b90; // type:func
 
 // eecdvd.c
 sceCdSearchFile                     = 0x001629b0; // type:func
@@ -2030,5 +2032,5 @@ strcpy                              = 0x00171aa0; // type:func
 // ee/gcc/src/newlib/libc/machine/r5900/strlen.S
 strlen                              = 0x00171bb4; // type:func
 
-// -- Temoporary symbols --
+// -- Temporary symbols --
 D_003938F8                          = 0x003938f8; // type:s32

@@ -231,6 +231,9 @@ segments:
         - [0x299f38, lit4, main/effect]
         - [0x299f40, lit4] # main/mbar
 
+        - [0x299f4c, .lit4, menu/menu_mdl]
+        - [0x299f60, lit4] # menu/menusub
+
         # .sdata
         - [0x29a300, sdata]
         - [0x29a308, .sdata, dbug/vramsave]
@@ -284,7 +287,9 @@ segments:
         - { start: 0x29aa00, type: .sbss, vram: 0x00399aac, name: main/p3str }
         - { start: 0x29aa00, type: .sbss, vram: 0x00399abc, name: menu/menu }
 
-        - { start: 0x29aa00, type: sbss, vram: 0x00399ac4, name: unk } # menu/menu_mdl
+        - { start: 0x29aa00, type: .sbss, vram: 0x00399ac4, name: menu/menu_mdl }
+        - { start: 0x29aa00, type: sbss, vram: 0x00399ac8, name: unk0 } # menu/menusub
+
         #- { start: 0x29aa00, type: sbss, vram: 0x00399b94, name: prlib/render }
         #- { start: 0x29aa00, type: sbss, vram: 0x00399b98, name: unk2 } # prlib/microprogram.cpp
         - { start: 0x29aa00, type: sbss, vram: 0x00399bd0, name: gcc }

@@ -6,6 +6,17 @@
 #include <eetypes.h>
 #include <libgraph.h>
 
+typedef struct { // 0x3c
+    /* 0x00 */ int fn_mdl;
+    /* 0x04 */ u_short fn_anmm[10];
+    /* 0x18 */ u_short fn_anmp[18];
+} MN_MDLTBL;
+
+typedef struct { // 0x8
+    /* 0x0 */ MN_MDLTBL *pmtbl;
+    /* 0x4 */ int *pctbl;
+} MN_SCENETBL;
+
 typedef struct { // 0x4
     /* 0x0 */ u_short cflg;
     /* 0x2 */ u_short no;
