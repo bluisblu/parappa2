@@ -30,14 +30,14 @@ void PrWaitDmaFinish(u_int dmaChannel)
     }
     else
     {
-        *D_STAT = (1 << dmaChannel);
+        *D_STAT = PR_BIT(dmaChannel);
         if (chcr->STR & 1)
         {
             u_int pcr = *D_PCR;
             u_int pcrOld = pcr;
             
             pcr &= ~0x3ff;
-            pcr |= (1 << dmaChannel);
+            pcr |= PR_BIT(dmaChannel);
             *D_PCR = pcr;
             asm("sync.l");
 
@@ -48,7 +48,7 @@ void PrWaitDmaFinish(u_int dmaChannel)
             "    nop                    \n\t"
             );
 
-            *D_STAT = (1 << dmaChannel);
+            *D_STAT = PR_BIT(dmaChannel);
             *D_PCR = pcrOld;
         }
     }

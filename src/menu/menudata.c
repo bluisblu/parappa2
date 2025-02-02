@@ -9,16 +9,14 @@
 
 #include "iop_mdl/tapctrl_rpc.h"
 
-// unsure where to put at the moment
-typedef struct
-{
-    u_short bnkNo;
-    SNDTAP *pTap;
+// Unsure where to put at the moment
+typedef struct { // 0x8
+    /* 0x0 */ u_short bnkNo;
+    /* 0x4 */ SNDTAP *pTap;
 } VOICE_TBL;
 
-typedef struct
-{
-    int fno[4][4];
+typedef struct { // 0x40
+    /* 0x00 */ int fno[4][4];
 } MN_CRWCL1_TBL;
 
 /* data */

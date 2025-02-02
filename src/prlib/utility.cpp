@@ -10,5 +10,5 @@ int PrGetBitSize(u_int number)
         bit >>= 1;
     }
 
-    return i + ((1 << i) < number);
+    return i + (PR_BIT(i) < number);
 }
