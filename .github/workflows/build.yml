@@ -22,6 +22,14 @@ jobs:
         repository: polybiusproxy/p3_binaries
         token: ${{ secrets.BINARY_ACCESS_TOKEN }}
         path: iso
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Upgrade pip
+      run: python3 -m pip install --upgrade pip setuptools wheel
 
     - name: Decrypt ELF
       run: echo ${{ secrets.PROTO_ENCRYPTION_KEY }} | openssl enc -d -aes-256-cbc -pass stdin -pbkdf2 -in iso/SCPS_150.17.aes -out iso/SCPS_150.17
