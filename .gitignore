@@ -24,3 +24,5 @@ ctx.c
 ctx.c.m2c
 
 output/
+.vscode/launch.json
+.vscode/settings.json

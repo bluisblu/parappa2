@@ -26,59 +26,50 @@ static void _tsWorkEnd(TS_WORKMEM *emem) {
     }
 }
 
-#if 1
-INCLUDE_ASM("menu/pksprite", _tsWorkInit);
-/* static */ u_int* _tsWorkInit(TS_WORKMEM *emem, u_int *buf, u_int size);
-#else
-static u_int* _tsWorkInit(/* s0 16 */ TS_WORKMEM *emem, /* s2 18 */ u_int *buf, /* s1 17 */ u_int size)
-{
-    u_int *tmp;
-
+static u_int* _tsWorkInit(TS_WORKMEM *emem, u_int *buf, u_int size) {
     _tsWorkEnd(emem);
 
-    if (buf == NULL)
-    {
-        if (size != 0)
-            tmp = memalign(128, size * sizeof(u_long128));
-        else
-            tmp = NULL;
-
-        emem->top = tmp;
+    if (buf == NULL) {
+        size = (size / 16) * 16;
+        if (size != 0) {
+            buf = memalign(128, size);
+        }
+        
+        emem->top = buf;
         emem->size = size;
         emem->isAlloc = 1;
-    }
-    else
-    {
+    } else {
         emem->top = buf;
         emem->size = size;
         emem->isAlloc = 0;
     }
-
+    
     return emem->top;
 }
-#endif
 
 u_long128* TsInitUPacket(TsUSERPKT *pk, u_long128 *buf, u_int size) {
     u_int      top;
     TsUSERPKT *p;
-    u_int      b0, b1; /* Function matches, but we should be using these variables */
+    u_int      b0, b1;
 
     memset(pk, 0, sizeof(TsUSERPKT));
-
     p = pk;
-    top = (u_int)_tsWorkInit(&p->mem, (u_int*)buf, size);
 
+    top = (u_int)_tsWorkInit(&p->mem, (u_int*)buf, size);
     if (top == NULL) {
         return NULL;
-    } else {
-        p->size = size / 16;
-
-        p->pkt[0].PaketTop = top;
-        p->pkt[1].PaketTop = top;
-
-        p->btop = p->ptop = p->pkt[p->idx].PaketTop | 0x20000000;
-        return (u_long128*)top;
     }
+
+    p->size = size / 16;
+
+    p->pkt[0].PaketTop = top;
+    p->pkt[1].PaketTop = top;
+
+    b0 = b1 = p->pkt[p->idx].PaketTop | 0x20000000;
+
+    p->ptop = b0;
+    p->btop = b1;
+    return (u_long128*)top;
 }
 
 void TsEndUPacket(TsUSERPKT *pk) {
