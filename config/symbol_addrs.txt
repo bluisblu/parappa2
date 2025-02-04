@@ -1995,6 +1995,9 @@ __floatdisf                         = 0x00169a20; // type:func
 __udivdi3                           = 0x0016a1c8; // type:func
 __umoddi3                           = 0x0016a798; // type:func
 
+// ee/gcc/src/gcc/cp/new2.cc
+__builtin_delete                    = 0x0016dde8; // type:func
+
 // ee/gcc/src/nwelib/libc/stdlib/malign.c
 memalign                            = 0x0016f7e8; // type:func
 

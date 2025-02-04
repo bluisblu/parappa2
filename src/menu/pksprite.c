@@ -65,7 +65,7 @@ u_long128* TsInitUPacket(TsUSERPKT *pk, u_long128 *buf, u_int size) {
     p->pkt[0].PaketTop = top;
     p->pkt[1].PaketTop = top;
 
-    b0 = b1 = p->pkt[p->idx].PaketTop | 0x20000000;
+    b0 = b1 = PR_UNCACHED(p->pkt[p->idx].PaketTop);
 
     p->ptop = b0;
     p->btop = b1;

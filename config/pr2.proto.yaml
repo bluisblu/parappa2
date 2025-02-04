@@ -131,7 +131,7 @@ segments:
         - [0x52270, asm, prlib/mendererdata]
           # - [0x52d78, asm, nalib/navector] # Header
         - [0x52e20, asm, prlib/wave]
-        - [0x533f0, asm, prlib/dmaqueue]
+        - [0x533f0, cpp, prlib/dmaqueue]
         - [0x53750, cpp, prlib/utility]
         - [0x53790, cpp, prlib/tim2]
         - [0x54840, asm, prlib/animation]

@@ -34,8 +34,6 @@ extern unsigned char RBuff[N + F - 1]; /* Ring buffer for INT decompression */
 #define lzss_read()   *(fp_r)++;
 #define lzss_write(x) *(fp_w)++ = (x);
 
-#define UNCACHED(addr) (u_char*)(((u_int)addr) | 0x20000000)
-
 u_int PackIntGetDecodeSize(u_char *fp_r) {
     return *(u_int*)fp_r;
 }
@@ -55,7 +53,7 @@ int PackIntDecode(u_char *fp_r, u_char *fp_w) {
     asm("sync.l");
 
     moto_size = *(u_int*)fp_r;
-    fp_w = UNCACHED(fp_w);
+    fp_w = (u_char*)PR_UNCACHED(fp_w);
     fp_w_end = fp_w + moto_size;
 
     fp_r += 8;
@@ -110,7 +108,7 @@ int PackIntDecodeWait(u_char *fp_r, u_char *fp_w, int wait_hline) {
     asm("sync.l");
 
     moto_size = *(u_int*)fp_r;
-    fp_w = UNCACHED(fp_w);
+    fp_w = (u_char*)PR_UNCACHED(fp_w);
     fp_w_end = fp_w + moto_size;
 
     fp_r += 8;

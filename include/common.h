@@ -52,4 +52,7 @@ typedef float f32;
 
 #define PR_ALIGNED(x) __attribute__((aligned(x)))
 
+#define PR_UNCACHED(addr)      ((u_int)(addr) | 0x20000000)
+#define PR_UNCACHEDACCEL(addr) ((u_int)(addr) | 0x30000000)
+
 #endif /* COMMON_H */
