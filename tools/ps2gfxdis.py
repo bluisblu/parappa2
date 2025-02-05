@@ -161,6 +161,12 @@ def disassemble_tex1(data, name):
 
     return format_macro(name, LCM, MXL, MMAG, MMIN, MTBA, L, K)
 
+def disassemble_texa(data, name):
+    TA0 = (data >> 0 ) & 0xff
+    AEM = (data >> 15) & 0b1
+    TA1 = (data >> 32) & 0xff
+    return format_macro(name, TA0, AEM, TA1)
+
 def disassemble_alpha(data, name):
     A   = (data >> 0 ) & 0b11
     B   = (data >> 2 ) & 0b11
@@ -213,7 +219,7 @@ DISASSEMBLY_FUNCTIONS = {
     'MIPTBP2_2':  lambda data: disassemble_null(data, 'MIPTBP2_2'),
     'CLAMP_1':    lambda data: disassemble_null(data, 'CLAMP_1'),
     'CLAMP_2':    lambda data: disassemble_null(data, 'CLAMP_2'),
-    'TEXA':       lambda data: disassemble_null(data, 'TEXA'),
+    'TEXA':       lambda data: disassemble_texa(data, 'TEXA'),
     'FOGCOL':     lambda data: disassemble_null(data, 'FOGCOL'),
     'TEXFLUSH':   lambda data: disassemble_null(data, 'TEXFLUSH'),
 
@@ -261,10 +267,10 @@ DISASSEMBLY_FUNCTIONS = {
 }
 
 def disassemble_command(register_name, hex_data):
-    if register_name not in REVERSE_REGISTERS:
+    if register_name not in DISASSEMBLY_FUNCTIONS:
         return f"Unknown register name: {register_name}"
 
-    register_code = REVERSE_REGISTERS[register_name]
+    # register_code = REVERSE_REGISTERS[register_name]
 
     try:
         data = parse_hex(hex_data)
