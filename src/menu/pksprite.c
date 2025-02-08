@@ -162,41 +162,302 @@ void TsDrawUPacket(/* s1 17 */ TsUSERPKT *up)
 }
 #endif
 
-INCLUDE_ASM("menu/pksprite", PkTEX0_Add);
+void PkTEX0_Add(SPR_PKT pkt, u_long texreg) {
+    qword *pk = (qword*)*pkt;
 
-INCLUDE_ASM("menu/pksprite", PkTEX1_Add);
+    ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, 0, 1);
+    ((u_long*)*pk)[1] = SCE_GIF_PACKED_AD;
+    ((u_long*)*pk)[2] = texreg;
+    ((u_long*)*pk)[3] = SCE_GS_TEX0_1;
 
-INCLUDE_ASM("menu/pksprite", PkCLAMP_Add);
+    *pkt = (u_long128*)pk + 2;
+}
 
-INCLUDE_ASM("menu/pksprite", PkALPHA_Add);
+void PkTEX1_Add(SPR_PKT pkt, u_long texreg) {
+    qword *pk = (qword*)*pkt;
 
-INCLUDE_ASM("menu/pksprite", PkTEST_Add);
+    ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, 0, 1);
+    ((u_long*)*pk)[1] = SCE_GIF_PACKED_AD;
+    ((u_long*)*pk)[2] = texreg;
+    ((u_long*)*pk)[3] = SCE_GS_TEX1_1;
 
-INCLUDE_ASM("menu/pksprite", PkSCISSOR_Add);
+    *pkt = (u_long128*)pk + 2;
+}
 
-INCLUDE_ASM("menu/pksprite", PkDefSCISSOR_Add);
+void PkCLAMP_Add(SPR_PKT pkt, u_long texrp) {
+    qword *pk = (qword*)*pkt;
 
-INCLUDE_ASM("menu/pksprite", PkOFFSET_Add);
+    ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, 0, 1);
+    ((u_long*)*pk)[1] = SCE_GIF_PACKED_AD;
+    ((u_long*)*pk)[2] = texrp;
+    ((u_long*)*pk)[3] = SCE_GS_CLAMP_1;
 
-INCLUDE_ASM("menu/pksprite", PkPABE_Add);
+    *pkt = (u_long128*)pk + 2;
+}
 
-INCLUDE_ASM("menu/pksprite", PkFBA_Add);
+void PkALPHA_Add(SPR_PKT pkt, u_long alpreg) {
+    qword *pk = (qword*)*pkt;
 
-INCLUDE_ASM("menu/pksprite", PkCCLAMP_Add);
+    ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, 0, 1);
+    ((u_long*)*pk)[1] = SCE_GIF_PACKED_AD;
+    ((u_long*)*pk)[2] = alpreg;
+    ((u_long*)*pk)[3] = SCE_GS_ALPHA_1;
 
-INCLUDE_ASM("menu/pksprite", PkDefReg_Add);
+    *pkt = (u_long128*)pk + 2;
+}
 
-INCLUDE_ASM("menu/pksprite", PkTEX0_SetAdd);
+void PkTEST_Add(SPR_PKT pkt, u_long testsw) {
+    qword *pk = (qword*)*pkt;
 
-INCLUDE_ASM("menu/pksprite", GetDToneColor);
+    ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, 0, 1);
+    ((u_long*)*pk)[1] = SCE_GIF_PACKED_AD;
+    ((u_long*)*pk)[2] = testsw;
+    ((u_long*)*pk)[3] = SCE_GS_TEST_1;
 
+    *pkt = (u_long128*)pk + 2;
+}
+
+void PkSCISSOR_Add(SPR_PKT pkt, short x, short y, short w, short h) {
+    qword *pk = (qword*)*pkt;
+
+    ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, 0, 1);
+    ((u_long*)*pk)[1] = SCE_GIF_PACKED_AD;
+
+    ((short*)*pk)[8]  = x;
+    ((short*)*pk)[9]  = x + w - 1;
+    ((short*)*pk)[10] = y;
+    ((short*)*pk)[11] = y + h - 1;
+
+    ((u_long*)*pk)[3] = SCE_GS_SCISSOR_1;
+
+    *pkt = (u_long128*)pk + 2;
+}
+
+void PkDefSCISSOR_Add(SPR_PKT pkt) {
+    qword *pk = (qword*)*pkt;
+
+    ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, 0, 1);
+    ((u_long*)*pk)[1] = SCE_GIF_PACKED_AD;
+    ((u_long*)*pk)[2] = *(u_long*)&_PkDefSCISSOR;
+    ((u_long*)*pk)[3] = SCE_GS_SCISSOR_1;
+
+    *pkt = (u_long128*)pk + 2;
+}
+
+void PkOFFSET_Add(SPR_PKT pkt, int x, int y) {
+    qword *pk = (qword*)*pkt;
+
+    ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, 0, 1);
+    ((u_long*)*pk)[1] = SCE_GIF_PACKED_AD;
+
+    ((short*)*pk)[8]  = x;
+    ((short*)*pk)[10] = y;
+
+    ((u_long*)*pk)[3] = SCE_GS_XYOFFSET_1;
+
+    *pkt = (u_long128*)pk + 2;
+}
+
+void PkPABE_Add(SPR_PKT pkt, u_int flg) {
+    qword *pk = (qword*)*pkt;
+
+    ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, 0, 1);
+    ((u_long*)*pk)[1] = SCE_GIF_PACKED_AD;
+    ((u_long*)*pk)[2] = flg;
+    ((u_long*)*pk)[3] = SCE_GS_PABE;
+
+    *pkt = (u_long128*)pk + 2;
+}
+
+void PkFBA_Add(SPR_PKT pkt, u_int flg) {
+    qword *pk = (qword*)*pkt;
+
+    ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, 0, 1);
+    ((u_long*)*pk)[1] = SCE_GIF_PACKED_AD;
+    ((u_long*)*pk)[2] = flg;
+    ((u_long*)*pk)[3] = SCE_GS_FBA_1;
+
+    *pkt = (u_long128*)pk + 2;
+}
+
+void PkCCLAMP_Add(SPR_PKT pkt, u_int flg) {
+    qword *pk = (qword*)*pkt;
+
+    ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, 0, 1);
+    ((u_long*)*pk)[1] = SCE_GIF_PACKED_AD;
+    ((u_long*)*pk)[2] = flg;
+    ((u_long*)*pk)[3] = SCE_GS_COLCLAMP;
+
+    *pkt = (u_long128*)pk + 2;
+}
+
+static void PkDefReg_Add(SPR_PKT pkt) {
+    qword *pk = (qword*)*pkt;
+
+    ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, 0, 2);
+    ((u_long*)*pk)[1] = 0 |
+        SCE_GIF_PACKED_AD << (0 * 4) |
+        SCE_GIF_PACKED_AD << (1 * 4);
+
+    ((u_long*)*pk)[3] = SCE_GS_TEXFLUSH;
+
+    ((u_long*)*pk)[4] = SCE_GS_SET_TEXA(0, 1, 128);
+    ((u_long*)*pk)[5] = SCE_GS_TEXA;
+
+    *pkt = (u_long128*)pk + 3;
+}
+
+void PkTEX0_SetAdd(SPR_PKT pkt, int vram, int w, int h, int isLinear) {
+    qword *pk;
+    int    n;
+    int    tw, th;
+
+    pk = (qword*)*pkt;
+
+    ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, SCE_GIF_PACKED, 3);
+    ((u_long*)*pk)[1] = 0 |
+        SCE_GIF_PACKED_AD << (0 * 4) |
+        SCE_GIF_PACKED_AD << (1 * 4) |
+        SCE_GIF_PACKED_AD << (2 * 4);
+
+    ((u_long*)*pk)[3] = SCE_GS_TEXFLUSH;
+
+    th = 0;
+    tw = 0;
+
+    for (n = 1; n < w; n <<= 1) {
+        tw++;
+    }
+    for (n = 1; n < h; n <<= 1) {
+        th++;
+    }
+
+    if (tw == 0) {
+        tw = 1;
+    }
+    if (th == 0) {
+        th = 1;
+    }
+
+    if (isLinear) {
+        ((u_long*)*pk)[4] = SCE_GS_SET_TEX1_1(0, 0, 1, 1, 0, 0, 0);
+    } else {
+        ((u_long*)*pk)[4] = SCE_GS_SET_TEX1_1(0, 0, 0, 0, 0, 0, 0);
+    }
+    
+    ((u_long*)*pk)[5] = SCE_GS_TEX1_1;
+
+    /* Macros to set (a portion of) the TEX0 register as two words */
+    #define GS_SET_TEX0_W0(tbp, tbw, psm, tw, th) \
+        ((tbp)        | ((tbw) << 14) | \
+        ((psm) << 20) | ((tw)  << 26) | \
+        ((th)  << 30))
+    #define GS_SET_TEX0_W1(th, tcc) \
+        (((th) >> 2)  | ((tcc) << 2)) /* Set last two bits of TH, and TCC */
+
+    ((u_int*)*pk)[12] = GS_SET_TEX0_W0(vram, (w + 63) / 64, 0, tw, th);
+    ((u_int*)*pk)[13] = GS_SET_TEX0_W1(th, 1);
+    ((u_long*)*pk)[7] = SCE_GS_TEX0_1;
+
+    *pkt = (u_long128*)pk + 4;
+
+    #undef GS_SET_TEX0_W0
+    #undef GS_SET_TEX0_W1
+}
+
+u_int GetDToneColor(u_int sbgr, u_int dbgr, int ton) {
+    u_char *pd, *ps;
+    int     sc, dc;
+    int     r, g, b, a;
+    u_int   col;
+
+    ps = (u_char*)&sbgr;
+    pd = (u_char*)&dbgr;
+
+    dc = pd[0]; sc = ps[0];
+    r = sc + (((dc - sc) * ton) >> 8);
+    
+    dc = pd[1]; sc = ps[1];
+    g = sc + (((dc - sc) * ton) >> 8);
+
+    dc = pd[2]; sc = ps[2];
+    b = sc + (((dc - sc) * ton) >> 8);
+
+    dc = pd[3]; sc = ps[3];
+    a = sc + (((dc - sc) * ton) >> 8);
+
+    asm volatile(
+        "pcpyld  $2, %4, %3 \n\t"
+        "pcpyld  $4, %2, %1 \n\t"
+        "ppacw   $2, $2, $4 \n\t"
+        "li      $8, 0xff   \n\t"
+        "dsll32  $8, 0      \n\t"
+        "ori     $8, 0xff   \n\t"
+        "pcpyld  $8, $8, $8 \n\t"
+        "pmaxw   $2, $2, $0 \n\t"
+        "pminw   $2, $2, $8 \n\t"
+        "ppach   $2, $0, $2 \n\t"
+        "ppacb   %0, $0, $2 \n\t"
+    : "=r"(col) : "r"(r), "r"(g), "r"(b), "r"(a)
+    );
+
+    return col;
+}
+
+#ifndef NON_MATCHING
 INCLUDE_ASM("menu/pksprite", GetToneColorA);
+#else
+u_int GetToneColorA(/* 0x0(sp) */ u_int abgr, /* a1 5 */ int tona, /* a2 6 */ int tonb, /* a3 7 */ int tong, /* t0 8 */ int tonr) {
+    u_char *pa;
+    /* a0 4 */ u_int r;
+    /* t1 9 */ u_int g;
+    /* v1 3 */ u_int b;
+    /* v0 2 */ u_int a;
+    u_int col;
+
+    pa = (u_char*)&abgr;
+
+    r = pa[0] * tonr;
+    g = pa[1] * tong;
+    b = pa[2] * tonb;
+    a = pa[3] * tona;
+
+    r >>= 4;
+    g >>= 4;
+    b >>= 4;
+    a >>= 4;
+
+    asm volatile(
+        "pcpyld  $2, %4, %3 \n\t"
+        "pcpyld  $4, %2, %1 \n\t"
+        "ppacw   $2, $2, $4 \n\t"
+        "li      $8, 0xff   \n\t"
+        "dsll32  $8, 0      \n\t"
+        "ori     $8, 0xff   \n\t"
+        "pcpyld  $8, $8, $8 \n\t"
+        "pmaxw   $2, $2, $0 \n\t"
+        "pminw   $2, $2, $8 \n\t"
+        "ppach   $2, $0, $2 \n\t"
+        "ppacb   %0, $0, $2 \n\t"
+    : "=r"(col) : "r"(r), "r"(g), "r"(b), "r"(a)
+    );
+
+    return col;
+}
+#endif
 
 INCLUDE_ASM("menu/pksprite", GetToneColorH);
 
-INCLUDE_ASM("menu/pksprite", SetSprDefOfsXY);
+void SetSprDefOfsXY(SPR_PRM *spr) {
+    spr->ofsx = 2048.0f - _PkScrW * 0.5f;
+    spr->ofsy = 2048.0f - _PkScrH * 0.5f;
+}
 
-INCLUDE_ASM("menu/pksprite", SetSprScreenXYWH);
+void SetSprScreenXYWH(SPR_PRM *spr) {
+    spr->sw = _PkScrW;
+    spr->sh = _PkScrH;
+    spr->px = spr->py = 0;
+}
 
 INCLUDE_ASM("menu/pksprite", PkSprPkt_SetDrawEnv);
 
@@ -821,46 +1082,70 @@ void PkFTMesh_Add(SPR_PKT pk, SPR_PRM *spr, PKMESH *mesh) {
     }
 }
 
-#if 1
-INCLUDE_ASM("menu/pksprite", PkMesh_SetHLinOfs);
-#else
-void PkMesh_SetHLinOfs(/* v1 3 */ PKMESH *mesh, /* a3 7 */ int no, /* f12 50 */ float x, /* f13 51 */ float y)
-{
-    /* a0 4 */ PKMSPT *pt;
-    /* v1 3 */ int i;
+void PkMesh_SetHLinOfs(PKMESH *mesh, int no, float x, float y) {
+    PKMSPT *pt;
+    int     i;
 
-    if (mesh->mh >= no)
-    {
-        i  = mesh->mw + 1;
-        pt = &mesh->pmspt[i * no];
-
-        /* For loop or while loop? */
-        #if 0
-        for (i; i > 0; i--)
-        {
-            pt->ofsx = x;
-            pt->ofsy = y;
-            pt++;
-        }
-        #else
-        if (i > 0)
-        {
-            while (i != 0)
-            {
-                pt->ofsx = x;
-                pt->ofsy = y;
-
-                pt++;
-                i--;
-            }
-        }
-        #endif
+    if (mesh->mh < no) {
+        return;
+    }
+    
+    pt = &mesh->pmspt[(mesh->mw + 1) * no];
+    for (i = 0; i < mesh->mw + 1; i++, pt++) {
+        pt->ofsx = x;
+        pt->ofsy = y;
     }
 }
-#endif
 
-INCLUDE_ASM("menu/pksprite", PkMesh_SetVLinOfs);
+void PkMesh_SetVLinOfs(PKMESH *mesh, int no, float x, float y) {
+    PKMSPT *pt;
+    int     i;
 
-INCLUDE_ASM("menu/pksprite", PkMesh_SetHLinOfsLRX);
+    if (mesh->mw < no) {
+        return;
+    }
 
-INCLUDE_ASM("menu/pksprite", PkMesh_SetVLinOfsUDY);
+    pt = &mesh->pmspt[no];
+    for (i = 0; i < mesh->mh + 1; i++, pt += (mesh->mw + 1)) {
+        pt->ofsx = x;
+        pt->ofsy = y;
+    }
+}
+
+void PkMesh_SetHLinOfsLRX(PKMESH *mesh, int no, float lofsx, float rofsx) {
+    PKMSPT *pt;
+    int     i;
+    float   x, dx;
+
+    x  = lofsx;
+    dx = (rofsx - lofsx) / mesh->mw;
+
+    if (mesh->mh < no) {
+        return;
+    }
+
+    pt = &mesh->pmspt[(mesh->mw + 1) * no];
+    for (i = 0; i < mesh->mw + 1; i++, pt++) {
+        pt->ofsx = x;
+        x += dx;
+    }
+}
+
+void PkMesh_SetVLinOfsUDY(PKMESH *mesh, int no, float uofsy, float dofsy) {
+    PKMSPT *pt;
+    int     i;
+    float   y, dy;
+
+    y  = uofsy;
+    dy = (uofsy - dofsy) / mesh->mh;
+
+    if (mesh->mw < no) {
+        return;
+    }
+
+    pt = &mesh->pmspt[no];
+    for (i = 0; i < mesh->mh + 1; i++, pt += (mesh->mw + 1)) {
+        pt->ofsy = y;
+        y += dy;
+    }
+}
