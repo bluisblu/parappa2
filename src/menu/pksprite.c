@@ -1,6 +1,7 @@
 #include "menu/pksprite.h"
 
 #include <eekernel.h>
+#include <libgraph.h>
 
 #include <stdio.h>
 #include <malloc.h>
@@ -459,9 +460,64 @@ void SetSprScreenXYWH(SPR_PRM *spr) {
     spr->px = spr->py = 0;
 }
 
-INCLUDE_ASM("menu/pksprite", PkSprPkt_SetDrawEnv);
+void PkSprPkt_SetDrawEnv(SPR_PKT pkt, SPR_PRM *spr, sceGsDrawEnv1 *pdenv) {
+    qword *pk;
 
+    if (pdenv == NULL) {
+        return;
+    }
+
+    pk = (qword*)*pkt;
+
+    ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, SCE_GIF_PACKED, 3);
+    ((u_long*)*pk)[1] = 0 |
+        SCE_GIF_PACKED_AD << (0 * 4) |
+        SCE_GIF_PACKED_AD << (1 * 4) |
+        SCE_GIF_PACKED_AD << (2 * 4);
+
+    ((u_long*)*pk)[3] = SCE_GS_TEXFLUSH;
+
+    ((u_long*)*pk)[4] = *(u_long*)&pdenv->frame1;
+    ((u_long*)*pk)[5] = SCE_GS_FRAME_1;
+
+    ((u_long*)*pk)[6] = *(u_long*)&pdenv->zbuf1;
+    ((u_long*)*pk)[7] = SCE_GS_ZBUF_1;
+
+    *pkt = (u_long128*)pk + 4;
+
+    _PkDefSCISSOR = pdenv->scissor1;
+    _PkDefZBUFFER = pdenv->zbuf1;
+
+    _PkScrW = _PkDefSCISSOR.SCAX1 - _PkDefSCISSOR.SCAX0 + 1;
+    _PkScrH = _PkDefSCISSOR.SCAY1 - _PkDefSCISSOR.SCAY0 + 1;
+
+    SetSprDefOfsXY(spr);
+    PkDefSCISSOR_Add(pkt);
+}
+
+#ifndef NON_MATCHING
 INCLUDE_ASM("menu/pksprite", PkZBUFMask_Add);
+#else
+void PkZBUFMask_Add(/* t0 8 */ SPR_PKT pkt, /* a1 5 */ int bMsk) {
+    /* a0 4 */ qword *pk;
+    u_long tmp;
+
+    if (_PkDefZBUFFER.ZBP == 0) {
+        return;
+    }
+
+    pk = (qword*)*pkt;
+
+    ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, SCE_GIF_PACKED, 1);
+    ((u_long*)*pk)[1] = SCE_GIF_PACKED_AD;
+
+    tmp = bMsk != 0;
+    ((u_long*)*pk)[2] = (*(u_long*)&_PkDefZBUFFER & (~0x100000000)) | (tmp << 32);
+    ((u_long*)*pk)[3] = SCE_GS_ZBUF_1;
+
+    *pkt = (u_long128*)pk + 2;
+}
+#endif
 
 INCLUDE_ASM("menu/pksprite", PkSprPkt_SetTexVram);
 
