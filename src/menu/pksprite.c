@@ -495,12 +495,8 @@ void PkSprPkt_SetDrawEnv(SPR_PKT pkt, SPR_PRM *spr, sceGsDrawEnv1 *pdenv) {
     PkDefSCISSOR_Add(pkt);
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("menu/pksprite", PkZBUFMask_Add);
-#else
-void PkZBUFMask_Add(/* t0 8 */ SPR_PKT pkt, /* a1 5 */ int bMsk) {
-    /* a0 4 */ qword *pk;
-    u_long tmp;
+void PkZBUFMask_Add(SPR_PKT pkt, int bMsk) {
+    qword *pk;
 
     if (_PkDefZBUFFER.ZBP == 0) {
         return;
@@ -510,14 +506,13 @@ void PkZBUFMask_Add(/* t0 8 */ SPR_PKT pkt, /* a1 5 */ int bMsk) {
 
     ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, SCE_GIF_PACKED, 1);
     ((u_long*)*pk)[1] = SCE_GIF_PACKED_AD;
-
-    tmp = bMsk != 0;
-    ((u_long*)*pk)[2] = (*(u_long*)&_PkDefZBUFFER & (~0x100000000)) | (tmp << 32);
+    ((u_long*)*pk)[2] = *(u_long*)&_PkDefZBUFFER;
     ((u_long*)*pk)[3] = SCE_GS_ZBUF_1;
 
     *pkt = (u_long128*)pk + 2;
+
+    ((sceGsZbuf*)*pk)[2].ZMSK = !!bMsk;
 }
-#endif
 
 INCLUDE_ASM("menu/pksprite", PkSprPkt_SetTexVram);
 
