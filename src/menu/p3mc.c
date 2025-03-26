@@ -39,7 +39,7 @@ static int   P3MC_GetIconSize(int mode);
 /* static */ char* _P3MC_GetFilePath(int mode, int fileNo);
 static void  _P3MC_dataCheckFunc(P3MC_WORK *pw, P3MCDataCheckFunc funcp);
 static int   _P3MC_CheckUserData(P3MC_WORK *pw);
-/* static */ int   _P3MC_CheckUserDataHead(P3MC_WORK *pw);
+static int   _P3MC_CheckUserDataHead(P3MC_WORK *pw);
 
 static int P3MC_GetIconSize(int mode) {
     int isize;
@@ -438,67 +438,33 @@ static int _P3MC_CheckUserData(P3MC_WORK *pw) {
     }
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("menu/p3mc", _P3MC_CheckUserDataHead);
-#else
-static int _P3MC_CheckUserDataHead(/* s1 17 */ P3MC_WORK *pw)
-{
-    /* s0 16 */ USER_HEADER *hed = (USER_HEADER*)pw->dhdl->pMemTop;
-
-    if (strcmp(hed->header, HedderID))
+/* There are no traces of such use of inlines on the
+ * symbols, yet the function only matches this way. */
+static inline int _P3MC_CheckHead(USER_HEADER *hed, P3MC_WORK *pw) {
+    /* Checks done on a single line according to symbols */
+    if (hed->user.fileNo != pw->data_no ||
+        hed->user.mode != pw->data_mode || 
+        hed->user.mode != pw->data_mode ||
+        (pw->data_stage > 0 && hed->user.stageNo != pw->data_stage) ||
+        (hed->user.name[0] == 0 && hed->user.name1[0] == 0)) {
         return 1;
-    
-    if (strcmp(hed->footer, FooterID))
-        return 1;
-    
-    if (!hed->user.flg)
-        return 0;
-    
-    if (hed->user.fileNo == pw->data_no)
-    {
-        if (hed->user.mode == pw->data_mode)
-        {
-            if (pw->data_stage > 0)
-            {
-                if (hed->user.stageNo != pw->data_stage)
-                    return 1;
-            }
-
-            if (hed->user.name[0] != 0)
-                return (hed->user.name1[0] == 0);
-            else
-                return 0;
-        }
     }
-
-#if 0
-    if (strcmp(hed->header, HedderID) == 0)
-    {
-        if (strcmp(hed->footer, FooterID) == 0)
-        {
-            if (!hed->user.flg)
-                return 0;
-
-            if (hed->user.fileNo == pw->data_no)
-            {
-                if (hed->user.mode == pw->data_mode)
-                {
-                    if (pw->data_stage > 0)
-                    {
-                        if (hed->user.stageNo != pw->data_stage)
-                            return 1;
-                    }
-
-                    if (hed->user.name[0] != 0)
-                        return (hed->user.name1[0] == 0);
-                    else
-                        return 0;
-                }
-            }
-        }
-    }
-    
-    return 1;
-#endif
+    return 0;
 }
-#endif
+
+/* Without use of inlines you can have a decent
+ * match with a minor difference on a likely branch:
+ * https://decomp.me/scratch/QD9p8 */
+static int _P3MC_CheckUserDataHead(P3MC_WORK *pw) {
+    USER_HEADER *hed = (USER_HEADER*)pw->dhdl->pMemTop;
+
+    if (strcmp(hed->header, HedderID) != 0 || strcmp(hed->footer, FooterID) != 0) {
+        return 1;
+    }
+
+    if (hed->user.flg == 0) {
+        return 0;
+    }
+
+    return _P3MC_CheckHead(hed, pw);
+}

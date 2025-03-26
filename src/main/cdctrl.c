@@ -16,7 +16,7 @@
 #include <stdio.h>
 
 /* sdata */
-void *current_intg_adrs = 0;
+void *current_intg_adrs = NULL;
 
 /* bss - static */
 extern CDCTRL_STR cdctrl_str;
