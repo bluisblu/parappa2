@@ -3,8 +3,7 @@
 
 #include "common.h"
 
-#include "os/cmngifpk.h"
-#include "main/etc.h"
+#include <eetypes.h>
 
 typedef struct { // 0x8
     /* 0x0 */ int cnt;

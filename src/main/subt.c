@@ -1,12 +1,17 @@
 #include "main/subt.h"
 
+#include "os/cmngifpk.h"
+#include "os/syssub.h"
+#include "main/etc.h"
+
 /* data */
-u_long SubtGsTex0[3];
+extern u_long SubtGsTex0[3];
+extern MCODE_ASCII mcode_ascii[];
 
 /* sdata */
-int SUBT_POSX;
-int SUBT_POSY;
-/* static */ int subtSetNum;
+extern int SUBT_POSX;
+extern int SUBT_POSY;
+/* static */ extern int subtSetNum;
 
 static MCODE_STR *kanji_pp;
 
@@ -21,7 +26,6 @@ void SubtInit(void) {
 
 void* SubtKanjiSet(void *adrs) {
     void *ret = kanji_pp;
-
     kanji_pp = adrs;
     return ret;
 }
@@ -87,101 +91,101 @@ static void euc2sjis(unsigned char *c1, unsigned char *c2) {
     }
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("main/subt", SubtMsgPrint);
-#else
-void SubtMsgPrint(/* s0 16 */ u_char *msg_pp, /* -0xac(sp) */ int xp, /* -0xa8(sp) */ int yp, 
-                    /* s3 19 */ int jap_flag, /* s4 20 */ int mline)
-{
-    /* s0 16 */ u_char *tmp_pp;
-    /* s6 22 */ int line_num;
-    /* a2 6 */ int i;
-    /* s2 18 */ int j;
-    /* -0xa4(sp) */ int hsize;
-    /* s2 18 */ int cnt_all;
-    /* -0xb0(sp) */ u_char dat0;
-    /* -0xaf(sp) */ u_char dat1;
-    /* s1 17 */ int posx;
-    /* s5 21 */ int posy;
-    /* s0 16 */ MCODE_DAT *mcode_pp;
-
-    posx = xp;
-    posy = yp;
-
+void SubtMsgPrint(u_char* msg_pp, int xp, int yp, int jap_flag, int mline) {
+    u_char* tmp_pp;
+    int line_num;
+    int i, j, k;
+    int hsize;
+    int cnt_all;
+    u_char dat0, dat1;
+    int posx, posy;
+    
+    cnt_all = 0;    
     SubtMcodeSet(jap_flag);
 
-    if (*msg_pp != '\0')
-    {
-        cnt_all = 0;
-        WorkClear(subt_code, sizeof(subt_code));
+    if (*msg_pp == '\0') {
+        return;
+    }
 
-        tmp_pp = msg_pp;
-        hsize = 13; // 0xD
+    WorkClear(&subt_code, sizeof(subt_code));
 
-        if (tmp_pp)
-        {
-            while (tmp_pp != '\0')
-            {
-                line_num = 1;
-                if (jap_flag)
-                {
-                    dat0 = msg_pp[0];
-                    dat1 = msg_pp[1];
+    line_num = 0;
+    hsize = 13;
+    tmp_pp = msg_pp;
 
-                    // New line
-                    if (dat0 == '@')
-                    {
-                        line_num++;
-                        cnt_all = line_num;
-                    }
-                    else if (dat0 != ' ')
-                    {
-                        euc2sjis(&dat0, (dat0 | 1));
+    while (1) {
+        if (hsize == 13) {
+            hsize = 13;
+        }
+        
+        if (*tmp_pp == '\0') {
+            line_num++;
+            break;
+        }
 
-                        if (dat0 == 0x81 && dat1 == 0x97)
-                        {
-                            line_num++;
-                        }
-                        else
-                        {
-                            mcode_pp = codeKanjiCheck(dat0, dat1);
-                            mcode_dat_pp[cnt_all] = mcode_pp;
+        if (jap_flag) {
+            dat0 = tmp_pp[0];
+            dat1 = tmp_pp[1];
 
-                            if (mcode_pp != NULL)
-                            {
-                                subt_code[cnt_all].cnt++;
-                                subt_code[cnt_all].wsize += mcode_pp->w;
-                            }
-                        }
-
-                        tmp_pp++;
+            if (dat0 == '@') {
+                line_num++;
+            } else if (dat0 != ' ') {
+                euc2sjis(&dat0, &dat1);
+                if (dat0 == 0x81 && dat1 == 0x97) {
+                    line_num++;
+                } else {
+                    mcode_dat_pp[cnt_all] = codeKanjiCheck(dat0, dat1);
+                    if (mcode_dat_pp[cnt_all] != NULL) {
+                        subt_code[line_num].cnt++;
+                        subt_code[line_num].wsize += mcode_dat_pp[cnt_all]->w;
+                        cnt_all++;
                     }
                 }
+
+                tmp_pp++;
+            }
+        } else {
+            if (*tmp_pp == '@') {
+                line_num++;
+            } else {
+                mcode_dat_pp[cnt_all] = &mcode_ascii[*tmp_pp - 32];
+                subt_code[line_num].cnt++;
+                subt_code[line_num].wsize += mcode_dat_pp[cnt_all]->w;
+                cnt_all++;
             }
         }
-        else
-            line_num = 1;
 
-        if (mline && mline < line_num)
-            line_num = mline;
+        tmp_pp++;
+    }
 
-        for (i = 0; i < line_num; i++)
-        {
-            for (j = 0; j < subt_code[i].cnt; j++)
-            {
-                sceGifPkAddGsAD(&subtPkSpr, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 0, 0, 1, 0, 0, 0, 0));
 
-                sceGifPkAddGsAD(&subtPkSpr, SCE_GS_UV, SCE_GS_SET_UV(mcode_dat_pp[i]->u << 4, mcode_dat_pp[i]->v << 4));
-                sceGifPkAddGsAD(&subtPkSpr, SCE_GS_XYZ2, 0); // TODO
+    if (mline != 0 && mline < line_num) {
+        line_num = mline;
+    }
 
-                sceGifPkAddGsAD(&subtPkSpr, SCE_GS_UV, SCE_GS_SET_UV(mcode_dat_pp[i]->u << 4, mcode_dat_pp[i]->v << 4));
-                sceGifPkAddGsAD(&subtPkSpr, SCE_GS_XYZ2, 0); // TODO
-                subtSetNum = 1;
-            }
+    for (i = 0, k = 0; i < line_num; i++) {
+        posx = xp - (subt_code[i].wsize / 2);
+        posy = yp + (hsize * i);
+
+        for (j = 0; j < subt_code[i].cnt; j++) {
+            MCODE_DAT *mcode_pp = mcode_dat_pp[k++];
+            
+            sceGifPkAddGsAD(&subtPkSpr, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
+
+            sceGifPkAddGsAD(&subtPkSpr, SCE_GS_UV,
+                SCE_GS_SET_UV(mcode_pp->u << 4, mcode_pp->v << 4));
+            sceGifPkAddGsAD(&subtPkSpr, SCE_GS_XYZ2,
+                SCE_GS_SET_XYZ2((posx + mcode_pp->adjx) << 4, (posy + (mcode_pp->adjy / 2)) << 4, 1));
+            sceGifPkAddGsAD(&subtPkSpr, SCE_GS_UV,
+                SCE_GS_SET_UV((mcode_pp->u + mcode_pp->w) << 4, (mcode_pp->v + mcode_pp->h) << 4));
+            sceGifPkAddGsAD(&subtPkSpr, SCE_GS_XYZ2,
+                SCE_GS_SET_XYZ2((posx + mcode_pp->w + mcode_pp->adjx) << 4, (posy + ((mcode_pp->h + mcode_pp->adjy) / 2)) << 4, 1));
+
+            posx += mcode_pp->w;
+            subtSetNum = 1;
         }
     }
 }
-#endif
 
 void SubtCtrlInit(void *adrs, int ser_f) {
     SubtInit();
@@ -282,7 +286,7 @@ u_char* SubtMsgDataPos(u_char *msg_pp, int jap_flag, int pos) {
 
     tmp_pp = msg_pp;
     
-    while (1){
+    while (1) {
         if (ret == pos) {
             return tmp_pp;
         }
