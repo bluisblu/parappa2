@@ -1,6 +1,8 @@
 #ifndef PRLIB_TIM2_H
 #define PRLIB_TIM2_H
 
+#include "common.h"
+
 #include <eetypes.h>
 
 #define TIM2_NONE   (0) // For use on ClutType when there is no CLUT data
@@ -49,9 +51,7 @@ typedef struct { // 0x10
     /* 0xc */ u_int Reserved;
 } TIM2_EXHEADER;
 
-#if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
-extern "C" {
-#endif
+PR_EXTERN {
 
 int                 Tim2CheckFileHeader();
 
@@ -69,9 +69,6 @@ void                Tim2LoadPicture(TIM2_PICTUREHEADER *ph);
 void                Tim2LoadImage(TIM2_PICTUREHEADER *ph);
 u_int               Tim2LoadClut(TIM2_PICTUREHEADER *ph);
 
-
-#if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 }
-#endif
 
 #endif

@@ -1,13 +1,5 @@
 #include "common.h"
 
-#include "prlib_intern.h"
-
-void* prSpramData = (void*)0x70000000;
-int FLT_003998E4 = 0x7F7FFFFF;
-int FLT_003998E8 = 0x7F7FFFFF;
-
-extern int AwfulStatus;
-
 INCLUDE_ASM("prlib/render", func_00142820);
 
 INCLUDE_ASM("prlib/render", func_00142C18);

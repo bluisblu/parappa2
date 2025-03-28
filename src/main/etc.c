@@ -332,11 +332,11 @@ TAP_LINE_LEVEL_ENUM ChangeTapLevel(TAP_LINE_LEVEL_ENUM now_lvl) {
 }
 
 void UsrPrInitScene(void) {
-    // Empty
+    /* Empty */
 }
 
 void UsrPrQuitScene(void) {
-    // Empty
+    /* Empty */
 }
 
 INCLUDE_ASM("main/etc", UsrPrSetScene);

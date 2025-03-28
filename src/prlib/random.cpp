@@ -5,14 +5,12 @@
 extern u_int randomSeed;
 extern u_int randomPool[97];
 
-static u_int RawRandom()
-{
+static u_int RawRandom() {
     randomSeed = (randomSeed * 0x5d588b65 + 1);
     return randomSeed;
 }
 
-u_int PrRandom()
-{
+u_int PrRandom() {
     extern u_int poolIndex;
     int ret;
 
@@ -23,12 +21,8 @@ u_int PrRandom()
     return ret;
 }
 
-void PrInitializeRandomPool()
-{
-    u_int i;
-
-    for (i = 0; i < 97; i++)
-    {
+void PrInitializeRandomPool() {
+    for (u_int i = 0; i < 97; i++) {
         randomPool[i] = RawRandom();
     }
 
@@ -36,16 +30,15 @@ void PrInitializeRandomPool()
     PrRandom();
 }
 
-float PrFloatRandom()
-{
-    float ret;
-    u_int rand;
-
+float PrFloatRandom() {
+    /* TODO: Function does not use goto,
+     * fix control flow. */
 generate_rand:
-    ret = PrRandom();
+    float ret = PrRandom();
 
-    if ((ret / RAND_MAX) >= 1.0f)
+    if ((ret / RAND_MAX) >= 1.0f) {
         goto generate_rand;
+    }
 
     return ret / RAND_MAX;
 }

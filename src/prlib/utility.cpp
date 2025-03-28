@@ -1,12 +1,10 @@
 #include "utility.h"
 
-int PrGetBitSize(u_int number)
-{
+int PrGetBitSize(u_int number) {
     int i;
 
     u_int bit = number;
-    for (i = 0; bit >= 2; i++)
-    {
+    for (i = 0; bit >= 2; i++) {
         bit >>= 1;
     }
 

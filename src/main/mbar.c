@@ -157,7 +157,7 @@ INCLUDE_ASM("main/mbar", examLevelDisp);
 INCLUDE_ASM("main/mbar", ExamDispSet);
 
 void ExamDispSubt(void) {
-    // Empty
+    /* Empty */
 }
 
 void MbarInit(int stg) {

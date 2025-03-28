@@ -1,5 +1,5 @@
-#ifndef DMA_H
-#define DMA_H
+#ifndef PRLIB_DMA_H
+#define PRLIB_DMA_H
 
 #include "common.h"
 

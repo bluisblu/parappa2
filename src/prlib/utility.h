@@ -1,5 +1,5 @@
-#ifndef UTILITY_H
-#define UTILITY_H
+#ifndef PRLIB_UTILITY_H
+#define PRLIB_UTILITY_H
 
 #include "common.h"
 

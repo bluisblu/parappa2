@@ -209,7 +209,9 @@ def patch_branch_instructions(folder: str, func: str = None) -> None:
 
 def apply_short_loop_fix():
     patch_branch_instructions("asm/nonmatchings/menu/menusub")
+    patch_branch_instructions("asm/nonmatchings/prlib/render")
     patch_branch_instructions("asm/nonmatchings/prlib/shape")
+    patch_branch_instructions("asm/nonmatchings/prlib/menderer")
 
 EUC_HACK_FILENAME_TABLE = ["TsDrawUPacket.s", "_P3MC_SetBrowsInfo.s"]
 def eucjp_convert():

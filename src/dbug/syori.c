@@ -1,11 +1,11 @@
 #include "dbug/syori.h"
 
 void SyoriLineInit(int bar_size) {
-    // Empty
+    /* Empty */
 }
 
 void SyoriLineReset(void) {
-    // Empty
+    /* Empty */
 }
 
 int SyoriLineCnt(int num) {
@@ -13,5 +13,5 @@ int SyoriLineCnt(int num) {
 }
 
 void SyoriLineDisp(short xp, short yp) {
-    // Empty
+    /* Empty */
 }

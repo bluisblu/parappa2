@@ -1,5 +1,5 @@
-#ifndef RANDOM_H
-#define RANDOM_H
+#ifndef PRLIB_RANDOM_H
+#define PRLIB_RANDOM_H
 
 #include "common.h"
 
