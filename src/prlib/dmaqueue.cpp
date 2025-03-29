@@ -6,8 +6,7 @@
 
 #define PR_DECACHE(addr) ((u_int)(addr) & 0x0fffffff)
 
-PrDmaQueue::PrDmaQueue(u_int size)
-{
+PrDmaQueue::PrDmaQueue(u_int size) {
     this->unk4 = size;
     this->unk0 = (PrDmaList*)memalign(128, (size + 1) * 128);
 
@@ -20,24 +19,20 @@ PrDmaQueue::PrDmaQueue(u_int size)
     this->unk0 = (PrDmaList*)PR_UNCACHEDACCEL(this->unk0);
 }
 
-PrDmaQueue::~PrDmaQueue()
-{
-    if (this->unk0 != NULL)
-    {
+PrDmaQueue::~PrDmaQueue() {
+    if (this->unk0 != NULL) {
         free((void*)PR_DECACHE(this->unk0));
     }
 }
 
 // Different compiler matches without any of the volatile trickery
 // https://decomp.me/scratch/PcirV
-void PrDmaQueue::Initialize()
-{
+void PrDmaQueue::Initialize() {
     u_int i;
     PrDmaList *temp_v1;
     volatile PrDmaList *var_v1;
 
-    for (i = 0; i <= this->unk4; i++)
-    {
+    for (i = 0; i <= this->unk4; i++) {
         temp_v1 = (PrDmaList*)&this->unk0[i];
 
         var_v1 = temp_v1;

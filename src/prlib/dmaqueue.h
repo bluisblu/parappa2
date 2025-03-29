@@ -6,8 +6,7 @@
 #include <eetypes.h>
 #include <libdma.h>
 
-struct PrDmaList
-{
+struct PrDmaList {
     int unk0;
     int unk4;
     int unk8;
@@ -20,8 +19,7 @@ struct PrDmaList
     char unk40[64];
 };
 
-class PrDmaQueue
-{
+class PrDmaQueue {
 public:
     PrDmaQueue(u_int size);
     ~PrDmaQueue();

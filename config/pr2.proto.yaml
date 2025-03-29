@@ -143,7 +143,31 @@ segments:
           # - [0x554a8, asm, nalib/navector] # Header
           # - [0x555d8, asm, nalib/navector]
 
-        - [0x55b58, asm, sdk/scelib]
+        # - [0x55b58, asm, sdk/scelib]
+        - [0x55b58, asm, sdk/graphdev]
+        - [0x57af0, asm, sdk/libdma]
+        - [0x585c0, asm, sdk/devvu0]
+        - [0x589d0, asm, sdk/devvif0]
+        - [0x58d00, asm, sdk/libgifpk]
+        - [0x59058, asm, sdk/libpad]
+        - [0x5a400, asm, sdk/klib]
+        - [0x5ac90, asm, sdk/glue]
+        - [0x5afc8, asm, sdk/cache]
+        - [0x5b248, asm, sdk/intr]
+        - [0x5b5a8, asm, sdk/tty]
+        - [0x5bac8, asm, sdk/kprintf]
+        - [0x5c440, asm, sdk/sifcmd]
+        - [0x5cb88, asm, sdk/sifrpc]
+        - [0x5dae8, asm, sdk/filestub]
+        - [0x61060, asm, sdk/eeloadfile]
+        - [0x61dc0, asm, sdk/iopreset]
+        - [0x62070, asm, sdk/diei]
+        - [0x620d0, asm, sdk/initsys]
+        - [0x62140, asm, sdk/thread]
+        - [0x624a0, asm, sdk/deci2]
+        - [0x62680, asm, sdk/libvu0]
+        - [0x633c0, asm, sdk/eecdvd]
+        - [0x64b18, asm, sdk/libmc]
         - [0x662d0, asm, sdk/newlib]
         
         # .vutext
@@ -163,12 +187,38 @@ segments:
         - [0x85b88, .data, main/fadectrl]
         - [0x85ba0, data, main/subt]
         - [0x86478, data, main/drawctrl]
-        - [0x87288, data] # main/mbar
+        - [0x87288, data, main/mbar]
+        - [0x87f30, data, main/etc]
+        - [0x88000, data, main/wipe]
         - [0x88400, data, main/main]
-        - [0x884f0, data] # main/commake
-        - [0x28d458, data, prlib/prlib]
+        - [0x884f0, data, main/commake]
+
+        - [0x88558, data, menu/menudata]
+        - [0x896f8, data, menu/menu_mdl]
+        - [0x8c0e0, data, menu/menusub]
+        - [0x8ed90, data, menu/p3mc]
+        - [0x8edf8, data, menu/memc]
+        - [0x8f1d0, data, menu/mntm2hed]
+        - [0x90580, data, menu/menufont]
+        - [0x91430, data, menu/pksprite]
+
+        - [0x91440, data, main/cmnfile] # Not actually part of cmnfile.c
+
+        - [0x28d458, data, prlib/database]
+        - [0x28d480, data, prlib/renderstuff]
+        - [0x28d500, data, prlib/render]
+        - [0x28d580, data, prlib/renderee]
+        - [0x28d6b0, data, prlib/microprogram]
+        - [0x28d710, data, prlib/spram]
+        - [0x28d720, data, prlib/scene]
+        - [0x28d730, data, prlib/menderer]
+        - [0x28d940, data, prlib/mendererawful]
+        - [0x28db30, data, prlib/mendereralpha]
         - [0x28dd80, .data, prlib/dma]
-        - [0x28ddb0, data, prlib/stub_0x28ddb0]
+
+        - [0x28ddb0, data, nalib/napacket]
+        - [0x28ddc0, data, nalib/navector]
+        - [0x28dde0, data, nalib/namatrix]
         
         # .vudata
         - [0x291ed0, data, vudata]
@@ -259,10 +309,10 @@ segments:
         - [0x29a8a0, sdata, menu/pksprite]
 
         - [0x29a8b8, sdata]
-        #- [0x29a8b8, sdata, prlib/gifreg] # prlib/gifreg
-        #- [0x29a8bc, sdata, prlib/model] # prlib/model
-        #- [0x29a8c4, sdata, prlib/database] # prlib/database
-        #- [0x29a8c8, sdata, prlib/renderstuff] # prlib/renderstuff
+        #- [0x29a8b8, sdata, prlib/gifreg]
+        #- [0x29a8bc, sdata, prlib/model]
+        #- [0x29a8c4, sdata, prlib/database]
+        #- [0x29a8c8, sdata, prlib/renderstuff]
         - [0x29a8cc, .sdata, prlib/prlib]
         - [0x29a8e0, sdata] # prlib/render
         - [0x29a940, sdata, prlib/random]
@@ -272,27 +322,29 @@ segments:
         # - [0x29a9d8, rodatabin] # .sbss / .bss
         
         # .sbss / .bss
-        - { start: 0x29aa00, type: sbss, vram: 0x00399a00, name: dbug/dbgmsg } # dbug/dbgmsg
+        - { start: 0x29aa00, type: sbss,  vram: 0x00399a00, name: dbug/dbgmsg }
         - { start: 0x29aa00, type: .sbss, vram: 0x00399a18, name: os/mtc }
         - { start: 0x29aa00, type: .sbss, vram: 0x00399a1c, name: os/cmngifpk }
         - { start: 0x29aa00, type: .sbss, vram: 0x00399a2c, name: os/usrmem }
         - { start: 0x29aa00, type: .sbss, vram: 0x00399a34, name: main/cdctrl }
-        - { start: 0x29aa00, type: sbss, vram: 0x00399a38, name: main/scrctrl }
+        - { start: 0x29aa00, type: sbss,  vram: 0x00399a38, name: main/scrctrl }
         - { start: 0x29aa00, type: .sbss, vram: 0x00399a44, name: main/sprite }
         - { start: 0x29aa00, type: .sbss, vram: 0x00399a48, name: main/subt }
-        - { start: 0x29aa00, type: sbss, vram: 0x00399a4c, name: main/drawctrl }
-        - { start: 0x29aa00, type: sbss, vram: 0x00399a80, name: main/mbar }
-        - { start: 0x29aa00, type: sbss, vram: 0x00399a98, name: main/wipe }
+        - { start: 0x29aa00, type: sbss,  vram: 0x00399a4c, name: main/drawctrl }
+        - { start: 0x29aa00, type: sbss,  vram: 0x00399a80, name: main/mbar }
+        - { start: 0x29aa00, type: sbss,  vram: 0x00399a98, name: main/wipe }
         - { start: 0x29aa00, type: .sbss, vram: 0x00399aa0, name: main/mcctrl }
         - { start: 0x29aa00, type: .sbss, vram: 0x00399aac, name: main/p3str }
         - { start: 0x29aa00, type: .sbss, vram: 0x00399abc, name: menu/menu }
 
         - { start: 0x29aa00, type: .sbss, vram: 0x00399ac4, name: menu/menu_mdl }
-        - { start: 0x29aa00, type: sbss, vram: 0x00399ac8, name: unk0 } # menu/menusub
+        - { start: 0x29aa00, type: sbss,  vram: 0x00399ac8, name: unk0 } # menu/menusub
 
-        #- { start: 0x29aa00, type: sbss, vram: 0x00399b94, name: prlib/render }
-        #- { start: 0x29aa00, type: sbss, vram: 0x00399b98, name: unk2 } # prlib/microprogram.cpp
-        - { start: 0x29aa00, type: sbss, vram: 0x00399bd0, name: gcc }
+        - { start: 0x29aa00, type: sbss,  vram: 0x00399b8c, name: prlib/model }
+        - { start: 0x29aa00, type: sbss,  vram: 0x00399b90, name: prlib/prlib }
+        - { start: 0x29aa00, type: sbss,  vram: 0x00399b94, name: prlib/render }
+        - { start: 0x29aa00, type: sbss,  vram: 0x00399b98, name: unk2 } # prlib/microprogram.cpp
+        - { start: 0x29aa00, type: sbss,  vram: 0x00399bd0, name: gcc }
 
         - { start: 0x29aa1c, type: bss,  vram: 0x00399c00, name: bss            }
         - { start: 0x29aa1c, type: .bss, vram: 0x00399d60, name: dbug/dbgmsg    }
