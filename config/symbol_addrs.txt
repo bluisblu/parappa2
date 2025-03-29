@@ -1958,6 +1958,10 @@ PrInitializeAwfulBackground__FPv                                                
 PrDrawAwfulBackground__FG10sceGsFrame                                               = 0x00150840; // type:func
 PrUpdateAwfulMenderer__Fv                                                           = 0x00150c80; // type:func
 
+mendererFadeData                                                                    = 0x0038c940; // size:0x38
+
+mendererAwfulColor                                                                  = 0x00399bb8;
+
 // prlib/mendereralpha.cpp
 PrInitializeAlphaModulation__Fv                                                     = 0x00150d68; // type:func
 PrCreateAlphaModulation__Ff                                                         = 0x00150f88; // type:func
@@ -2058,6 +2062,7 @@ sceGsSwapDBuffDc                    = 0x001564b8; // type:func
 sceDmaGetChan                       = 0x00156b28; // type:func
 sceDmaReset                         = 0x00156b50; // type:func
 sceDmaSend                          = 0x00156e78; // type:func
+sceDmaSendN                         = 0x00156f50; // type:func
 sceDmaSync                          = 0x001573c8; // type:func
 
 // devvu0.c
@@ -2177,10 +2182,13 @@ __floatdisf                         = 0x00169a20; // type:func
 __udivdi3                           = 0x0016a1c8; // type:func
 __umoddi3                           = 0x0016a798; // type:func
 
+// ee/gcc/src/gcc/build/gcc/fp-bit.c
+fptoui                              = 0x0016cbc8; // type:func
+
 // ee/gcc/src/gcc/cp/new2.cc
 __builtin_delete                    = 0x0016dde8; // type:func
 
-// ee/gcc/src/nwelib/libc/stdlib/malign.c
+// ee/gcc/src/newlib/libc/stdlib/malign.c
 memalign                            = 0x0016f7e8; // type:func
 
 // ee/gcc/src/newlib/libc/stdlib/malloc.c
