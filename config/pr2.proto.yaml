@@ -143,7 +143,6 @@ segments:
           # - [0x554a8, asm, nalib/navector] # Header
           # - [0x555d8, asm, nalib/navector]
 
-        # - [0x55b58, asm, sdk/scelib]
         - [0x55b58, asm, sdk/graphdev]
         - [0x57af0, asm, sdk/libdma]
         - [0x585c0, asm, sdk/devvu0]
@@ -168,6 +167,7 @@ segments:
         - [0x62680, asm, sdk/libvu0]
         - [0x633c0, asm, sdk/eecdvd]
         - [0x64b18, asm, sdk/libmc]
+
         - [0x662d0, asm, sdk/newlib]
         
         # .vutext
@@ -268,7 +268,19 @@ segments:
         - [0x2979a0, .rodata, prlib/wave]
         - [0x2979b0, .rodata, prlib/tim2]
 
-        - [0x297c10, rodata, sdk/scelib]
+        - [0x297c10, rodata, sdk/graphdev]
+        - [0x298138, rodata, sdk/libdma]
+        - [0x298150, rodata, sdk/devvu0]
+        - [0x298168, rodata, sdk/libpad]
+        - [0x2982c0, rodata, sdk/tty]
+        - [0x298330, rodata, sdk/kprintf]
+        - [0x298490, rodata, sdk/filestub]
+        - [0x298500, rodata, sdk/eeloadfile]
+        - [0x298510, rodata, sdk/iopreset]
+        - [0x298540, rodata, sdk/thread]
+        - [0x298568, rodata, sdk/eecdvd]
+        - [0x298780, rodata, sdk/libmc]
+
         - [0x2987e8, rodata, sdk/newlib]
         
         # # .gcc_except_table
