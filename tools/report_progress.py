@@ -30,8 +30,8 @@ def parse_progress(output):
     sdk_of_total_percent = 0
     folder_percentages = {}
 
-    for line in lines[1:]:  # Skip the header
-        parts = re.split(r'\s{2,}', line.strip())  # Split by 2 or more spaces
+    for line in lines[1:]: # Skip the header
+        parts = re.split(r'\s{2,}', line.strip()) # Split by 2 or more spaces
         if len(parts) >= 5:
             category = parts[0]
             try:
@@ -49,16 +49,12 @@ def parse_progress(output):
     return total_percentage, folder_percentages
 
 def main():
-    # Execute the command and capture the output
     command = ["python3", "-m", "mapfile_parser", "progress", "build/SCPS_150.17.map", "asm", "asm/nonmatchings/"]
     result = subprocess.run(command, stdout=subprocess.PIPE, text=True)
 
     #result = mapfile_parser.frontends.progress.doProgress("build/SCPS_150.17.map", "asm", "asm/nonmatchings/")
-
-    # Parse the output
     total_percentage, folder_percentages = parse_progress(result.stdout)
 
-    # Print the results
     # print(f"Total percentage: {total_percentage:.4f}%")
     total_report = {
         "schemaVersion": 1,
