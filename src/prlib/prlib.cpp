@@ -1,7 +1,15 @@
-#include "prlib.h"
+#include "prlib/prpriv.h"
+
+#include "prlib/animation.h"
+#include "prlib/camera.h"
+#include "prlib/database.h"
+#include "prlib/model.h"
+#include "prlib/random.h"
+#include "prlib/renderstuff.h"
 
 #include "nalib/navector.h"
-#include "prlib/old/model.h"
+
+#include <eestruct.h>
 
 /* sdata */
 static float prFrameRate = 1.0f;
@@ -9,6 +17,8 @@ static float prInverseFrameRate = 1.0f;
 
 /* sbss */
 extern PrDebugParam debugParam[2];
+
+static void InitializeDebugParam();
 
 PR_EXTERN
 void PrSetFrameRate(float frameRate) {
@@ -21,9 +31,26 @@ float PrGetFrameRate() {
     return prFrameRate;
 }
 
-INCLUDE_ASM("prlib/prlib", PrInitializeModule);
+PR_EXTERN
+void PrInitializeModule(sceGsZbuf zbuf) {
+    InitializeDebugParam();
+    PrInitializeRandomPool();
 
-INCLUDE_ASM("prlib/prlib", PrCleanupModule);
+    prObjectDatabase.Initialize();
+    prRenderStuff.Initialize(zbuf);
+}
+
+PR_EXTERN
+void PrCleanupModule() {
+    prRenderStuff.Cleanup();
+
+    PrCleanupModel(NULL);
+    PrCleanupAnimation(NULL);
+    PrCleanupCamera(NULL);
+    PrCleanupScene(NULL);
+
+    prObjectDatabase.Cleanup();
+}
 
 INCLUDE_ASM("prlib/prlib", PrInitializeScene);
 

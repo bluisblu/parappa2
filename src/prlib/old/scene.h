@@ -5,8 +5,6 @@
 #include <eestruct.h>
 #include <libgraph.h>
 
-#include "database.h"
-
 #include "model.h"
 
 struct PrPERSPECTIVE_CAMERA { // 0x40
