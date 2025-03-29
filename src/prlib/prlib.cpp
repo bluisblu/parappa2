@@ -6,10 +6,13 @@
 #include "prlib/model.h"
 #include "prlib/random.h"
 #include "prlib/renderstuff.h"
+#include "prlib/scene.h"
 
 #include "nalib/navector.h"
 
+#include <eetypes.h>
 #include <eestruct.h>
+#include <libgraph.h>
 
 /* sdata */
 static float prFrameRate = 1.0f;
@@ -52,20 +55,41 @@ void PrCleanupModule() {
     prObjectDatabase.Cleanup();
 }
 
-INCLUDE_ASM("prlib/prlib", PrInitializeScene);
+PR_EXTERN
+PrSceneObject* PrInitializeScene(sceGsDrawEnv1 *drawEnv, const char *name, u_int fbp) {
+    return prObjectDatabase.CreateScene(drawEnv, name, fbp);
+}
 
 INCLUDE_ASM("prlib/prlib", PrInitializeSceneDBuff);
 
-INCLUDE_ASM("prlib/prlib", PrCleanupScene);
+PR_EXTERN
+void PrCleanupScene(PrSceneObject *scene) {
+    if (scene == NULL) {
+        scene = prObjectDatabase.unk0;
+        while (scene != NULL) {
+            prObjectDatabase.DeleteScene(scene);
+            scene = prObjectDatabase.unk0;
+        }
+    } else {
+        prObjectDatabase.DeleteScene(scene);
+    }
+}
 
 PR_EXTERN
 void PrSetSceneFrame() {
     /* Empty */
 }
 
-INCLUDE_ASM("prlib/prlib", PrSetSceneEnv);
+PR_EXTERN
+void PrSetSceneEnv(PrSceneObject *scene, sceGsDrawEnv1 *drawEnv) {
+    scene->unk50 = drawEnv->frame1;
+    scene->unk58 = drawEnv->xyoffset1;
+}
 
-INCLUDE_ASM("prlib/prlib", PrPreprocessSceneModel);
+PR_EXTERN
+void PrPreprocessSceneModel(PrSceneObject *scene) {
+    scene->PreprocessModel();
+}
 
 INCLUDE_ASM("prlib/prlib", PrInitializeModel);
 
@@ -86,7 +110,10 @@ float PrGetAnimationStartFrame(SpaFileHeader *animation) {
     return 0.0f;
 }
 
-INCLUDE_ASM("prlib/prlib", PrGetAnimationEndFrame);
+PR_EXTERN
+float PrGetAnimationEndFrame(SpaFileHeader *animation) {
+    return animation->unk14 * prFrameRate;
+}
 
 PR_EXTERN
 float PrGetCameraStartFrame(SpcFileHeader *camera) {
