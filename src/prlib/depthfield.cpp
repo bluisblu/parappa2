@@ -1,7 +1,8 @@
 #include "common.h"
 
-INCLUDE_ASM("prlib/depthfield", func_0014C8E8);
+INCLUDE_ASM("prlib/depthfield", ApplyDepthOfField__13PrSceneObject);
 
+/* nalib/napacket.h */
 INCLUDE_ASM("prlib/depthfield", func_0014CD38);
 
 INCLUDE_ASM("prlib/depthfield", func_0014CD48);

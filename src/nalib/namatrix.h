@@ -1,9 +1,8 @@
-#ifndef NAMATRIX_H
-#define NAMATRIX_H
+#ifndef NALIB_NAMATRIX_H
+#define NALIB_NAMATRIX_H
 
 template <typename T, int width, int height>
-struct NaMATRIX
-{
+struct NaMATRIX {
     T m[width][height];
 };
 

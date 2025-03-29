@@ -1,19 +1,20 @@
 #include "common.h"
 
-INCLUDE_ASM("prlib/mendererawful", func_001504C8);
+INCLUDE_ASM("prlib/mendererawful", SetNextSwitchRotationTimer__Fv);
 
-INCLUDE_ASM("prlib/mendererawful", func_00150510);
+INCLUDE_ASM("prlib/mendererawful", GetAwfulRotation__Fv);
 
-INCLUDE_ASM("prlib/mendererawful", func_001505E8);
+INCLUDE_ASM("prlib/mendererawful", PrStartAwfulRotation__Fv);
 
-INCLUDE_ASM("prlib/mendererawful", func_001505F8);
+INCLUDE_ASM("prlib/mendererawful", PrFadeFrameImage__Ff);
 
-INCLUDE_ASM("prlib/mendererawful", func_001506D8);
+INCLUDE_ASM("prlib/mendererawful", PrInitializeAwfulBackground__FPv);
 
-INCLUDE_ASM("prlib/mendererawful", func_00150840);
+INCLUDE_ASM("prlib/mendererawful", PrDrawAwfulBackground__FG10sceGsFrame);
 
-INCLUDE_ASM("prlib/mendererawful", func_00150C80);
+INCLUDE_ASM("prlib/mendererawful", PrUpdateAwfulMenderer__Fv);
 
+/* nalib/navector.h */
 INCLUDE_ASM("prlib/mendererawful", func_00150CE8);
 
 INCLUDE_ASM("prlib/mendererawful", func_00150D10);

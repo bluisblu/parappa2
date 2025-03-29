@@ -1624,224 +1624,406 @@ sbuff                               = 0x01c82a00; // allow_duplicated:True
 gCd                                 = 0x01c82a40; // size:0x28 // allow_duplicated:True
 
 // prlib/gifreg.cpp
-Append__27PrDmaStripForSetGifRegisterUiRCUl             = 0x00140130; // type:func
-Freeze__27PrDmaStripForSetGifRegisterUcPCv              = 0x00140170; // type:func
-PrInitializeDmaStripGifRegister__FG9sceGsZbuf           = 0x00140288; // type:func
-PrGetDmaStripGifRegister__F20PrSetGifRegisterMode       = 0x001407a0; // type:func
-_GLOBAL_$D$Append__27PrDmaStripForSetGifRegisterUiRCUl  = 0x001407b8; // type:func
-_GLOBAL_$I$Append__27PrDmaStripForSetGifRegisterUiRCUl  = 0x00140810; // type:func
-_$_27PrDmaStripForSetGifRegister                        = 0x00140848; // type:func
+Append__27PrDmaStripForSetGifRegisterUiRCUl                                         = 0x00140130; // type:func
+Freeze__27PrDmaStripForSetGifRegisterUcPCv                                          = 0x00140170; // type:func
+PrInitializeDmaStripGifRegister__FG9sceGsZbuf                                       = 0x00140288; // type:func
+PrGetDmaStripGifRegister__F20PrSetGifRegisterMode                                   = 0x001407a0; // type:func
+_GLOBAL_$D$Append__27PrDmaStripForSetGifRegisterUiRCUl                              = 0x001407b8; // type:func
+_GLOBAL_$I$Append__27PrDmaStripForSetGifRegisterUiRCUl                              = 0x00140810; // type:func
+_$_27PrDmaStripForSetGifRegister                                                    = 0x00140848; // type:func
 
-gifRegisterModeInitialized                              = 0x003998b8; // size:0x4
+gifRegisterModeInitialized                                                          = 0x003998b8; // size:0x4
 
-setGifRegisterMode                                      = 0x01c82a70; // size:0x720
-
-// prlib/animation.cpp
-Initialize__13SpaFileHeader = 0x00153840; // type:func
+setGifRegisterMode                                                                  = 0x01c82a70; // size:0x720
 
 // prlib/model.cpp
-PrSetPostureWorkArea                                   = 0x00140868; // type:func
-GetPrimitivePosition__13PrModelObjectPt8NaVECTOR2Zfi4  = 0x00140cb8; // type:func
-GetScreenPosition__13PrModelObjectPt8NaVECTOR2Zfi4     = 0x00140dc0; // type:func
-LinkAnimation__13PrModelObjectP13SpaFileHeader         = 0x00140c10; // type:func
-LinkPositionAnimation__13PrModelObjectP13SpaFileHeader = 0x00140c30; // type:func
-CleanupAnimation__13PrModelObject                      = 0x00140c28; // type:func
-_$_13PrModelObject                                     = 0x001409b8; // type:func
-
-// prlib/contour.cpp
-SaveContour__13PrModelObject                           = 0x00153e80; // type:func
-ResetContour__13PrModelObject                          = 0x00154098; // type:func
-
-// prlib/transition.cpp
-SavePosture__13PrModelObject                           = 0x00146a10; // type:func
-ResetPosture__13PrModelObject                          = 0x00146a58; // type:func
-
-// prlib/scene.cpp
-SelectCamera__13PrSceneObjectP13SpcFileHeader = 0x0014b368; // type:func
-GetCurrentCamera__13PrSceneObject             = 0x0014b378; // type:func
-PreprocessModel__13PrSceneObject              = 0x0014b7d0; // type:func
+PrSetPostureWorkArea                                                                = 0x00140868; // type:func
+AllocateFromWorkArea__FUi                                                           = 0x001408a0; // type:func
+__13PrModelObjectP13SpmFileHeader                                                   = 0x001408e0; // type:func
+_$_13PrModelObject                                                                  = 0x001409b8; // type:func
+Initialize__13PrModelObject                                                         = 0x00140ac0; // type:func
+LinkAnimation__13PrModelObjectP13SpaFileHeader                                      = 0x00140c10; // type:func
+CleanupAnimation__13PrModelObject                                                   = 0x00140c28; // type:func
+LinkPositionAnimation__13PrModelObjectP13SpaFileHeader                              = 0x00140c30; // type:func
+CleanupPositionAnimation__13PrModelObject                                           = 0x00140c48; // type:func
+UnionBoundaryBox__13PrModelObjectPt8NaVECTOR2Zfi4T1                                 = 0x00140c50; // type:func
+GetPrimitivePosition__13PrModelObjectPt8NaVECTOR2Zfi4                               = 0x00140cb8; // type:func
+GetScreenPosition__13PrModelObjectPt8NaVECTOR2Zfi4                                  = 0x00140dc0; // type:func
 
 // prlib/database.cpp
-Initialize__16PrObjectDatabase                       = 0x00140f08; // type:func
-Cleanup__16PrObjectDatabase                          = 0x00140f18; // type:func
-CreateScene__16PrObjectDatabaseP13sceGsDrawEnv1PCcUi = 0x00140F30; // type:func
-DeleteScene__16PrObjectDatabaseP13PrSceneObject      = 0x00140fc8; // type:func
-_GLOBAL_$D$prObjectDatabase                          = 0x00141058; // type:func
-_GLOBAL_$I$prObjectDatabase                          = 0x00141068; // type:func
+__16PrObjectDatabase                                                                = 0x00140e60; // type:func
+_$_16PrObjectDatabase                                                               = 0x00140e98; // type:func
+Initialize__16PrObjectDatabase                                                      = 0x00140f08; // type:func
+Cleanup__16PrObjectDatabase                                                         = 0x00140f18; // type:func
+CreateScene__16PrObjectDatabaseP13sceGsDrawEnv1PCcUi                                = 0x00140f30; // type:func
+DeleteScene__16PrObjectDatabaseP13PrSceneObject                                     = 0x00140fc8; // type:func
+_GLOBAL_$D$prObjectDatabase                                                         = 0x00141058; // type:func
+_GLOBAL_$I$prObjectDatabase                                                         = 0x00141068; // type:func
 
-prObjectDatabase                    = 0x0038c458; // size:0x24
+prObjectDatabase                                                                    = 0x0038c458; // size:0x24
+
+// prlib/objectset.h
+_$_t11PrObjectSet1Z13SpcFileHeader                                                  = 0x00141078; // type:func
+_$_t11PrObjectSet1Z13SpaFileHeader                                                  = 0x00141098; // type:func
+_$_t11PrObjectSet1Z13PrSceneObject                                                  = 0x001410b8; // type:func
 
 // prlib/renderstuff.cpp
-Initialize__13PrRenderStuffG9sceGsZbuf = 0x00141178; // type:func
-Cleanup__13PrRenderStuff               = 0x001411e0; // type:func
-WaitRender__13PrRenderStuff            = 0x001412f0; // type:func
-_GLOBAL_$D$prRenderStuff               = 0x00141630; // type:func
-_GLOBAL_$I$prRenderStuff               = 0x00141640; // type:func
+__13PrRenderStuff                                                                   = 0x001410d8; // type:func
+_$_13PrRenderStuff                                                                  = 0x00141120; // type:func
+Initialize__13PrRenderStuffG9sceGsZbuf                                              = 0x00141178; // type:func
+Cleanup__13PrRenderStuff                                                            = 0x001411e0; // type:func
+GetZbufBits__C13PrRenderStuff                                                       = 0x00141220; // type:func
+ResetStatistics__13PrRenderStuff                                                    = 0x00141278; // type:func
+StartRender__13PrRenderStuffP13PrSceneObject                                        = 0x001412b8; // type:func
+WaitRender__13PrRenderStuff                                                         = 0x001412f0; // type:func
+AllocateTransmitDmaArray__13PrRenderStuffUi                                         = 0x001413b8; // type:func
+AppendTransmitDmaTag__13PrRenderStuffPC10_sceDmaTagUif                              = 0x00141438; // type:func
+CompareFunction__13PrRenderStuffPCvT1                                               = 0x001414b8; // type:func
+SortTransmitDmaArray__13PrRenderStuff                                               = 0x00141510; // type:func
+MergeRender__13PrRenderStuff                                                        = 0x00141538; // type:func
+_GLOBAL_$D$prRenderStuff                                                            = 0x00141630; // type:func
+_GLOBAL_$I$prRenderStuff                                                            = 0x00141640; // type:func
 
-prRenderStuff                       = 0x0038c480;
+prRenderStuff                                                                       = 0x0038c480;
 
 // prlib/prlib.cpp
-PrSetFrameRate                      = 0x00141658; // type:func
-PrGetFrameRate                      = 0x00141678; // type:func
-PrInitializeModule                  = 0x00141680; // type:func
-PrCleanupModule                     = 0x001416c8; // type:func
-PrInitializeScene                   = 0x00141710; // type:func
-PrInitializeSceneDBuff              = 0x00141748; // type:func
-PrCleanupScene                      = 0x00141788; // type:func
-PrSetSceneFrame                     = 0x001417f8; // type:func
-PrSetSceneEnv                       = 0x00141800; // type:func
-PrPreprocessSceneModel              = 0x00141818; // type:func
-PrInitializeModel                   = 0x00141820; // type:func
-PrInitializeAnimation               = 0x001418d8; // type:func
-PrInitializeCamera                  = 0x00141980; // type:func
-PrCleanupModel                      = 0x00141a28; // type:func
-PrCleanupAnimation                  = 0x00141a58; // type:func
-PrCleanupCamera                     = 0x00141b00; // type:func
-PrCleanupAllSceneModel              = 0x00141ba8; // type:func
-PrGetAnimationStartFrame            = 0x00141c10; // type:func
-PrGetAnimationEndFrame              = 0x00141c20; // type:func
-PrGetCameraStartFrame               = 0x00141c30; // type:func
-PrGetCameraEndFrame                 = 0x00141c40; // type:func
-PrSetModelUserData                  = 0x00141c50; // type:func
-PrSetAnimationUserData              = 0x00141c58; // type:func
-PrSetCameraUserData                 = 0x00141c60; // type:func
-PrGetModelUserData                  = 0x00141c68; // type:func
-PrGetAnimationUserData              = 0x00141c70; // type:func
-PrGetCameraUserData                 = 0x00141c78; // type:func
-PrLinkAnimation                     = 0x00141c80; // type:func
-PrUnlinkAnimation                   = 0x00141c88; // type:func
-PrGetLinkedAnimation                = 0x00141c90; // type:func
-PrLinkPositionAnimation             = 0x00141c98; // type:func
-PrUnlinkPositionAnimation           = 0x00141ca0; // type:func
-PrGetLinkedPositionAnimation        = 0x00141ca8; // type:func
-PrSelectCamera                      = 0x00141cb0; // type:func
-PrGetSelectedCamera                 = 0x00141cc0; // type:func
-PrGetCurrentCamera                  = 0x00141cc8; // type:func
-PrSetDefaultCamera                  = 0x00141ce8; // type:func
-PrSetAppropriateDefaultCamera       = 0x00141d38; // type:func
-PrShowModel                         = 0x00141d40; // type:func
-PrGetModelMatrix                    = 0x00141db0; // type:func
-PrHideModel                         = 0x00141dd0; // type:func
-PrGetModelPrimitivePosition         = 0x00141de8; // type:func
-PrGetModelScreenPosition            = 0x00141e28; // type:func
-PrAnimateModel                      = 0x00141e68; // type:func
-PrAnimateModelPosition              = 0x00141e78; // type:func
-PrAnimateSceneCamera                = 0x00141e88; // type:func
-PrRender                            = 0x00141e98; // type:func
-PrWaitRender                        = 0x00141ea0; // type:func
-PrSetStage                          = 0x00141eb0; // type:func
-PrSetDepthOfField                   = 0x00141eb8; // type:func
-PrSetDepthOfFieldLevel              = 0x00141f08; // type:func
-PrGetFocalLength                    = 0x00141f10; // type:func
-PrGetDefocusLength                  = 0x00141f18; // type:func
-PrGetDepthOfFieldLevel              = 0x00141f20; // type:func
-PrSaveContour                       = 0x00141f28; // type:func
-PrResetContour                      = 0x00141f30; // type:func
-PrSavePosture                       = 0x00141f38; // type:func
-PrResetPosture                      = 0x00141f40; // type:func
-PrSetContourBlurAlpha               = 0x00141f48; // type:func
-PrSetTransactionBlendRatio          = 0x00141f58; // type:func
-PrGetContourBlurAlpha               = 0x00141f60; // type:func
-PrGetContourBlurAlpha2              = 0x00141f68; // type:func
-PrGetTransactionBlendRatio          = 0x00141f70; // type:func
-PrSetModelDisturbance               = 0x00141f78; // type:func
-PrGetModelDisturbance               = 0x00141f80; // type:func
-PrGetVertexNum                      = 0x00141f88; // type:func
-PrGetModelName                      = 0x00141f98; // type:func
-PrGetAnimationName                  = 0x00141fa8; // type:func
-PrGetCameraName                     = 0x00141fb0; // type:func
-PrGetSceneName                      = 0x00141fb8; // type:func
-PrGetRenderingStatistics            = 0x00141fc0; // type:func
-PrSetModelVisibility                = 0x00141fd0; // type:func
-PrGetModelImage                     = 0x00142028; // type:func
-PrGetAnimationImage                 = 0x00142030; // type:func
-PrGetCameraImage                    = 0x00142038; // type:func
-PrSetDebugParam                     = 0x00142040; // type:func
-PrSetDebugParamFloat                = 0x00142058; // type:func
-PrGetDebugParam                     = 0x00142078; // type:func
-PrGetDebugParamFloat                = 0x00142090; // type:func
-InitializeDebugParam__Fv            = 0x001420a8; // type:func
+PrSetFrameRate                                                                      = 0x00141658; // type:func
+PrGetFrameRate                                                                      = 0x00141678; // type:func
+PrInitializeModule                                                                  = 0x00141680; // type:func
+PrCleanupModule                                                                     = 0x001416c8; // type:func
+PrInitializeScene                                                                   = 0x00141710; // type:func
+PrInitializeSceneDBuff                                                              = 0x00141748; // type:func
+PrCleanupScene                                                                      = 0x00141788; // type:func
+PrSetSceneFrame                                                                     = 0x001417f8; // type:func
+PrSetSceneEnv                                                                       = 0x00141800; // type:func
+PrPreprocessSceneModel                                                              = 0x00141818; // type:func
+PrInitializeModel                                                                   = 0x00141820; // type:func
+PrInitializeAnimation                                                               = 0x001418d8; // type:func
+PrInitializeCamera                                                                  = 0x00141980; // type:func
+PrCleanupModel                                                                      = 0x00141a28; // type:func
+PrCleanupAnimation                                                                  = 0x00141a58; // type:func
+PrCleanupCamera                                                                     = 0x00141b00; // type:func
+PrCleanupAllSceneModel                                                              = 0x00141ba8; // type:func
+PrGetAnimationStartFrame                                                            = 0x00141c10; // type:func
+PrGetAnimationEndFrame                                                              = 0x00141c20; // type:func
+PrGetCameraStartFrame                                                               = 0x00141c30; // type:func
+PrGetCameraEndFrame                                                                 = 0x00141c40; // type:func
+PrSetModelUserData                                                                  = 0x00141c50; // type:func
+PrSetAnimationUserData                                                              = 0x00141c58; // type:func
+PrSetCameraUserData                                                                 = 0x00141c60; // type:func
+PrGetModelUserData                                                                  = 0x00141c68; // type:func
+PrGetAnimationUserData                                                              = 0x00141c70; // type:func
+PrGetCameraUserData                                                                 = 0x00141c78; // type:func
+PrLinkAnimation                                                                     = 0x00141c80; // type:func
+PrUnlinkAnimation                                                                   = 0x00141c88; // type:func
+PrGetLinkedAnimation                                                                = 0x00141c90; // type:func
+PrLinkPositionAnimation                                                             = 0x00141c98; // type:func
+PrUnlinkPositionAnimation                                                           = 0x00141ca0; // type:func
+PrGetLinkedPositionAnimation                                                        = 0x00141ca8; // type:func
+PrSelectCamera                                                                      = 0x00141cb0; // type:func
+PrGetSelectedCamera                                                                 = 0x00141cc0; // type:func
+PrGetCurrentCamera                                                                  = 0x00141cc8; // type:func
+PrSetDefaultCamera                                                                  = 0x00141ce8; // type:func
+PrSetAppropriateDefaultCamera                                                       = 0x00141d38; // type:func
+PrShowModel                                                                         = 0x00141d40; // type:func
+PrGetModelMatrix                                                                    = 0x00141db0; // type:func
+PrHideModel                                                                         = 0x00141dd0; // type:func
+PrGetModelPrimitivePosition                                                         = 0x00141de8; // type:func
+PrGetModelScreenPosition                                                            = 0x00141e28; // type:func
+PrAnimateModel                                                                      = 0x00141e68; // type:func
+PrAnimateModelPosition                                                              = 0x00141e78; // type:func
+PrAnimateSceneCamera                                                                = 0x00141e88; // type:func
+PrRender                                                                            = 0x00141e98; // type:func
+PrWaitRender                                                                        = 0x00141ea0; // type:func
+PrSetStage                                                                          = 0x00141eb0; // type:func
+PrSetDepthOfField                                                                   = 0x00141eb8; // type:func
+PrSetDepthOfFieldLevel                                                              = 0x00141f08; // type:func
+PrGetFocalLength                                                                    = 0x00141f10; // type:func
+PrGetDefocusLength                                                                  = 0x00141f18; // type:func
+PrGetDepthOfFieldLevel                                                              = 0x00141f20; // type:func
+PrSaveContour                                                                       = 0x00141f28; // type:func
+PrResetContour                                                                      = 0x00141f30; // type:func
+PrSavePosture                                                                       = 0x00141f38; // type:func
+PrResetPosture                                                                      = 0x00141f40; // type:func
+PrSetContourBlurAlpha                                                               = 0x00141f48; // type:func
+PrSetTransactionBlendRatio                                                          = 0x00141f58; // type:func
+PrGetContourBlurAlpha                                                               = 0x00141f60; // type:func
+PrGetContourBlurAlpha2                                                              = 0x00141f68; // type:func
+PrGetTransactionBlendRatio                                                          = 0x00141f70; // type:func
+PrSetModelDisturbance                                                               = 0x00141f78; // type:func
+PrGetModelDisturbance                                                               = 0x00141f80; // type:func
+PrGetVertexNum                                                                      = 0x00141f88; // type:func
+PrGetModelName                                                                      = 0x00141f98; // type:func
+PrGetAnimationName                                                                  = 0x00141fa8; // type:func
+PrGetCameraName                                                                     = 0x00141fb0; // type:func
+PrGetSceneName                                                                      = 0x00141fb8; // type:func
+PrGetRenderingStatistics                                                            = 0x00141fc0; // type:func
+PrSetModelVisibility                                                                = 0x00141fd0; // type:func
+PrGetModelImage                                                                     = 0x00142028; // type:func
+PrGetAnimationImage                                                                 = 0x00142030; // type:func
+PrGetCameraImage                                                                    = 0x00142038; // type:func
+PrSetDebugParam                                                                     = 0x00142040; // type:func
+PrSetDebugParamFloat                                                                = 0x00142058; // type:func
+PrGetDebugParam                                                                     = 0x00142078; // type:func
+PrGetDebugParamFloat                                                                = 0x00142090; // type:func
+InitializeDebugParam__Fv                                                            = 0x001420a8; // type:func
 
-prFrameRate                         = 0x003998cc; // type:f32 size:0x4
-prInverseFrameRate                  = 0x003998d0; // type:f32 size:0x4
-tmp_0                               = 0x003998d4;
-tmp_1                               = 0x003998d8;
-prCurrentStage                      = 0x003998dc; // type:s32
+prFrameRate                                                                         = 0x003998cc; // type:f32 size:0x4
+prInverseFrameRate                                                                  = 0x003998d0; // type:f32 size:0x4
+tmp_0                                                                               = 0x003998d4;
+tmp_1                                                                               = 0x003998d8;
+prCurrentStage                                                                      = 0x003998dc; // type:s32
 
-debugParam                          = 0x00399b90;
+debugParam                                                                          = 0x00399b90;
 
-vector_0                            = 0x01c83190;
-vector_1                            = 0x01c831a0;
+vector_0                                                                            = 0x01c83190;
+vector_1                                                                            = 0x01c831a0;
 
 // prlib/setpointer.cpp
-ChangePointer__13SpmFileHeader      = 0x001420b8; // type:func
-ChangePointer__7SpmNodeP13SpmFileHeaderP7SpmNode = 0x00142168; // type:func
-ChangePointer__13SpaFileHeader      = 0x00142308; // type:func
-ChangePointer__16SpaNodeAnimationP13SpaFileHeader = 0x001423c0; // type:func
-ChangePointer__13SpcFileHeader      = 0x00142670; // type:func
+ChangePointer__13SpmFileHeader                                                      = 0x001420b8; // type:func
+ChangePointer__7SpmNodeP13SpmFileHeaderP7SpmNode                                    = 0x00142168; // type:func
+ChangePointer__13SpaFileHeader                                                      = 0x00142308; // type:func
+ChangePointer__16SpaNodeAnimationP13SpaFileHeader                                   = 0x001423c0; // type:func
+ChangePointer__13SpcFileHeader                                                      = 0x00142670; // type:func
 
 // prlib/render.cpp
-prSpramData                         = 0x003998e0;
-FLT_003998E4                        = 0x003998e4; // type:s32
-FLT_003998E8                        = 0x003998e8; // type:s32
+Render__13PrSceneObject                                                             = 0x00142820; // type:func
+InitializeVu1__13PrSceneObject                                                      = 0x00142c18; // type:func
+PrepareScreenModelRender__13PrSceneObject                                           = 0x00142ca0; // type:func
+CalculateCurrentMatrix__13PrModelObject                                             = 0x00142d60; // type:func
+CalculateCurrentMatrix__13SpmFileHeaderP13PrModelObjectRCt8NaMATRIX3Zfi4i4          = 0x00142f50; // type:func
+CalculateCurrentMatrixAnimation__13SpmFileHeaderP13PrModelObjectRCt8NaMATRIX3Zfi4i4 = 0x00142fd0; // type:func
+CalculateClusterMatrix__13SpmFileHeaderP13PrModelObjectRCt8NaMATRIX3Zfi4i4          = 0x00143f20; // type:func
+CalculateClusterMatrixAnimation__13SpmFileHeaderP13PrModelObjectRCt8NaMATRIX3Zfi4i4 = 0x00144210; // type:func
+RenderContext1Model__13PrModelObject                                                = 0x001453a0; // type:func
+RenderContext1Model__13SpmFileHeaderP13PrModelObject                                = 0x001453d8; // type:func
+ModifySimpleDmaPacket__7SpmNodeP23PrVuNodeHeaderDmaPacket                           = 0x00145450; // type:func
+RenderContext1Node__7SpmNodeP13PrModelObject                                        = 0x00145538; // type:func
+RenderScreenModelNode__13PrModelObject                                              = 0x001456b0; // type:func
+RenderScreenModelNode__13SpmFileHeader                                              = 0x001456e0; // type:func
+RenderScreenModelNode__7SpmNode                                                     = 0x00145740; // type:func
+RenderBackgroundScreenModel__13PrModelObject                                        = 0x00145880; // type:func
+RenderBackgroundScreenModel__13SpmFileHeader                                        = 0x001458b0; // type:func
+RenderBackgroundScreenModel__7SpmNode                                               = 0x00145910; // type:func
+RenderContext2Model__13PrModelObject                                                = 0x00145a20; // type:func
+RenderContext2Model__13SpmFileHeaderP13PrModelObject                                = 0x00145a68; // type:func
+RenderContext2Node__7SpmNodeP13PrModelObject                                        = 0x00145ae0; // type:func
+ComposeGlobalMatrix__7SpmNodeP13PrModelObjectRCt8NaMATRIX3Zfi4i4                    = 0x00145dd8; // type:func
+ComposeGlobalMatrixWithoutVisibility__7SpmNodeP13PrModelObjectRCt8NaMATRIX3Zfi4i4   = 0x00145e58; // type:func
 
-AwfulStatus                         = 0x00399b94;
+// prlib/renderee.cpp
+InitializeEECore__13PrRenderStuffP13PrSceneObject                                   = 0x001461d0; // type:func
+RenderVertexEECoreBothface__13PrRenderStuff                                         = 0x00146258; // type:func
+RenderVertexEECoreNormal__13PrRenderStuff                                           = 0x001462f8; // type:func
+RenderVertexEECoreRefmap__13PrRenderStuff                                           = 0x001463b8; // type:func
+RenderVertexEECoreContour__13PrRenderStuff                                          = 0x001463c0; // type:func
+RenderNodeEECore__13PrRenderStuffP23PrVuNodeHeaderDmaPacket                         = 0x001463c8; // type:func
+RenderChunkEECore__13PrRenderStuffP25PrVuDataChunkPacketHeaderf                     = 0x001466f8; // type:func
+
+// prlib/transition.cpp
+SavePosture__13PrModelObject                                                        = 0x00146a10; // type:func
+ResetPosture__13PrModelObject                                                       = 0x00146a58; // type:func
+BlendTransitionMatrix__7SpmNodeP13PrModelObjectRt8NaMATRIX3Zfi4i4                   = 0x00146a70; // type:func
+BlendTransactionWeight__12SpmShapeNodeP13PrModelObjectfUi                           = 0x00146d60; // type:func
+
+// prlib/microprogram.cpp
+CalculateEntryPoint__Fv                                                             = 0x00146dc8; // type:func
+PrLoadMicroPrograms__Fv                                                             = 0x00146e80; // type:func
+PrGetMicroProgramAddress__F22PrMICRO_PROGRAM_MODULE                                 = 0x00146eb8; // type:func
+PrGetInputVertexParameterNum__F22PrMICRO_PROGRAM_MODULE                             = 0x00146ed0; // type:func
+PrGetInputVertexParameterSet__F22PrMICRO_PROGRAM_MODULE                             = 0x00146ee8; // type:func
+PrGetOutputVertexParameterNum__F22PrMICRO_PROGRAM_MODULE                            = 0x00146f00; // type:func
+PrGetOutputVertexParameterSet__F22PrMICRO_PROGRAM_MODULE                            = 0x00146f18; // type:func
+PrGetMendererCreateTextureAddress__Fv                                               = 0x00146f30; // type:func
+PrGetMendererDrawMeshAddress__Fv                                                    = 0x00146f38; // type:func
+
+// prlib/spram.cpp
+Initialize__12PrSPRAM_DATAP13PrSceneObject                                          = 0x00146f40; // type:func
+InitializeModel__12PrSPRAM_DATAP13PrModelObject                                     = 0x00147ab8; // type:func
+SendDisplayHeader__12PrSPRAM_DATA                                                   = 0x00147b10; // type:func
+_GLOBAL_$I$Initialize__12PrSPRAM_DATAP13PrSceneObject                               = 0x00147de8; // type:func
+
+// prlib/mfifo.cpp
+PrInitializeMfifo__Fv                                                               = 0x00148350; // type:func
+PrCleanupMfifo__Fv                                                                  = 0x00148380; // type:func
+PrStartMfifo__Fv                                                                    = 0x00148388; // type:func
+PrStopMfifo__Fv                                                                     = 0x00148410; // type:func
+PrWaitMfifo__Fv                                                                     = 0x00148468; // type:func
+PrSendMfifo__FPC10_sceDmaTag                                                        = 0x001484d0; // type:func
+PrMfifoUnsentDataSize__Fv                                                           = 0x00148568; // type:func
+
+// prlib/spadata.cpp
+SearchSegment__C12SpaTrackBasef                                                     = 0x00148590; // type:func
+GetValue__Ct8SpaTrack1Zif                                                           = 0x001486d0; // type:func
+GetMatrix__C12SpaTransformf                                                         = 0x00148778; // type:func
+GetMatrix__C16SpaNodeAnimationf                                                     = 0x001489f0; // type:func
+IsVisible__C16SpaNodeAnimationf                                                     = 0x00148b20; // type:func
+IsNodeVisible__C13SpaFileHeaderP7SpmNodef                                           = 0x00148b50; // type:func
+IsEverIdentical__12SpaTransform                                                     = 0x00148c18; // type:func
+Optimize__16SpaNodeAnimation                                                        = 0x00148e98; // type:func
+GetLinearValue__Ct8SpaTrack1Zt8NaVECTOR2Zfi4Uif                                     = 0x00148f50; // type:func
+GetValue__Ct8SpaTrack1Zt8NaVECTOR2Zfi4f                                             = 0x00149038; // type:func
+GetSprineValue__Ct8SpaTrack1ZfUif                                                   = 0x00149518; // type:func
+GetLinearValue__Ct8SpaTrack1ZfUif                                                   = 0x001495e8; // type:func
+GetValue__Ct8SpaTrack1Zff                                                           = 0x00149648; // type:func
+GetSprineValue__Ct8SpaTrack1Zt8NaMATRIX3Zfi4i4Uif                                   = 0x00149778; // type:func
+GetLinearValue__Ct8SpaTrack1Zt8NaMATRIX3Zfi4i4Uif                                   = 0x0014a668; // type:func
+GetValue__Ct8SpaTrack1Zt8NaMATRIX3Zfi4i4f                                           = 0x0014aab0; // type:func
+GetSprineValue__Ct8SpaTrack1Zt8NaVECTOR2Zfi4Uif                                     = 0x0014b0b0; // type:func
+
+// prlib/scene.cpp
+__13PrSceneObjectP13sceGsDrawEnv1PCcUi                                              = 0x0014b188; // type:func
+_$_13PrSceneObject                                                                  = 0x0014b310; // type:func
+SelectCamera__13PrSceneObjectP13SpcFileHeader                                       = 0x0014b368; // type:func
+GetCurrentCamera__13PrSceneObject                                                   = 0x0014b378; // type:func
+SetAppropriateDefaultCamera__13PrSceneObject                                        = 0x0014b3b0; // type:func
+GetFocalLength__C13PrSceneObject                                                    = 0x0014b6f0; // type:func
+GetDefocusLength__C13PrSceneObject                                                  = 0x0014b758; // type:func
+GetDepthLevel__C13PrSceneObject                                                     = 0x0014b7a0; // type:func
+PreprocessModel__13PrSceneObject                                                    = 0x0014b7d0; // type:func
+
+// prlib/objectset.h
+_$_t11PrObjectSet1Z13PrModelObject                                                  = 0x0014b9d8; // type:func
+
+// prlib/cluster.cpp
+RenderClusterNode__22SpmClusterGeometryNodeP13PrModelObject                         = 0x0014b9f8; // type:func
 
 // prlib/shape.cpp
-AddShapePosition__12SpmShapeNodeUif = 0x0014bd18; // type:func
-RenderShapeNode__12SpmShapeNodeP13PrModelObject = 0x0014bdc0; // type:func
+AddShapePosition__12SpmShapeNodeUif                                                 = 0x0014bd18; // type:func
+RenderShapeNode__12SpmShapeNodeP13PrModelObject                                     = 0x0014bdc0; // type:func
+
+// prlib/billboard.cpp
+CreateBillboardMatrix__FRCt8NaMATRIX3Zfi4i4                                         = 0x0014c200; // type:func
+ApplyBillboardMatrix__7SpmNode                                                      = 0x0014c3b8; // type:func
+
+// prlib/depthfield.cpp
+ApplyDepthOfField__13PrSceneObject                                                  = 0x0014c8e8; // type:func
+
+// prlib/vram.cpp
+PrAddDrawAreaDefinition__FP11NaGifPacketRC11PrVRAM_RECTbbUl                         = 0x0014cdd0; // type:func
+PrAddTextureAreaDefinition__FP11NaGifPacketRC11PrVRAM_RECTb                         = 0x0014cf78; // type:func
+PrSetSpriteDefinitionZ__FUi                                                         = 0x0014d078; // type:func
+PrAddSpriteDefinition__FP11NaGifPacketRC11PrVRAM_RECTT1b                            = 0x0014d080; // type:func
+PrAddSpriteDefinitionSuperSampled__FP11NaGifPacketRC11PrVRAM_RECTT1                 = 0x0014d238; // type:func
 
 // prlib/random.cpp
-RawRandom__Fv                       = 0x0014d8e0; // type:func
-PrRandom__Fv                        = 0x0014d900; // type:func
-PrInitializeRandomPool__Fv          = 0x0014d980; // type:func
-PrFloatRandom__Fv                   = 0x0014d9d8; // type:func
+RawRandom__Fv                                                                       = 0x0014d8e0; // type:func
+PrRandom__Fv                                                                        = 0x0014d900; // type:func
+PrInitializeRandomPool__Fv                                                          = 0x0014d980; // type:func
+PrFloatRandom__Fv                                                                   = 0x0014d9d8; // type:func
 
-randomSeed                          = 0x00399940;
-poolIndex                           = 0x00399944;
+randomSeed                                                                          = 0x00399940;
+poolIndex                                                                           = 0x00399944;
 
-randomPool                          = 0x01c833e0; // size:0x184
+randomPool                                                                          = 0x01c833e0; // size:0x184
 
 // prlib/menderer.cpp
-PrDecelerateMenderer                = 0x0014ec30; // type:func
-PrSetMendererRatio                  = 0x0014f278; // type:func
-PrGetMendererRatio                  = 0x0014f280; // type:func
-PrInitializeMenderer                = 0x0014f2a8; // type:func
+InitializeNoodleStripRendering__FUiUiUiUi                                           = 0x0014da40; // type:func
+GetRandom__Fv                                                                       = 0x0014da98; // type:func
+StageIndexForColor__Fv                                                              = 0x0014db00; // type:func
+PushNoodleColor__FPUl                                                               = 0x0014db30; // type:func
+DrawNoodleStripChunk__FRCt8NaMATRIX3Zfi4i4                                          = 0x0014dee0; // type:func
+SetNoodleRotationMatrix__FRt8NaMATRIX3Zfi4i4f                                       = 0x0014e4a0; // type:func
+PreDrawNoodleStrip__Fv                                                              = 0x0014e8d0; // type:func
+DrawNoodleStrip__Fff                                                                = 0x0014e970; // type:func
+StartNoodleRotation__Fv                                                             = 0x0014eaa0; // type:func
+UpdateNoodleRotation__Fv                                                            = 0x0014eac0; // type:func
+PrUpdateMendererSpeed__Fv                                                           = 0x0014ebb8; // type:func
+PrDecelerateMenderer                                                                = 0x0014ec30; // type:func
+PrRestartMenderer                                                                   = 0x0014ece8; // type:func
+DrawMenderer__Fv                                                                    = 0x0014ed00; // type:func
+PrSetMendererRatio                                                                  = 0x0014f278; // type:func
+PrGetMendererRatio                                                                  = 0x0014f280; // type:func
+PrSetMendererDirection                                                              = 0x0014f288; // type:func
+PrGetMendererDirection                                                              = 0x0014f290; // type:func
+PrSetMendererColorModulation                                                        = 0x0014f298; // type:func
+PrIsMendererColorModulation                                                         = 0x0014f2a0; // type:func
+PrInitializeMenderer                                                                = 0x0014f2a8; // type:func
+PrRenderMenderer                                                                    = 0x0014f388; // type:func
+_GLOBAL_$I$prMendererRatio                                                          = 0x0014f4c0; // type:func
 
 // prlib/menderercreate.cpp
-PrCreateMendererTexture             = 0x00150330; // type:func
+PrSynchronizeMendererParameter__Ff                                                  = 0x0014f9d0; // type:func
+PrInitializeTextureCreation__FUiUiUiUi                                              = 0x0014fbb8; // type:func
+CreateMendererTexture__Ff                                                           = 0x001500f0; // type:func
+PrCreateMendererTexture                                                             = 0x00150330; // type:func
+PrWaitMendererTexture__FP13sceGsDrawEnv1RC10sceGsFrameRC13sceGsXyoffset             = 0x00150418; // type:func
+
+// prlib/mendererawful.cpp
+SetNextSwitchRotationTimer__Fv                                                      = 0x001504c8; // type:func
+GetAwfulRotation__Fv                                                                = 0x00150510; // type:func
+PrStartAwfulRotation__Fv                                                            = 0x001505e8; // type:func
+PrFadeFrameImage__Ff                                                                = 0x001505f8; // type:func
+PrInitializeAwfulBackground__FPv                                                    = 0x001506d8; // type:func
+PrDrawAwfulBackground__FG10sceGsFrame                                               = 0x00150840; // type:func
+PrUpdateAwfulMenderer__Fv                                                           = 0x00150c80; // type:func
+
+// prlib/mendereralpha.cpp
+PrInitializeAlphaModulation__Fv                                                     = 0x00150d68; // type:func
+PrCreateAlphaModulation__Ff                                                         = 0x00150f88; // type:func
+PrBlendNoodleImage__Fb                                                              = 0x001510d8; // type:func
+
+// prlib/mendererdata.cpp
+SetNextTarget__FP20PrNoodlePositionData                                             = 0x00151270; // type:func
+InitializeNoodlePositionData__Fv                                                    = 0x00151490; // type:func
+UpdateNoodlePositionData__FP20PrNoodlePositionData                                  = 0x001515b0; // type:func
+GetSynchronizeRatio__FPC20PrNoodlePositionData                                      = 0x00151630; // type:func
+PrInitializeNoodlePolygonPosition__Fv                                               = 0x00151728; // type:func
+PrGetNoodlePolygonPosition__FPt8NaVECTOR2Zfi4Ui                                     = 0x001517e8; // type:func
+
+// prlib/wave.cpp
+CG_WaveInit__FP8WAVE_STR                                                            = 0x00151e20; // type:func
+CG_WaveInitEasy__FP8WAVE_STRssss10WMODE_ENUM                                        = 0x00151e28; // type:func
+UG_WaveDisp__FP8WAVE_STRP10sceGsFrameP12sceGifPacket                                = 0x00151f20; // type:func
+CG_WaveDisp__FP8WAVE_STRP10sceGsFrame                                               = 0x00152218; // type:func
+WaveCtrlInit__FP8WAVE_STRss10WMODE_ENUM                                             = 0x001522f8; // type:func
+WaveCtrlDisp__FP8WAVE_STRP10sceGsFrame                                              = 0x001523b0; // type:func
+WaveCtrlUpdate__FP8WAVE_STRf                                                        = 0x001523b8; // type:func
 
 // prlib/dmaqueue.cpp
-__10PrDmaQueueUi                    = 0x001523f0; // type:func
-_$_10PrDmaQueue                     = 0x00152458; // type:func
-Initialize__10PrDmaQueue            = 0x001524b8; // type:func
-Start__10PrDmaQueue                 = 0x00152558; // type:func
-Append__10PrDmaQueuePv              = 0x001525f0; // type:func
-Wait__10PrDmaQueue                  = 0x00152690; // type:func
+__10PrDmaQueueUi                                                                    = 0x001523f0; // type:func
+_$_10PrDmaQueue                                                                     = 0x00152458; // type:func
+Initialize__10PrDmaQueue                                                            = 0x001524b8; // type:func
+Start__10PrDmaQueue                                                                 = 0x00152558; // type:func
+Append__10PrDmaQueuePv                                                              = 0x001525f0; // type:func
+Wait__10PrDmaQueue                                                                  = 0x00152690; // type:func
 
-warned                              = 0x003999b4;
+warned                                                                              = 0x003999b4;
 
 // prlib/utility.cpp
-PrGetBitSize__FUi                   = 0x00152750; // type:func
+PrGetBitSize__FUi                                                                   = 0x00152750; // type:func
 
 // prlib/tim2.cpp
-Tim2CheckFileHeader                 = 0x00152790; // type:func
-Tim2GetPictureHeader                = 0x00152798; // type:func
-Tim2GetMipMapPictureSize            = 0x001527e8; // type:func
-Tim2GetMipMapHeader                 = 0x00152870; // type:func
-Tim2GetImage                        = 0x001528a8; // type:func
-Tim2GetClut                         = 0x00152908; // type:func
-Tim2GetClutColor                    = 0x00152930; // type:func
-Tim2SetClutColor                    = 0x00152b20; // type:func
-Tim2GetTexel                        = 0x00152d88; // type:func
-Tim2SetTexel                        = 0x00152f10; // type:func
-Tim2GetTextureColor                 = 0x00153100; // type:func
-Tim2LoadPicture                     = 0x00153210; // type:func
-Tim2LoadImage                       = 0x00153238; // type:func
-Tim2LoadClut                        = 0x00153430; // type:func
-Tim2LoadTexture__FiUiiiiPUI80       = 0x001536d0; // type:func
+Tim2CheckFileHeader                                                                 = 0x00152790; // type:func
+Tim2GetPictureHeader                                                                = 0x00152798; // type:func
+Tim2GetMipMapPictureSize                                                            = 0x001527e8; // type:func
+Tim2GetMipMapHeader                                                                 = 0x00152870; // type:func
+Tim2GetImage                                                                        = 0x001528a8; // type:func
+Tim2GetClut                                                                         = 0x00152908; // type:func
+Tim2GetClutColor                                                                    = 0x00152930; // type:func
+Tim2SetClutColor                                                                    = 0x00152b20; // type:func
+Tim2GetTexel                                                                        = 0x00152d88; // type:func
+Tim2SetTexel                                                                        = 0x00152f10; // type:func
+Tim2GetTextureColor                                                                 = 0x00153100; // type:func
+Tim2LoadPicture                                                                     = 0x00153210; // type:func
+Tim2LoadImage                                                                       = 0x00153238; // type:func
+Tim2LoadClut                                                                        = 0x00153430; // type:func
+Tim2LoadTexture__FiUiiiiPUI80                                                       = 0x001536d0; // type:func
 
-mmsize                              = 0x003999b8;
+mmsize                                                                              = 0x003999b8;
+
+// prlib/animation.cpp
+Initialize__13SpaFileHeader                                                         = 0x00153840; // type:func
+
+// prlib/camera.cpp
+Initialize__13SpcFileHeader                                                         = 0x00153888; // type:func
+GetCamera__C13SpcFileHeaderf                                                        = 0x00153890; // type:func
+
+// prlib/contour.cpp
+SaveContour__13PrModelObject                                                        = 0x00153e80; // type:func
+SaveContour__14SpmComplexNodeP13PrModelObject                                       = 0x00153f28; // type:func
+ResetContour__13PrModelObject                                                       = 0x00154098; // type:func
+RenderContour__14SpmComplexNodeP13PrModelObject                                     = 0x001540b0; // type:func
 
 // prlib/dma.cpp
 PrWaitDmaFinish__FUi                = 0x001543e8; // type:func

@@ -1,17 +1,18 @@
 #include "common.h"
 
-INCLUDE_ASM("prlib/mendererdata", func_00151270);
+INCLUDE_ASM("prlib/mendererdata", SetNextTarget__FP20PrNoodlePositionData);
 
-INCLUDE_ASM("prlib/mendererdata", func_00151490);
+INCLUDE_ASM("prlib/mendererdata", InitializeNoodlePositionData__Fv);
 
-INCLUDE_ASM("prlib/mendererdata", func_001515B0);
+INCLUDE_ASM("prlib/mendererdata", UpdateNoodlePositionData__FP20PrNoodlePositionData);
 
-INCLUDE_ASM("prlib/mendererdata", func_00151630);
+INCLUDE_ASM("prlib/mendererdata", GetSynchronizeRatio__FPC20PrNoodlePositionData);
 
-INCLUDE_ASM("prlib/mendererdata", func_00151728);
+INCLUDE_ASM("prlib/mendererdata", PrInitializeNoodlePolygonPosition__Fv);
 
-INCLUDE_ASM("prlib/mendererdata", func_001517E8);
+INCLUDE_ASM("prlib/mendererdata", PrGetNoodlePolygonPosition__FPt8NaVECTOR2Zfi4Ui);
 
+/* nalib/navector.h */
 INCLUDE_ASM("prlib/mendererdata", func_00151D78);
 
 INCLUDE_ASM("prlib/mendererdata", func_00151DA0);

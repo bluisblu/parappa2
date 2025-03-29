@@ -1,19 +1,19 @@
 #include "common.h"
 
-INCLUDE_ASM("prlib/microprogram", func_00146DC8);
+INCLUDE_ASM("prlib/microprogram", CalculateEntryPoint__Fv);
 
-INCLUDE_ASM("prlib/microprogram", func_00146E80);
+INCLUDE_ASM("prlib/microprogram", PrLoadMicroPrograms__Fv);
 
-INCLUDE_ASM("prlib/microprogram", func_00146EB8);
+INCLUDE_ASM("prlib/microprogram", PrGetMicroProgramAddress__F22PrMICRO_PROGRAM_MODULE);
 
-INCLUDE_ASM("prlib/microprogram", func_00146ED0);
+INCLUDE_ASM("prlib/microprogram", PrGetInputVertexParameterNum__F22PrMICRO_PROGRAM_MODULE);
 
-INCLUDE_ASM("prlib/microprogram", func_00146EE8);
+INCLUDE_ASM("prlib/microprogram", PrGetInputVertexParameterSet__F22PrMICRO_PROGRAM_MODULE);
 
-INCLUDE_ASM("prlib/microprogram", func_00146F00);
+INCLUDE_ASM("prlib/microprogram", PrGetOutputVertexParameterNum__F22PrMICRO_PROGRAM_MODULE);
 
-INCLUDE_ASM("prlib/microprogram", func_00146F18);
+INCLUDE_ASM("prlib/microprogram", PrGetOutputVertexParameterSet__F22PrMICRO_PROGRAM_MODULE);
 
-INCLUDE_ASM("prlib/microprogram", func_00146F30);
+INCLUDE_ASM("prlib/microprogram", PrGetMendererCreateTextureAddress__Fv);
 
-INCLUDE_ASM("prlib/microprogram", func_00146F38);
+INCLUDE_ASM("prlib/microprogram", PrGetMendererDrawMeshAddress__Fv);

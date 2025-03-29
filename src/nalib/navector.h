@@ -1,9 +1,8 @@
-#ifndef NAVECTOR_H
-#define NAVECTOR_H
+#ifndef NALIB_NAVECTOR_H
+#define NALIB_NAVECTOR_H
 
 template <typename T, int size>
-struct NaVECTOR
-{
+struct NaVECTOR {
     T v[size];
 };
 

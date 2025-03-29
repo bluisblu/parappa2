@@ -1,8 +1,8 @@
 #include "common.h"
 
-INCLUDE_ASM("prlib/database", func_00140E60);
+INCLUDE_ASM("prlib/database", __16PrObjectDatabase);
 
-INCLUDE_ASM("prlib/database", func_00140E98);
+INCLUDE_ASM("prlib/database", _$_16PrObjectDatabase);
 
 INCLUDE_ASM("prlib/database", Initialize__16PrObjectDatabase);
 
@@ -16,8 +16,9 @@ INCLUDE_ASM("prlib/database", _GLOBAL_$D$prObjectDatabase);
 
 INCLUDE_ASM("prlib/database", _GLOBAL_$I$prObjectDatabase);
 
-INCLUDE_ASM("prlib/database", func_00141078);
+/* objectset.h */
+INCLUDE_ASM("prlib/database", _$_t11PrObjectSet1Z13SpcFileHeader);
 
-INCLUDE_ASM("prlib/database", func_00141098);
+INCLUDE_ASM("prlib/database", _$_t11PrObjectSet1Z13SpaFileHeader);
 
-INCLUDE_ASM("prlib/database", func_001410B8);
+INCLUDE_ASM("prlib/database", _$_t11PrObjectSet1Z13PrSceneObject);
