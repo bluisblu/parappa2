@@ -1961,6 +1961,7 @@ PrUpdateAwfulMenderer__Fv                                                       
 mendererFadeData                                                                    = 0x0038c940; // size:0x38
 
 mendererAwfulColor                                                                  = 0x00399bb8;
+awfulChangeTimer                                                                    = 0x00399bc0;
 
 // prlib/mendereralpha.cpp
 PrInitializeAlphaModulation__Fv                                                     = 0x00150d68; // type:func

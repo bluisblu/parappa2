@@ -1,6 +1,7 @@
 #include "common.h"
 
 #include "prlib/dma.h"
+#include "prlib/random.h"
 
 #include <eekernel.h>
 #include <eetypes.h>
@@ -12,8 +13,11 @@ extern u_long mendererFadeData[7][2];
 
 /* sbss */
 extern u_int mendererAwfulColor;
+extern u_int awfulChangeTimer;
 
-INCLUDE_ASM("prlib/mendererawful", SetNextSwitchRotationTimer__Fv);
+void SetNextSwitchRotationTimer() {
+    awfulChangeTimer = (u_int)((PrFloatRandom() * 4.0f + 3.0f) * 60.0f);
+}
 
 INCLUDE_ASM("prlib/mendererawful", GetAwfulRotation__Fv);
 
