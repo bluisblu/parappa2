@@ -34,7 +34,7 @@ COMMON_INCLUDES = "-Iinclude -Isrc -isystem include/sdk/ee -isystem include/sdk 
 COMPILER_DIR = f"{TOOLS_DIR}/cc/ee-gcc2.96/bin"
 
 COMPILER_FLAGS     = "-O2 -G8 -gstabs"
-COMPILER_FLAGS_CPP = "-O2 -G8 -x c++ -fno-exceptions -gstabs"
+COMPILER_FLAGS_CPP = "-O2 -G8 -gstabs -x c++ -fno-exceptions -fno-strict-aliasing"
 
 COMPILE_CMD = (
     f"{COMPILER_DIR}/ee-gcc -c {COMMON_INCLUDES} {COMPILER_FLAGS}"

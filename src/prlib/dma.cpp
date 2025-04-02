@@ -38,8 +38,7 @@ void PrWaitDmaFinish(u_int dmaChannel) {
         *D_PCR = pcr;
         asm("sync.l");
 
-        asm volatile
-        (
+        asm volatile(
         "cpcond0_wait_loop:         \n\t"
         "    bc0f cpcond0_wait_loop \n\t"
         "    nop                    \n\t"
