@@ -768,7 +768,7 @@ ExamDispReset                       = 0x001191b8; // type:func
 examScore2Level                     = 0x001191d8; // type:func
 ExamDispOn                          = 0x001192b8; // type:func
 // TODO: match as static
-hex2dec_mbar_tmp                   = 0x001195d8; // type:func
+hex2dec_mbar_tmp                    = 0x001195d8; // type:func
 hex2decPlMi                         = 0x00119658; // type:func
 examNumDisp                         = 0x00119728; // type:func
 examScoreSet                        = 0x00119890; // type:func
@@ -814,6 +814,14 @@ MbarDispGuiSceneMbarArea            = 0x0011ba88; // type:func
 lessonTim2InfoGet                   = 0x0011bba8; // type:func
 lessonCl2InfoGet                    = 0x0011bbb8; // type:func
 MbarDemoCharDisp                    = 0x0011bc18; // type:func
+
+// TODO: match .data to get rid of temporary name
+tim2spr_tbl_tmp1                    = 0x00186288; // size:0x7e0
+niko_chan_str_hook                  = 0x00186aa8; // size:0x50
+niko_chan_str_vs                    = 0x00186af8; // size:0x30
+
+niko_chan_str_pp                    = 0x00399558;
+niko_chan_str_cnt                   = 0x0039955c;
 
 mbar_ctrl_time                      = 0x00399a84;
 mbar_ctrl_stage                     = 0x00399a88;
@@ -993,7 +1001,7 @@ dbg_score_msg                       = 0x00187458;
 dbg_mode_str                        = 0x00187460;
 
 // TODO: migrate .data (and .sdata) and remove the temp name
-tim2spr_tbl_tmp                     = 0x001874b0; // size:0x40 allow_duplicated:true
+tim2spr_tbl_tmp0                    = 0x001874b0; // size:0x40 allow_duplicated:true
 
 urawaza_skip_bottun                 = 0x003995d0;
 urawaza_levelsel_bottun             = 0x003995d4;

@@ -7,6 +7,14 @@
 #include "main/scrctrl.h"
 
 typedef enum {
+    NIKO_KAGE = 0,
+    NIKO_HALF = 1,
+    NIKO_MARU = 2,
+    NIKO_SKIP = 3,
+    NIKO_MAX = 4
+} NIKO_ENUM;
+
+typedef enum {
     MBAR_NONE = 0,
     MBAR_TEACHER = 393,
     MBAR_PARAPPA = 745,
@@ -16,18 +24,6 @@ typedef enum {
     MBAR_PARAPPA_VS = 553,
     MBAR_BOXY_VS = 2089
 } MBAR_REQ_ENUM;
-
-typedef struct { // 0x24
-    /* 0x00 */ MBAR_REQ_ENUM mbar_req_enum;
-    /* 0x04 */ TAPSET *tapset_pp;
-    /* 0x08 */ int current_time;
-    /* 0x0c */ int scr_tap_memory_cnt;
-    /* 0x10 */ SCR_TAP_MEMORY *scr_tap_memory_pp;
-    /* 0x14 */ int lang;
-    /* 0x18 */ int tapdat_size;
-    /* 0x1c */ TAPDAT *tapdat_pp;
-    /* 0x20 */ GUI_CURSOR_ENUM gui_cursor_enum;
-} MBAR_REQ_STR;
 
 typedef enum {
     MBC_NONE = 0,
@@ -75,24 +71,12 @@ typedef enum {
     MBC_MAX = 38
 } MBC_ENUM;
 
-typedef struct { // 0x18
-    /* 0x00 */ MBC_ENUM mbc_enum;
-    /* 0x04 */ int xp;
-    /* 0x08 */ int yp;
-    /* 0x0c */ float sclx;
-    /* 0x10 */ float scly;
-    /* 0x14 */ u_char r;
-    /* 0x15 */ u_char g;
-    /* 0x16 */ u_char b;
-    /* 0x17 */ u_char a;
-} MBARR_CHR;
-
 typedef struct { // 0x38
     /* 0x00 */ u_long GsTex0;
     /* 0x08 */ u_long GsTex1;
     /* 0x10 */ u_int GsRegs;
-    /* 0x14 */ short int x;
-    /* 0x16 */ short int y;
+    /* 0x14 */ short x;
+    /* 0x16 */ short y;
     /* 0x18 */ u_short w;
     /* 0x1a */ u_short h;
     /* 0x1c */ u_short u;
@@ -104,6 +88,36 @@ typedef struct { // 0x38
     /* 0x2c */ float scaley;
     /* 0x30 */ u_char kido[3];
 } EX_CHAR_DISP;
+
+typedef struct { // 0x8
+    /* 0x0 */ u_short xp;
+    /* 0x2 */ u_short yp;
+    /* 0x4 */ NIKO_ENUM niko_enum;
+} NIKO_CHAN_STR;
+
+typedef struct { // 0x24
+    /* 0x00 */ MBAR_REQ_ENUM mbar_req_enum;
+    /* 0x04 */ TAPSET *tapset_pp;
+    /* 0x08 */ int current_time;
+    /* 0x0c */ int scr_tap_memory_cnt;
+    /* 0x10 */ SCR_TAP_MEMORY *scr_tap_memory_pp;
+    /* 0x14 */ int lang;
+    /* 0x18 */ int tapdat_size;
+    /* 0x1c */ TAPDAT *tapdat_pp;
+    /* 0x20 */ GUI_CURSOR_ENUM gui_cursor_enum;
+} MBAR_REQ_STR;
+
+typedef struct { // 0x18
+    /* 0x00 */ MBC_ENUM mbc_enum;
+    /* 0x04 */ int xp;
+    /* 0x08 */ int yp;
+    /* 0x0c */ float sclx;
+    /* 0x10 */ float scly;
+    /* 0x14 */ u_char r;
+    /* 0x15 */ u_char g;
+    /* 0x16 */ u_char b;
+    /* 0x17 */ u_char a;
+} MBARR_CHR;
 
 void MbarSetCtrlTime(int mctime);
 void MbarReq(MBAR_REQ_ENUM mm_req, TAPSET *ts_pp, int curr_time, SCR_TAP_MEMORY *tm_pp, int tm_cnt, int lang, int tapdat_size, TAPDAT *tapdat_pp, GUI_CURSOR_ENUM guic);

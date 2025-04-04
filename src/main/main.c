@@ -708,7 +708,7 @@ static void uramenFileSearchEnd(void) {
 void startUpDisp(void) {
     /* Splash screens TIM2 data */
     /* TODO: match .data (see symbol_addrs.txt) */
-    extern TIM2_DAT tim2spr_tbl_tmp[2]; /* =
+    extern TIM2_DAT tim2spr_tbl_tmp0[2]; /* =
     {
         { .GsTex0 = 0x20050A022531A800, .GsTex1 = 0x260, .w = 320, .h = 224 }, / NanaOn-Sha /
         { .GsTex0 = 0x20150A81A5422968, .GsTex1 = 0x260, .w = 440, .h = 52  }  / SCEI presents /
@@ -731,8 +731,8 @@ void startUpDisp(void) {
     MenuMemCardCheck();
 
     uramenFileSearchSet();
-    logoDispOne(&spr_prim[0], &tim2spr_tbl_tmp[1]);
-    logoDispOne(&spr_prim[1], &tim2spr_tbl_tmp[0]);
+    logoDispOne(&spr_prim[0], &tim2spr_tbl_tmp0[1]);
+    logoDispOne(&spr_prim[1], &tim2spr_tbl_tmp0[0]);
     uramenFileSearchEnd();
 
     UsrMemClear();

@@ -1,6 +1,16 @@
 #include "main/mbar.h"
 
 #include "main/scrctrl.h"
+#include "main/sprite.h"
+
+/* .data */
+extern TIM2_DAT tim2spr_tbl_tmp1[];
+extern NIKO_CHAN_STR niko_chan_str_hook[];
+extern NIKO_CHAN_STR niko_chan_str_vs[];
+
+/* .sdata */
+extern NIKO_CHAN_STR *niko_chan_str_pp;
+extern int niko_chan_str_cnt;
 
 /* .bss */
 extern int conditionFramCnt[4];
@@ -88,15 +98,108 @@ void examCharKidoSet(EX_CHAR_DISP *ecd_pp, u_char rc, u_char gc, u_char bc) {
 
 INCLUDE_ASM("main/mbar", NikoReset);
 
-INCLUDE_ASM("main/mbar", MbarNikoHookUse);
+void MbarNikoHookUse(void) {
+    niko_chan_str_cnt = 10;
+    niko_chan_str_pp = niko_chan_str_hook;
+    NikoReset();
+}
 
-INCLUDE_ASM("main/mbar", MbarNikoVsUse);
+void MbarNikoVsUse(void) {
+    niko_chan_str_cnt = 6;
+    niko_chan_str_pp = niko_chan_str_vs;
+    NikoReset();
+}
 
-INCLUDE_ASM("main/mbar", MbarNikoUnUse);
+void MbarNikoUnUse(void) {
+    niko_chan_str_pp = NULL;
+    niko_chan_str_cnt = 0;
+}
 
-INCLUDE_ASM("main/mbar", MbarNikoSet);
+void MbarNikoSet(int num, int ofs) {
+    int i;
 
-INCLUDE_ASM("main/mbar", MbarNikoDisp);
+    if (niko_chan_str_pp == NULL) {
+        return;
+    }
+
+    for (i = 0; i < num / 2; i++) {
+        if ((i + ofs) >= niko_chan_str_cnt) {
+            printf("NIKO OVER!!\n");
+            return;
+        }
+        niko_chan_str_pp[i + ofs].niko_enum = NIKO_MARU;
+    }
+
+    if (num & 0x1) {
+        if (((num / 2) + ofs) >= niko_chan_str_cnt) {
+            printf("NIKO OVER!!\n");
+            return;
+        }  
+        niko_chan_str_pp[(num / 2) + ofs].niko_enum = NIKO_HALF;
+    }
+}
+
+static void MbarNikoDisp(sceGifPacket *gifpk_pp) {
+    int i;
+    NIKO_CHAN_STR *niko_pp;
+    TIM2_DAT *tim2_dat_pp;
+    TIM2_DAT *tim2_dat2_pp;
+
+    if (niko_chan_str_pp == NULL || niko_chan_str_cnt == 0) {
+        return;
+    }
+
+    ChangeDrawAreaSetGifTag(DrawGetDrawEnvP(DNUM_DRAW), gifpk_pp);
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_TEXFLUSH, 0);
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_TEST_1, SCE_GS_SET_TEST_1(1, 6, 0, 0, 0, 0, 1, 1));
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_TEXA, SCE_GS_SET_TEXA(0, 1, 128));
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_CLAMP_1, SCE_GS_SET_CLAMP_1(1, 1, 0, 0, 0, 0));
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_PABE, 0);
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_TEXA, SCE_GS_SET_TEXA(0, 1, 128));
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_ALPHA_1, SCE_GS_SET_ALPHA_1(0, 1, 0, 1, 0));
+
+    niko_pp = niko_chan_str_pp;
+    for (i = 0; i < niko_chan_str_cnt; i++, niko_pp++) {
+        tim2_dat_pp = NULL;
+        tim2_dat2_pp = NULL;
+
+        switch (niko_chan_str_pp[i].niko_enum) {
+        case NIKO_KAGE:
+            tim2_dat_pp = &tim2spr_tbl_tmp1[60];
+            break;
+        case NIKO_HALF:
+            tim2_dat_pp = &tim2spr_tbl_tmp1[60];
+            tim2_dat2_pp = tim2_dat_pp + 1;
+            break;
+        case NIKO_MARU:
+            tim2_dat_pp = &tim2spr_tbl_tmp1[61];
+            break;
+        case NIKO_SKIP:
+            tim2_dat_pp = &tim2spr_tbl_tmp1[62];
+            break;
+        }
+
+        if (tim2_dat_pp != NULL) {
+            sceGifPkAddGsAD(gifpk_pp, SCE_GS_TEX0_1, tim2_dat_pp->GsTex0);
+            sceGifPkAddGsAD(gifpk_pp, SCE_GS_TEX1_1, tim2_dat_pp->GsTex1);
+            sceGifPkAddGsAD(gifpk_pp, SCE_GS_PRIM, SCE_GS_SET_PRIM(6, 0, 1, 0, 1, 0, 1, 0, 0));
+            sceGifPkAddGsAD(gifpk_pp, SCE_GS_UV, SCE_GS_SET_UV(0, 0));
+            sceGifPkAddGsAD(gifpk_pp, SCE_GS_XYZ2, SCE_GS_SET_XYZ2((niko_pp->xp + 0x6c0) << 4, (niko_pp->yp + 0x790) << 4, 1));
+            sceGifPkAddGsAD(gifpk_pp, SCE_GS_UV, SCE_GS_SET_UV(tim2_dat_pp->w << 4, tim2_dat_pp->h << 4));
+            sceGifPkAddGsAD(gifpk_pp, SCE_GS_XYZ2, SCE_GS_SET_XYZ2((niko_pp->xp + tim2_dat_pp->w + 0x6c0) << 4, (niko_pp->yp + (tim2_dat_pp->h / 2) + 0x790) << 4, 1));
+
+            if (tim2_dat2_pp != NULL) {
+                sceGifPkAddGsAD(gifpk_pp, SCE_GS_TEX0_1, tim2_dat2_pp->GsTex0);
+                sceGifPkAddGsAD(gifpk_pp, SCE_GS_TEX1_1, tim2_dat2_pp->GsTex1);
+                sceGifPkAddGsAD(gifpk_pp, SCE_GS_PRIM, SCE_GS_SET_PRIM(6, 0, 1, 0, 1, 0, 1, 0, 0));
+                sceGifPkAddGsAD(gifpk_pp, SCE_GS_UV, SCE_GS_SET_UV(0, 0));
+                sceGifPkAddGsAD(gifpk_pp, SCE_GS_XYZ2, SCE_GS_SET_XYZ2((niko_pp->xp + 0x6c0) << 4, (niko_pp->yp + 0x790) << 4, 1));
+                sceGifPkAddGsAD(gifpk_pp, SCE_GS_UV, SCE_GS_SET_UV(tim2_dat2_pp->w << 4, (tim2_dat2_pp->h / 2) << 4));
+                sceGifPkAddGsAD(gifpk_pp, SCE_GS_XYZ2, SCE_GS_SET_XYZ2((niko_pp->xp + tim2_dat2_pp->w + 0x6c0) << 4, (niko_pp->yp + (tim2_dat2_pp->h / 4) + 0x790) << 4, 1));
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("main/mbar", MbarHookUseInit);
 
