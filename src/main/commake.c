@@ -1,15 +1,6 @@
 #include "main/commake.h"
 #include "main/scrctrl.h"
 
-// data
-extern void (*comMakeingTblLevel0[8])(CM_STR_CTRL *cmstr_pp);
-extern void (*comMakeingTblLevel1[7])(CM_STR_CTRL *cmstr_pp);
-extern void (*comMakeingTblLevel2[6])(CM_STR_CTRL *cmstr_pp);
-extern void (*comMakeingTblLevel3[4])(CM_STR_CTRL *cmstr_pp);
-
-// bss
-extern CM_STR_CTRL cm_str_ctrl;
-
 void comMakingNo15(CM_STR_CTRL *cmstr_pp);
 
 static void setMakinDataMoto(TAPDAT *tapdat_pp, int size, CM_STR *cm_str_pp) {
@@ -440,6 +431,31 @@ void comMakingNo16(CM_STR_CTRL *cmstr_pp) {
     comMakeSubYure(cmstr_pp->cm_str_make, cmstr_pp->maxBox, -2, 2);
 }
 
+/* .data */
+void (*comMakeingTblLevel0[8])(CM_STR_CTRL *cmstr_pp) = {
+    comMakingNo0, comMakingNo0,
+    comMakingNo1, comMakingNo1,
+    comMakingNo2, comMakingNo2,
+    comMakingNo3, comMakingNo3,
+};
+
+void (*comMakeingTblLevel1[7])(CM_STR_CTRL *cmstr_pp) = {
+    comMakingNo1, comMakingNo2, comMakingNo3,
+    comMakingNo5, comMakingNo5,
+    comMakingNo6, comMakingNo6,
+};
+
+void (*comMakeingTblLevel2[6])(CM_STR_CTRL *cmstr_pp) = {
+    comMakingNo7, comMakingNo7,
+    comMakingNo8, comMakingNo8,
+    comMakingNo9, comMakingNo9,
+};
+
+void (*comMakeingTblLevel3[4])(CM_STR_CTRL *cmstr_pp) = {
+    comMakingNo15, comMakingNo15,
+    comMakingNo16, comMakingNo16,
+};
+
 static void comSelection(LEVEL_VS_ENUM lvl, CM_STR_CTRL *cmstr_pp) {
     void (**comMakeingTbl_tmp)(CM_STR_CTRL *cmstr_pp);
     int tblcnt;
@@ -466,6 +482,9 @@ static void comSelection(LEVEL_VS_ENUM lvl, CM_STR_CTRL *cmstr_pp) {
 
     (comMakeingTbl_tmp[randMakeMax(tblcnt)])(cmstr_pp);
 }
+
+/* .bss */
+extern CM_STR_CTRL cm_str_ctrl;
 
 int computerMaking(COMMAKE_STR *com_pp, int com_cnt, TAPDAT *moto_pp, int moto_cnt, TAPSET *tapset_pp, LEVEL_VS_ENUM clvl) {
     WorkClear(&cm_str_ctrl, sizeof(cm_str_ctrl));

@@ -23,7 +23,7 @@ options:
     ld_bss_contains_common: True
     
     string_encoding: EUC-JP
-    rodata_string_guesser_level: 2 # improve string detection
+    rodata_string_guesser_level: 2 # Improve string detection
     disasm_unknown: True
     named_regs_for_c_funcs: False
     gp_value: 0x3a0ef0
@@ -37,7 +37,7 @@ segments:
       type: code
       start: 0x1000
       vram: 0x100000
-      bss_size: 0x18F4434 # should be 1 byte less?
+      bss_size: 0x18F4434 # Should be 1 byte less?
       subsegments:
         # .text
         - [0x1000,  asm, sdk/crt0]
@@ -191,7 +191,7 @@ segments:
         - [0x87f30, data, main/etc]
         - [0x88000, data, main/wipe]
         - [0x88400, data, main/main]
-        - [0x884f0, data, main/commake]
+        - [0x884f0, .data, main/commake]
 
         - [0x88558, data, menu/menudata]
         - [0x896f8, data, menu/menu_mdl]
