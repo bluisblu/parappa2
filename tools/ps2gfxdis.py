@@ -161,17 +161,28 @@ def disassemble_tex1(data, name):
 
     return format_macro(name, LCM, MXL, MMAG, MMIN, MTBA, L, K)
 
+def disassemble_clamp(data, name):
+    WMS  = (data >> 0 ) & 0x3
+    WMT  = (data >> 2 ) & 0x3
+    MINU = (data >> 4 ) & 0x3ff
+    MAXU = (data >> 14) & 0x3ff
+    MINV = (data >> 24) & 0x3ff
+    MAXV = (data >> 34) & 0x3ff
+
+    return format_macro(name, WMS, WMT, MINU, MAXU, MINV, MAXV)
+
 def disassemble_texa(data, name):
     TA0 = (data >> 0 ) & 0xff
-    AEM = (data >> 15) & 0b1
+    AEM = (data >> 15) & 0x1
     TA1 = (data >> 32) & 0xff
+
     return format_macro(name, TA0, AEM, TA1)
 
 def disassemble_alpha(data, name):
-    A   = (data >> 0 ) & 0b11
-    B   = (data >> 2 ) & 0b11
-    C   = (data >> 4 ) & 0b11
-    D   = (data >> 6 ) & 0b11
+    A   = (data >> 0 ) & 0x3
+    B   = (data >> 2 ) & 0x3
+    C   = (data >> 4 ) & 0x3
+    D   = (data >> 6 ) & 0x3
     FIX = (data >> 32) & 0xff
 
     return format_macro(name, A, B, C, D, FIX)
@@ -217,8 +228,8 @@ DISASSEMBLY_FUNCTIONS = {
     'MIPTBP1_2':  lambda data: disassemble_null(data, 'MIPTBP1_2'),
     'MIPTBP2_1':  lambda data: disassemble_null(data, 'MIPTBP2_1'),
     'MIPTBP2_2':  lambda data: disassemble_null(data, 'MIPTBP2_2'),
-    'CLAMP_1':    lambda data: disassemble_null(data, 'CLAMP_1'),
-    'CLAMP_2':    lambda data: disassemble_null(data, 'CLAMP_2'),
+    'CLAMP_1':    lambda data: disassemble_clamp(data, 'CLAMP_1'),
+    'CLAMP_2':    lambda data: disassemble_clamp(data, 'CLAMP_2'),
     'TEXA':       lambda data: disassemble_texa(data, 'TEXA'),
     'FOGCOL':     lambda data: disassemble_null(data, 'FOGCOL'),
     'TEXFLUSH':   lambda data: disassemble_null(data, 'TEXFLUSH'),
