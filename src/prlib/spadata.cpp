@@ -1,4 +1,4 @@
-#include "common.h"
+#include "prlib/spadata.h"
 
 INCLUDE_ASM("prlib/spadata", SearchSegment__C12SpaTrackBasef);
 
@@ -14,7 +14,21 @@ INCLUDE_ASM("prlib/spadata", IsNodeVisible__C13SpaFileHeaderP7SpmNodef);
 
 INCLUDE_ASM("prlib/spadata", IsEverIdentical__12SpaTransform);
 
-INCLUDE_ASM("prlib/spadata", Optimize__16SpaNodeAnimation);
+int SpaNodeAnimation::Optimize() {
+    int removeCount = 0;
+
+    for (int i = 0; i < this->unk8; i++) {
+        SpaTransform* transform = this->unkC[i];
+        if (transform == NULL || transform->IsEverIdentical()) {
+            removeCount++;
+            continue;
+        }
+        this->unkC[i - removeCount] = this->unkC[i];
+    }
+
+    this->unk8 -= removeCount;
+    return removeCount;
+}
 
 INCLUDE_ASM("prlib/spadata", GetLinearValue__Ct8SpaTrack1Zt8NaVECTOR2Zfi4Uif);
 

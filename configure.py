@@ -211,6 +211,7 @@ def apply_short_loop_fix():
     patch_branch_instructions("asm/nonmatchings/menu/menusub")
     patch_branch_instructions("asm/nonmatchings/prlib/render")
     patch_branch_instructions("asm/nonmatchings/prlib/shape")
+    patch_branch_instructions("asm/nonmatchings/prlib/spadata")
     patch_branch_instructions("asm/nonmatchings/prlib/menderer")
 
 EUC_HACK_FILENAME_TABLE = ["TsDrawUPacket.s", "_P3MC_SetBrowsInfo.s"]
