@@ -38,9 +38,6 @@ u_int PackIntGetDecodeSize(u_char *fp_r) {
     return *(u_int*)fp_r;
 }
 
-// ==========================================
-//                  UNUSED
-// ==========================================
 int PackIntDecode(u_char *fp_r, u_char *fp_w) {
     u_int        moto_size;     /* Decode size                                  */
     int          rp    = N - F; /* Ring buffer position                         */
@@ -232,27 +229,27 @@ static int cdctrlReadSub(FILE_STR *fstr_pp, int ofs, int size, int buf) {
         if (!sceCdSeek(read_lsn)) {
             printf("sceCdSeek Error! %s\n", fstr_pp->fname);
             return 0;
-        } else {
-            while (sceCdSync(1)) {
-                MtcWait(1);
-            }
+        } 
 
-            if (!sceCdRead(read_lsn, (size + 2047) / 2048, (void*)buf, &cdmode)) {
-                printf("sceCdRead Error! %s\n", fstr_pp->fname);
-                return 0;
-            }
-
-            while (sceCdSync(1)) {
-                MtcWait(1);
-            }
-
-            if (sceCdGetError()) {
-                return 0;
-            }
-            
-            FlushCache(0);
-            return 1;
+        while (sceCdSync(1)) {
+            MtcWait(1);
         }
+
+        if (!sceCdRead(read_lsn, (size + 2047) / 2048, (void*)buf, &cdmode)) {
+            printf("sceCdRead Error! %s\n", fstr_pp->fname);
+            return 0;
+        }
+
+        while (sceCdSync(1)) {
+            MtcWait(1);
+        }
+
+        if (sceCdGetError()) {
+            return 0;
+        }
+            
+        FlushCache(0);
+        return 1;
     } else {
         int rfd = sceOpen(fstr_pp->fname, SCE_RDONLY);
         if (rfd < 0) {
@@ -722,16 +719,20 @@ int CdctrlWP2CheckBuffer(void) {
     return WP2Ctrl(WP2_READBUF, WP2_NONE);
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("main/cdctrl", CdctrlWP2SetVolume);
-#else
 void CdctrlWP2SetVolume(u_short vol) {
+    int volume;
+
     cdctrl_str.volume = vol;
-    vol <<= 8;
+    vol *= 256;
     
-    WP2Ctrl(WP2_SETVOLDIRECT, WP2_CONCAT(vol, vol));
+    if ((short)vol < 0) {
+        volume = 0x7fff;
+    } else {
+        volume = vol;
+    }
+
+    WP2Ctrl(WP2_SETVOLDIRECT, PR_CONCAT(volume, volume));
 }
-#endif
 
 u_short CdctrlWP2GetVolume(void) {
     return cdctrl_str.volume;
