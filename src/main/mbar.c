@@ -1,5 +1,7 @@
 #include "main/mbar.h"
 
+#include "os/syssub.h"
+
 #include "main/scrctrl.h"
 #include "main/sprite.h"
 
@@ -96,7 +98,17 @@ void examCharKidoSet(EX_CHAR_DISP *ecd_pp, u_char rc, u_char gc, u_char bc) {
     ecd_pp->kido[2] = bc;
 }
 
-INCLUDE_ASM("main/mbar", NikoReset);
+static void NikoReset() {
+    int i;
+
+    if (niko_chan_str_pp == NULL) {
+        return;
+    }
+
+    for (i = 0; i < niko_chan_str_cnt; i++) {
+        niko_chan_str_pp[i].niko_enum = NIKO_KAGE;
+    }
+}
 
 void MbarNikoHookUse(void) {
     niko_chan_str_cnt = 10;
