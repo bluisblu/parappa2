@@ -1,14 +1,16 @@
 #include "main/stdat.h"
 
-FILE_STR file_str_logo_file; /*= {
+#include "os/mtc.h"
+
+extern FILE_STR file_str_logo_file; /*= {
     FRMODE_CD, FTMODE_INTG, 0, 0, "\\DATA\\LOGO.INT;1", {}
 };*/
 
-FILE_STR file_str_menu_file; /*= {
+extern FILE_STR file_str_menu_file; /*= {
     FRMODE_CD, FTMODE_INTG, 0, 0, "\\DATA\\STMENU.INT;1", {}
 };*/
 
-FILE_STR file_str_extra_file[10]; /*= {
+extern FILE_STR file_str_extra_file[10]; /*= {
     { FRMODE_CD, FTMODE_WP2, 2, 0, "\\EXT\\EXT00.WP2;1", {} },
     { FRMODE_CD, FTMODE_WP2, 2, 0, "\\EXT\\EXT01.WP2;1", {} },
     { FRMODE_CD, FTMODE_WP2, 2, 0, "\\EXT\\EXT02.WP2;1", {} },
@@ -109,10 +111,10 @@ static STDAT_DAT stdat_dat_st01[] =
 };
 #endif
 
-STDAT_REC stdat_rec[19];
+extern STDAT_REC stdat_rec[19];
 
-/* sdata */
-int stdat_rec_num; /* = 14; */
+/* .sdata */
+extern int stdat_rec_num; /* = 14; */
 
 static void stDatFileSearch(FILE_STR *fs_pp) {
     if (fs_pp == NULL || fs_pp->fname == NULL) {

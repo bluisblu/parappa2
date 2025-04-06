@@ -1,13 +1,15 @@
 #include "menu/memc.h"
 
 #include <libmc.h>
+
+#include <stdio.h>
 #include <string.h>
 
-/* data - static */
+/* .data */
 extern sceMcIconSys memc_iconsys;
 extern u_int _memc_type[];
 
-/* bss - static */
+/* .bss */
 extern MEMC_STAT memc_stat;
 
 static int memc_mansub_Open(char *name, u_int type);

@@ -1,8 +1,7 @@
 #include "os/tim2.h"
 
-// TIM2 pixel format table
-int tim2ColorTypeTbl[] =
-{
+/* TIM2 pixel format table */
+int tim2ColorTypeTbl[] = {
     SCE_GS_PSMCT32, SCE_GS_PSMCT16, SCE_GS_PSMCT24, SCE_GS_PSMCT32,
     SCE_GS_PSMT4, SCE_GS_PSMT8
 };
@@ -405,8 +404,7 @@ static int GetModeMaxH(int w, int mode, int *trsize_pp) {
     return ret;
 }
 
-void Tim2Trans_TBP_MODE(void *adrs, int tbp, int mode)
-{
+void Tim2Trans_TBP_MODE(void *adrs, int tbp, int mode) {
     TIM2INFO tim2info;
     static sceGsLoadImage tp;
     u_long  dbw;
@@ -460,7 +458,7 @@ void Tim2TransColor_TBP(void *adrs, int tbp) {
     w = 8;
     h = 2;
     
-    if (tim2info.picturH->ImageType == TIM2_IDTEX8)  {
+    if (tim2info.picturH->ImageType == TIM2_IDTEX8) {
         w = 16;
         h = 16;
     }
@@ -474,4 +472,4 @@ void Tim2TransColor_TBP(void *adrs, int tbp) {
     sceGsSyncPath(0, 0);
 }
 
-static char _pad_[2720]; /* bss pad - TODO: remove once RBuff (cdctrl.c) is added */
+static char _bss_tim2_pad_[2720]; /* bss pad - TODO: remove once RBuff (cdctrl.c) is added */

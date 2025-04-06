@@ -1,10 +1,10 @@
 #include "os/usrmem.h"
 
-/* static - bss */
+/* .bss */
 extern char usrMemoryData[25690112]; // 25 MB
 extern u_int usrMemPos[2048];
 
-/* static - sbss */
+/* .sbss */
 static int usrMemPosCnt;
 static int usrMemPosEndCnt;
 
@@ -88,8 +88,7 @@ u_int UsrMemAlloc(int size) {
 u_int UsrMemEndAlloc(int size) {
     u_int ret = UsrMemAllocEndNext() - ((size + 15) / 16) * 16;
     
-    if (ret < UsrMemAllocNext())
-    {
+    if (ret < UsrMemAllocNext()) {
         printf("UsrMemEndAlloc size over [0x%08x]\n", UsrMemAllocNext() - ret);
         return 0;
     }

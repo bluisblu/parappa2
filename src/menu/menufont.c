@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-/* data */
+/* .data */
 extern u_long SubtGsTex0_TmpMenuFont[3];
 extern MCODE_ASCII mcode_ascii_TmpMenuFont[];
 extern char Tbl_ASC2EUC[193];
@@ -10,23 +10,16 @@ extern char Tbl_ASC2EUC[193];
 extern MCODE_CHAR mcode_dat_pp_TmpMenuFont[512];
 extern MCODE_KANJI_ANIME PadSymbolFontA[12];
 
-/* sdata - static */
-int _PadFont_SW;
-int _PadArrowState;
+/* .sdata */
+extern int _PadFont_SW;
+extern int _PadArrowState;
 
-/* sbss - static */
-int _AnimeFontFlg;
-MCODE_STR *kanji_pp_TmpMenuFont;
+/* .sbss */
+extern int _AnimeFontFlg;
+extern MCODE_STR *kanji_pp_TmpMenuFont;
 
-/* bss - static */
+/* .bss */
 extern MNFONT_INFO MnSubtFontInfo[3];
-
-/* lit4 */
-float D_003990C8;
-float D_003990CC;
-float D_003990D0;
-float D_003990D4;
-float D_003990D8;
 
 /* static */ int  _JPFont_GetSubtCode(u_char *str, SUBT_CODE *subt_code);
 static int  _EGFont_GetSubtCode(u_char *str, SUBT_CODE *subt_code, MCODE_DAT *pfnt_ascii);

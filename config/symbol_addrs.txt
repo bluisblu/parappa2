@@ -324,7 +324,7 @@ stdat_dat_vs07                      = 0x00182c58;
 stdat_dat_vs08                      = 0x00182d28;
 
 stdat_rec                           = 0x00182df8; // size:0x460
-stdat_rec_num                       = 0x00399430;
+stdat_rec_num                       = 0x00399430; // size:0x4
 
 // main/scrctrl.c
 GetCurrentTblNumber                 = 0x00106f28; // type:func
@@ -464,11 +464,11 @@ exh_str_normal                      = 0x00183258;
 exh_str_original                    = 0x001832a8;
 exh_str_hane                        = 0x001832e0;
 exh_str_hook                        = 0x00183310;
-thnum_tbl                           = 0x00183320; // size:0x10
+thnum_tbl                           = 0x00183320; // size:0x10 can_reference:false
 tcl_ctrl                            = 0x00183330; // size:0x840
 scrprgstr                           = 0x00183b70;
 scrprgstr_hook                      = 0x00183b88;
-tim2spr_tbl                         = 0x00183b90; // size:0x40 allow_duplicated:true
+tim2spr_tbl                         = 0x00183b90; // size:0x40 allow_duplicated:true can_reference:false
 bn_num_type                         = 0x00183bd0;
 lero_tim2_pt                        = 0x00183c10;
 lero_pos_str                        = 0x00183c68;
@@ -522,7 +522,7 @@ SprBox                              = 0x0010f7e0; // type:func
 SprWindow                           = 0x0010f920; // type:func
 SprWindowDf                         = 0x0010f968; // type:func
 
-sprSetNum                           = 0x00399504;
+sprSetNum                           = 0x00399504; // type:s32 size:0x4
 sprDmaC                             = 0x00399a44; // type:s32 size:0x4
 sprPacket                           = 0x01c65b80; // size:0x8000
 gifPkSpr                            = 0x01c6db80; // size:0x10
@@ -553,11 +553,11 @@ SubtMsgDataPos                      = 0x00110328; // type:func
 SubtTapPrintWake                    = 0x00110410; // type:func
 SubtCtrlPrintBoxyWipe               = 0x001104f0; // type:func
 
-mcode_ascii                         = 0x00184ba0; // size:0x8C0
+mcode_ascii                         = 0x00184ba0; // size:0x8C0 can_reference:false
 SubtGsTex0                          = 0x00185460; // size:0x18
-SUBT_POSX                           = 0x00399508;
-SUBT_POSY                           = 0x0039950c;
-subtSetNum                          = 0x00399510;
+SUBT_POSX                           = 0x00399508; // size:0x4
+SUBT_POSY                           = 0x0039950c; // size:0x4
+subtSetNum                          = 0x00399510; // size:0x4
 kanji_pp                            = 0x00399a48; // size:0x4
 subtPkSpr                           = 0x01c6dba0; // size:0x10
 subt_code                           = 0x01c6dbb0; // size:0x80
@@ -675,7 +675,7 @@ mentitle_dat_dera                   = 0x00185d08; // size:0x540
 draw_dbg_str                        = 0x00186248; // size:0x3C
 
 vclr_black_tmp                      = 0x00399518; // size:0x4
-bthrow_ctrl_time                    = 0x0039951c;
+bthrow_ctrl_time                    = 0x0039951c; // size:0x4
 mend_title_req                      = 0x00399528;
 
 ddbg_event_num                      = 0x0039952c;
@@ -816,9 +816,10 @@ lessonCl2InfoGet                    = 0x0011bbb8; // type:func
 MbarDemoCharDisp                    = 0x0011bc18; // type:func
 
 // TODO: match .data to get rid of temporary name
-tim2spr_tbl_tmp1                    = 0x00186288; // size:0x7e0
-niko_chan_str_hook                  = 0x00186aa8; // size:0x50
-niko_chan_str_vs                    = 0x00186af8; // size:0x30
+tim2spr_tbl_tmp1                    = 0x00186288; // size:0x7e0 can_reference:false
+niko_chan_str_hook                  = 0x00186aa8; // size:0x50 can_reference:false
+niko_chan_str_vs                    = 0x00186af8; // size:0x30 can_reference:false
+mbhook_str                          = 0x00186b28; // size:0x10 can_reference:false
 
 niko_chan_str_pp                    = 0x00399558;
 niko_chan_str_cnt                   = 0x0039955c;
@@ -940,7 +941,7 @@ loading_wipe_switch                 = 0x003995a0;
 ldmove_rate                         = 0x003995a4;
 ldrecode_rate                       = 0x003995a8;
 ldlogo_rate                         = 0x003995ac;
-wipe_para_spa_type                  = 0x003995c0;
+wipe_para_spa_type                  = 0x003995c0; // size:0x4
 vclr_para_disp                      = 0x003995c8; // size:0x4
 
 ldmap_hdl                           = 0x00399a98;
@@ -996,18 +997,18 @@ ura_check                           = 0x001219c8; // type:func
 mainStart                           = 0x00121a68; // type:func
 
 dbg_select_str                      = 0x00187400; // size:0x10
-dbg_tbl_msg                         = 0x00187410;
-dbg_score_msg                       = 0x00187458;
-dbg_mode_str                        = 0x00187460;
+dbg_tbl_msg                         = 0x00187410; // size:0x48
+dbg_score_msg                       = 0x00187458; // size:0x8
+dbg_mode_str                        = 0x00187460; // size:0x50
 
 // TODO: migrate .data (and .sdata) and remove the temp name
-tim2spr_tbl_tmp0                    = 0x001874b0; // size:0x40 allow_duplicated:true
+tim2spr_tbl_tmp0                    = 0x001874b0; // size:0x40 allow_duplicated:true can_reference:false
 
 urawaza_skip_bottun                 = 0x003995d0;
 urawaza_levelsel_bottun             = 0x003995d4;
-overlay_loadaddr                    = 0x00399688;
-uramen_end_flag                     = 0x003996c8;
-first_f                             = 0x003996d8;
+overlay_loadaddr                    = 0x00399688; // size:0x4
+uramen_end_flag                     = 0x003996c8; // size:0x4
+first_f                             = 0x003996d8; // size:0x4
 
 FLT_00398F44                        = 0x00398f44; // type:f32
 FLT_00398F48                        = 0x00398f48; // type:f32
@@ -1020,8 +1021,7 @@ cmnfTim2Trans                       = 0x00121e00; // type:func
 cmnfGetFileAdrs                     = 0x00121e80; // type:func
 cmnfGetFileSize                     = 0x00121ee8; // type:func
 
-common_ipk_start                    = 0x00190440;
-common_ipk_end                      = 0x0038c454;
+common_ipk_start                    = 0x00190440; // name_end:common_ipk_end
 
 // main/p3str.c
 adrd_common_clr                     = 0x00121f68; // type:func
@@ -1130,11 +1130,11 @@ MenuRoundTim2Trans                  = 0x00124388; // type:func
 MenuStageCl1Trans                   = 0x00124430; // type:func
 MenuCoolCl1Trans                    = 0x00124490; // type:func
 
-menumciconL                         = 0x00187558; // size:0x310
-menumciconR                         = 0x00187868; // size:0x620
+menumciconL                         = 0x00187558; // size:0x310 can_reference:false
+menumciconR                         = 0x00187868; // size:0x620 can_reference:false
 sndtap_menu                         = 0x00187e88; // size:0xC0
-sndtap_map                          = 0x00187f48; // size:0x18
-sndtap_chall                        = 0x00187f60; // size:0x78
+sndtap_map                          = 0x00187f48; // size:0x18 can_reference:false
+sndtap_chall                        = 0x00187f60; // size:0x78 can_reference:false
 VoiceSet                            = 0x00187fd8; // size:0x1B0
 mess_mc                             = 0x00188188; // size:0xD0
 mess_menu                           = 0x00188258; // size:0x190
@@ -1189,13 +1189,13 @@ MnMoveMode_InitRoot                 = 0x00125a40; // type:func
 _MnParMovRoot_GetPos                = 0x00125bd8; // type:func
 MnMoveModelPosition                 = 0x00125d40; // type:func
 
-Mdl_StageMapH                       = 0x001886f8; // size:0x4EC
-Mdl_StageMapA                       = 0x00188be8; // size:0x4EC
-Mdl_StageMapY                       = 0x001890d8; // size:0x4EC
+Mdl_StageMapH                       = 0x001886f8; // size:0x4EC can_reference:false
+Mdl_StageMapA                       = 0x00188be8; // size:0x4EC can_reference:false
+Mdl_StageMapY                       = 0x001890d8; // size:0x4EC can_reference:false
 Cam_StageMap                        = 0x001895c8; // size:0x30
 PRP_CTHAL                           = 0x001895f8; // size:0x28
 PRP_RootTbl                         = 0x00189620; // size:0x8
-StageMapAnime                       = 0x00189628; // size:0x2C0
+StageMapAnime                       = 0x00189628; // size:0x2C0 can_reference:false
 StageMapAnimeBB                     = 0x001898e8; // size:0x200
 StageMapAnimeCW1                    = 0x00189ae8; // size:0x80
 StageMapAnimeCW2                    = 0x00189b68; // size:0x80
@@ -1208,11 +1208,11 @@ StageMapAnimeCW8                    = 0x00189e68; // size:0x80
 StageMapCWptr                       = 0x00189ee8; // size:0x20
 StageMapAnimeSEA                    = 0x00189f08; // size:0x40
 StageMapAnimeBK                     = 0x00189f48; // size:0x60
-StageMapAnimePA                     = 0x00189fa8; // size:0x460
+StageMapAnimePA                     = 0x00189fa8; // size:0x460 can_reference:false
 StageMapBGMCamera                   = 0x0018a408; // size:0x140
-Mdl_CityHall                        = 0x0018a548; // size:0x12C
+Mdl_CityHall                        = 0x0018a548; // size:0x12C can_reference:false
 Cam_CityHall                        = 0x0018a678; // size:0x18
-CityHallAnime                       = 0x0018a690; // size:0x3A0
+CityHallAnime                       = 0x0018a690; // size:0x3A0 can_reference:false
 Cam_Notdef                          = 0x0018aa30; // size:0x8
 Mdl_OptCounter                      = 0x0018aa38; // size:0x78
 Mdl_RepCounter                      = 0x0018aab0; // size:0x1A4
@@ -1401,6 +1401,7 @@ _TsCELBackObjDraw                   = 0x00137930; // type:func
 TsHosiPut                           = 0x00137df0; // type:func
 
 tblTex                              = 0x003997bc;
+D_00399800                          = 0x00399800; // type:asciz size:0x8
 HOSIObj                             = 0x00399824;
 
 menuPadState                        = 0x01c77ac0; // size:0x20
@@ -1533,20 +1534,20 @@ _PKFontPut                          = 0x0013d348; // type:func
 _PADArrow_Put                       = 0x0013d6d0; // type:func
 _JPFont_GetSubtCode                 = 0x0013d800; // type:func
 _EGFont_GetSubtCode                 = 0x0013d9b8; // type:func
-codeKanjiCheck                      = 0x0013db18; // type:func allow_duplicated:True
+codeKanjiCheck                      = 0x0013db18; // type:func allow_duplicated:true
 codeKanjiACheck                     = 0x0013db58; // type:func
-euc2sjis                            = 0x0013db98; // type:func allow_duplicated:True
+euc2sjis                            = 0x0013db98; // type:func allow_duplicated:true
 
 SubtGsTex0_TmpMenuFont              = 0x0018f580; // size:0x18
-mcode_ascii_TmpMenuFont             = 0x0018f598; // size:0x8C0
+mcode_ascii_TmpMenuFont             = 0x0018f598; // size:0x8C0 can_reference:false
 mcode_HalfSpace                     = 0x0018fe58; // size:0xA
-PadSymbolFontA                      = 0x0018fe68; // size:0x108
+PadSymbolFontA                      = 0x0018fe68; // size:0x108 can_reference:false
 ArowPat                             = 0x0018ff70; // size:0x32
-TsFont                              = 0x0018ffa8; // size:0x3B6
+TsFont                              = 0x0018ffa8; // size:0x3B6 can_reference:false
 Tbl_ASC2EUC                         = 0x00190360; // size:0xC1
 
 _PadFont_SW                         = 0x00399890;
-_PadArrowState                      = 0x00399894;
+_PadArrowState                      = 0x00399894; // size:0x4
 
 _AnimeFontFlg                       = 0x00399b7c;
 kanji_pp_TmpMenuFont                = 0x00399b80;
@@ -1658,6 +1659,9 @@ UnionBoundaryBox__13PrModelObjectPt8NaVECTOR2Zfi4T1                             
 GetPrimitivePosition__13PrModelObjectPt8NaVECTOR2Zfi4                               = 0x00140cb8; // type:func
 GetScreenPosition__13PrModelObjectPt8NaVECTOR2Zfi4                                  = 0x00140dc0; // type:func
 
+prSpramData_tmp_model                                                               = 0x003998bc; // size:0x4
+workAreaTopAddress                                                                  = 0x003998c0; // size:0x4
+
 // prlib/database.cpp
 __16PrObjectDatabase                                                                = 0x00140e60; // type:func
 _$_16PrObjectDatabase                                                               = 0x00140e98; // type:func
@@ -1669,6 +1673,8 @@ _GLOBAL_$D$prObjectDatabase                                                     
 _GLOBAL_$I$prObjectDatabase                                                         = 0x00141068; // type:func
 
 prObjectDatabase                                                                    = 0x0038c458; // size:0x24
+
+databaseInitialized                                                                 = 0x003998c4; // size:0x4
 
 // prlib/objectset.h
 _$_t11PrObjectSet1Z13SpcFileHeader                                                  = 0x00141078; // type:func
@@ -2236,3 +2242,8 @@ strlen                              = 0x00171bb4; // type:func
 
 // -- Temporary symbols --
 D_003938F8                          = 0x003938f8; // type:s32
+
+// -- Ignored addresses --
+D_FFFF                              = 0x0000ffff; // ignore:true
+D_8000                              = 0x00008000; // ignore:true
+D_00300000                          = 0x00300000; // ignore:true

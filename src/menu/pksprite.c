@@ -8,15 +8,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* sbss - static */
-sceGsScissor _PkDefSCISSOR;
-sceGsZbuf _PkDefZBUFFER;
+/* .sbss */
+extern sceGsScissor _PkDefSCISSOR;
+extern sceGsZbuf _PkDefZBUFFER;
 
-/* sbss - static */
-int _PkScrW;
-int _PkScrH;
+/* .sbss */
+extern int _PkScrW;
+extern int _PkScrH;
 
-float FLT_003990DC;
+/* .lit4 */
+float FLT_003990DC; /* cannot be defined as extern, needed for `rotcossin` */
 
 static void _tsWorkEnd(TS_WORKMEM *emem) {
     if (emem->isAlloc && emem->top) {

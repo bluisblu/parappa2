@@ -9,29 +9,29 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* sdata - static */
-char *HedderID;
-char *FooterID;
-GETUSER_WORK *pUChkWork;
+/* .sdata */
+extern char *HedderID;
+extern char *FooterID;
+extern GETUSER_WORK *pUChkWork;
 
-/* bss - static */
+/* .bss */
 extern P3MC_WORK P3MC_Work;
 
-/* sbss - static */
+/* .sbss */
 extern int FreeSizeFlg;
 extern int portCheckFlg;
 extern int NeedSize[2];
 extern int UChkSize[2];
 
-/* bss - static */
+/* .bss */
 extern char filePath[64];
 extern MEMC_INFO mcmenu_info;
 extern sceMcTblGetDir p3mcTblGetDir[8];
 
-/* sbss - static */
+/* .sbss */
 extern int isFileFlgCash;
 
-/* bss - static */
+/* .bss*/
 extern u_char McLogFileFlg[80];
 extern u_char McReplayFileFlg[80];
 

@@ -25,24 +25,19 @@
 
 #include "prlib/prlib.h"
 
-/* TODO - put on system.c */
-HAT_CHANGE_ENUM hat_change_enum;
-
-/* sdata */
-/* static */ int urawaza_skip_bottun;
-/* static */ int urawaza_levelsel_bottun;
+/* .sdata */
+extern int urawaza_skip_bottun;
+extern int urawaza_levelsel_bottun;
 
 /* data */
-extern DBG_SELECT_STR dbg_select_str; /* =
-{
+extern DBG_SELECT_STR dbg_select_str; /* = {
     .debug_on      = 0,
     .use_line      = 0xFFFFFFFF,
     .score_updown  = 0,
-    .non_play      = 0
+    .non_play      = 0,
 }; */
 
-extern u_char *dbg_tbl_msg[]; /* =
-{
+extern u_char *dbg_tbl_msg[]; /* = {
     "AUTO", "BASE",
     "LV1",
     "LV2",
@@ -59,57 +54,51 @@ extern u_char *dbg_tbl_msg[]; /* =
     "LV13", 
     "LV14", 
     "LV15", 
-    "LV16"
+    "LV16",
 }; */
 
-extern u_char *dbg_score_msg[]; /* =
-{
+extern u_char *dbg_score_msg[]; /* = {
     "OFF", "ON"
 }; */
 
-extern DBG_MODE_STR dbg_mode_str[]; /* =
-{
+extern DBG_MODE_STR dbg_mode_str[]; /* = {
     {
         .msg_pp = "START",
         .set_pp = NULL,
         .min = 0,
         .max = 0,
-        .selmsg_pp = NULL
+        .selmsg_pp = NULL,
     },
     {
         .msg_pp = "TABLE",
         .set_pp = &dbg_select_str.use_line,
         .min = 0xFFFFFFFF,
         .max = 17,
-        .selmsg_pp = dbg_tbl_msg
+        .selmsg_pp = dbg_tbl_msg,
     },
     {
         .msg_pp = "SCORE DBUG",
         .set_pp = &dbg_select_str.score_updown,
         .min = 0,
         .max = 2,
-        .selmsg_pp = dbg_score_msg
+        .selmsg_pp = dbg_score_msg,
     },
     {
         .msg_pp = "NON PLAY",
         .set_pp = &dbg_select_str.non_play,
         .min = 0,
         .max = 2,
-        .selmsg_pp = dbg_score_msg
-    }
+        .selmsg_pp = dbg_score_msg,
+    },
 }; */
 
-int overlay_loadaddr;
-/* static */ int uramen_end_flag;
+extern int overlay_loadaddr;
+extern int uramen_end_flag;
 
-/* bss - static */
+/* ,bss */
 extern MENU_STR menu_str;
 
-int first_f; /* mainStart */
-
-/* lit4 - temp */
-float FLT_00398F44;
-float FLT_00398F48;
+extern int first_f; /* mainStart */
 
 INCLUDE_RODATA("main/main", D_00393810);
 INCLUDE_RODATA("main/main", D_00393820);
@@ -715,8 +704,7 @@ void startUpDisp(void) {
     }; */
 
     /* Splash screens sprite data */
-    SPR_PRIM spr_prim[2] =
-    {
+    SPR_PRIM spr_prim[2] = {
         { .x = 2048, .y = 2048, .scalex = 256, .scaley = 128 },
         { .x = 2048, .y = 2048, .scalex = 512, .scaley = 256 }
     };

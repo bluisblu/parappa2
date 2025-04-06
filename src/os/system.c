@@ -2,17 +2,16 @@
 
 #include <stdio.h>
 
-int _end_addr;
-int _stack_size_addr;
+extern int _end_addr;
+extern int _stack_size_addr;
+extern int oddeven_idx;
 
-int oddeven_idx;
-
-/* bss - static */
+/* .bss */
 extern u_long128 GifPkCommon[8192];
 
 void (*OsFuncAddr)();
 
-/* bss - static */
+/* .bss */
 extern sceGsDrawEnv1 drawEnvSp;
 extern sceGsDrawEnv1 drawEnvZbuff;
 extern sceGsDrawEnv1 drawEnvEnd;
@@ -31,8 +30,7 @@ int main() {
     }
 }
 
-static u_char *iop_module[11] =
-{
+static u_char *iop_module[11] = {
     "cdrom0:\\IRX\\SIO2MAN.IRX;1",
     "cdrom0:\\IRX\\PADMAN.IRX;1",
     "cdrom0:\\IRX\\LIBSD.IRX;1",

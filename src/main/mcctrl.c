@@ -6,16 +6,15 @@
 #include <string.h>
 #include <stdio.h>
 
-/* data - static */
+/* .data */
 extern u_char ascii2sjiscng_tbl[];
 
-/* bss - static */
+/* .bss */
 extern MC_REP_STR mc_rep_str_local;
 
 static u_char mc_holdTmp[4];
 static u_char mc_resetTmp[4];
 
-/* bss - static */
 extern MC_REP_CTRL mc_rep_ctrl;
 
 int setAscii2SjisCode(u_char *saki_pp, u_char *moto_pp) {

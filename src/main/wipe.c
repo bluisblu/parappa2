@@ -16,7 +16,7 @@
 
 #include <prlib/prlib.h>
 
-/* data */
+/* .data */
 extern SNDTAP sndtap_wipe[];
 extern LDMAP ldmap[];
 
@@ -27,20 +27,18 @@ extern JIMAKU_STR jimaku_str[];
 extern WIPE_PARA_STR wipe_para_str;
 extern sceGsDrawEnv1 sceGsDrawEnv1_tmp;
 
-/* sdata - static */
-WIPE_TYPE wipe_type;
-int wipe_end_flag;
-int loading_wipe_switch;
+/* .sdata */
+extern WIPE_TYPE wipe_type;
+extern int wipe_end_flag;
+extern int loading_wipe_switch;
+extern int ldmove_rate;
+extern int ldrecode_rate;
+extern int ldlogo_rate;
+extern int wipe_para_spa_type;
+extern VCLR_PARA vclr_para_disp;
 
-int ldmove_rate;
-int ldrecode_rate;
-int ldlogo_rate;
-
-int wipe_para_spa_type;
-VCLR_PARA vclr_para_disp;
-
-/* sbss - static */
-PR_SCENEHANDLE ldmap_hdl;
+/* .sbss */
+extern PR_SCENEHANDLE ldmap_hdl;
 
 void wipeSndReq(SNDTAP_WIPE_ENUM req) {
     SNDTAP *sndtap_pp;
@@ -488,7 +486,7 @@ static void WipeInitPrDataPara(sceGsFrame *fr_pp) {
     wipe_para_str.scene_hdl = PrInitializeScene(&DBufDc.draw01, "wipe para", fbp);
     wipe_para_str.spm_hdl   = PrInitializeModel(cmnfGetFileAdrs(75), wipe_para_str.scene_hdl);
 
-    if (wipe_para_spa_type) { // PaRappa "bye-bye" waving animation
+    if (wipe_para_spa_type) { /* PaRappa "bye-bye" waving animation */
         wipe_para_str.spa_hdl = PrInitializeAnimation(cmnfGetFileAdrs(76));
     } else {
         wipe_para_str.spa_hdl = PrInitializeAnimation(cmnfGetFileAdrs(77));

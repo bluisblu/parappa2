@@ -4,18 +4,18 @@
 #include "os/syssub.h"
 #include "main/etc.h"
 
-/* data */
+/* .data */
 extern u_long SubtGsTex0[3];
 extern MCODE_ASCII mcode_ascii[];
 
-/* sdata */
+/* .sdata */
 extern int SUBT_POSX;
 extern int SUBT_POSY;
 /* static */ extern int subtSetNum;
 
 static MCODE_STR *kanji_pp;
 
-/* bss - static */
+/* .bss */
 static sceGifPacket subtPkSpr;
 static SUBT_CODE subt_code[16];
 static MCODE_DAT *mcode_dat_pp[256];

@@ -208,6 +208,7 @@ def patch_branch_instructions(folder: str, func: str = None) -> None:
                     file.write(content)
 
 def apply_short_loop_fix():
+    # patch_branch_instructions("asm/nonmatchings/main/scrctrl")
     patch_branch_instructions("asm/nonmatchings/menu/menusub")
     patch_branch_instructions("asm/nonmatchings/prlib/render")
     patch_branch_instructions("asm/nonmatchings/prlib/shape")

@@ -202,7 +202,7 @@ segments:
         - [0x90580, data, menu/menufont]
         - [0x91430, data, menu/pksprite]
 
-        - [0x91440, data, main/cmnfile] # Not actually part of cmnfile.c
+        - [0x91440, databin, common_ipk] # common_ipk_start/common_ipk_end
 
         - [0x28d458, data, prlib/database]
         - [0x28d480, data, prlib/renderstuff]

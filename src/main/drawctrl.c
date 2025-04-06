@@ -20,58 +20,40 @@
 
 #include <prlib/prlib.h>
 
-// FIXME: From system.c
-int oddeven_idx;
-int outbuf_idx;
+/* .data */
+extern float bra_tap[10][2];
+extern MOZAIKU_POLL_STR mozaiku_poll_str[];
 
-/* data */
-/* static */ extern float bra_tap[10][2];
-/* static */ extern MOZAIKU_POLL_STR mozaiku_poll_str[];
+/* .sdata */
+extern VCLR_PARA vclr_black_tmp;
+extern int bthrow_ctrl_time;
+extern int mend_title_req;
+extern int ddbg_event_num;
+extern int ddbg_scene_num;
+extern int ddbg_go_event_scene;
+extern int ddbg_tap_num;
+extern int ddbg_bmp_frame;
 
-/* sdata - static */
-VCLR_PARA vclr_black_tmp;
+/* .sbss */
+extern int scenectrl_outside_cnt;
+extern int scenectrl_outside_read_cnt;
+extern MOZAIKU_POLL_STR *mozaiku_poll_str_current_pp;
+extern int dr_tap_req_num;
+extern float men_ctrl_ratio;
+extern MEN_CTRL_ENUM men_ctrl_enum;
+extern int drawCurrentLine;
+extern int drawCurrentTime;
+extern int drawCurrentTimeOld;
+extern EVENTREC *drawEventrec;
+extern u_int useDispFlag;
+extern u_int drDispFlag;
+extern u_char ddbg_pause_f;
 
-/* sdata - static */
-int bthrow_ctrl_time;
-int mend_title_req;
-int ddbg_event_num;
-int ddbg_scene_num;
-int ddbg_go_event_scene;
-int ddbg_tap_num;
-int ddbg_bmp_frame;
-
-/* sbss - static */
-int scenectrl_outside_cnt;
-int scenectrl_outside_read_cnt;
-MOZAIKU_POLL_STR *mozaiku_poll_str_current_pp;
-int dr_tap_req_num;
-float men_ctrl_ratio;
-MEN_CTRL_ENUM men_ctrl_enum;
-int drawCurrentLine;
-int drawCurrentTime;
-int drawCurrentTimeOld;
-EVENTREC *drawEventrec;
-
-u_int useDispFlag;
-u_int drDispFlag;
-u_char ddbg_pause_f;
-
-/* bss - static */
+/* .bss */
 extern SCENECTRL scenectrl_outside[8];
 extern BTHROW_CTRL bthrow_ctrl[2];
 extern SCENECTRL *check_scenectrl[20];
 extern void *tmp_buf_adrs[16];
-
-/* lit4 */
-float D_00398F14;
-float D_00398F18;
-float D_00398F1C;
-float D_00398F20;
-float D_00398F24;
-float D_00398F28;
-float D_00398F2C;
-float D_00398F30;
-float D_00398F34;
 
 static void UseGsRegSet(void) {
     sceGifPacket gifpk;

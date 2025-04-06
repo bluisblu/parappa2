@@ -1,6 +1,6 @@
 #include "dbug/vramsave.h"
 
-/* data */
+/* .data */
 extern /* static */ TIM2SETINFO tim2setinfo;
 extern sceGsStoreImage gs_simage;
 

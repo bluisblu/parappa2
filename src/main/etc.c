@@ -9,10 +9,10 @@
 
 #include <prlib/prlib.h>
 
-/* sdata */
+/* .sdata */
 extern PR_SCENEHANDLE usrSceneHandle;
 
-/* data */
+/* .data */
 extern SCR_SND_AREA scr_snd_area[4];
 
 extern u_char hkl_pknum_01[];
@@ -24,7 +24,7 @@ extern u_char hkl_pknum_06[];
 extern u_char hkl_pknum_07[];
 extern HKL_PKSTR hkl_pkstr[];
 
-/* bss */
+/* .bss */
 extern u_int vsync_time[51];
 
 void GlobalInit(void) {

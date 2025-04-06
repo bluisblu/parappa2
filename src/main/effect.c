@@ -1,6 +1,6 @@
 #include "main/effect.h"
 
-/* lit4 - temp */
+/* .lit4 */
 float FLT_00398F38; /* UG_WaveDisp    -> 6.2831855  */
 float FLT_00398F3C; /* UG_NoodlesDisp -> 0.12822828 */
 

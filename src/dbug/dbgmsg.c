@@ -6,12 +6,12 @@ static sceGifPacket gifPacket;
 
 char padding_bss_dbgmsg[8];
 
-/* sbss - static */
+/* .sbss */
 extern sceDmaChan *dbgDmaC;
 
 static TIM2INFO tinfo;
 
-/* sbss - static */
+/* .sbss */
 extern u_char MSGCOL[3];
 extern u_short MSGSIZE[2];
 extern u_int MSGZPOP;

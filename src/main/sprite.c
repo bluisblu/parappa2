@@ -1,7 +1,9 @@
 #include "main/sprite.h"
 
-/* sdata - static */
-int sprSetNum;
+#include <stdio.h>
+
+/* .sdata */
+extern int sprSetNum;
 
 static u_long128 sprPacket[2048];
 static sceGifPacket gifPkSpr;

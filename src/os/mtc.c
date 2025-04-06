@@ -21,17 +21,15 @@ static MTC_TASK_CONB mtcTaskConB[16];
 static char mtcStack_Ctrl[MTC_TASK_SIZE_CTRL];
 static struct ThreadParam th_para_Ctrl;
 
-// Size for each stack
-int mtcStackSizeTbl[] =
-{ 
+/* Size for each stack */
+int mtcStackSizeTbl[] = {
     0x1000, 0x1000, 0x100,  0x800,
     0x1000, 0x4000, 0x100,  0x4000,
     0x100,  0x100,  0x1000, 0x100,
     0x100,  0x1000, 0x100,  0x1000
 };
 
-char* mtcStack[16] =
-{
+char* mtcStack[16] = {
     mtcStack_CTRL, mtcStack_MAIN, mtcStack_02, mtcStack_03,
     mtcStack_04,   mtcStack_05,   mtcStack_06, mtcStack_07,
     mtcStack_08,   mtcStack_09,   mtcStack_0A, mtcStack_0B,
@@ -39,14 +37,13 @@ char* mtcStack[16] =
 };
 
 struct SemaParam mtcSemaPara = { 0, 0, 0, 0, 0, 0 }; 
+int _data_mtc_pad_[] = { 0, 0, 0, 0, 0, 0 };
 
-int PAD_MTC[] = { 0, 0, 0, 0, 0, 0 }; /* pad */
-
-/* sdata */
+/* .sdata */
 int mtcCurrentTask = 0;
 int mtcSemaEnd = 0;
 
-/* sbss - static */
+/* ,sbss */
 static short th_id_Ctrl;
 
 static void mtcStackErrorCheck(int level) {

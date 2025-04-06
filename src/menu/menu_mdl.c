@@ -11,7 +11,7 @@
 
 #include <math.h>
 
-/* data */
+/* .data */
 extern PRPROOT PRP_RootTbl[];
 
 static u_int AMusicFitTime;

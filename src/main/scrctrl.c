@@ -3,6 +3,8 @@
 #include "main/drawctrl.h"
 #include "main/mbar.h"
 
+#include "iop_mdl/tapctrl_rpc.h"
+
 #include <prlib/prlib.h>
 
 /* data */
@@ -50,8 +52,7 @@ int GetCurrentTblNumber(void) {
 }
 
 DISP_LEVEL RANK_LEVEL2DISP_LEVEL(RANK_LEVEL lvl) {
-    DISP_LEVEL lvl_tbl[17] =
-    {
+    DISP_LEVEL lvl_tbl[17] = {
         DLVL_COOL,  DLVL_COOL,
         DLVL_GOOD,  DLVL_GOOD,  DLVL_GOOD,
         DLVL_BAD,   DLVL_BAD,   DLVL_BAD,
@@ -64,8 +65,7 @@ DISP_LEVEL RANK_LEVEL2DISP_LEVEL(RANK_LEVEL lvl) {
 }
 
 DISP_LEVEL RANK_LEVEL2DISP_LEVEL_HK(RANK_LEVEL lvl) {
-    DISP_LEVEL lvl_tbl[15] =
-    {
+    DISP_LEVEL lvl_tbl[15] = {
         DLVL_COOL,  DLVL_COOL,
         DLVL_GOOD,  DLVL_GOOD,  DLVL_GOOD,
         DLVL_BAD,   DLVL_BAD,   DLVL_BAD,

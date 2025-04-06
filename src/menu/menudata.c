@@ -9,7 +9,7 @@
 
 #include "iop_mdl/tapctrl_rpc.h"
 
-// Unsure where to put at the moment
+/* Unsure where to put at the moment */
 typedef struct { // 0x8
     /* 0x0 */ u_short bnkNo;
     /* 0x4 */ SNDTAP *pTap;
@@ -29,9 +29,9 @@ typedef struct { // 0x40
 extern MESS mess_mc[];
 extern MESS mess_menu[];
 
-/* sdata - static */
-int _BankChan1Req;
-int _BankChan1Stat;
+/* .sdata */
+extern int _BankChan1Req;
+extern int _BankChan1Stat;
 
 INCLUDE_ASM("menu/menudata", MenuDataGetIconSysHed);
 

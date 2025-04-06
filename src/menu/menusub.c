@@ -2,8 +2,8 @@
 #include "menu/menu_mdl.h"
 
 /* .sdata */
-TSTEX_INF *tblTex;
-HOSI_OBJ *HOSIObj;
+extern TSTEX_INF *tblTex;
+extern HOSI_OBJ *HOSIObj;
 
 /* .bss */
 extern TSREPPAD menuPadState[2][4];
