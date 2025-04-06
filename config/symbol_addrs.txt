@@ -930,6 +930,7 @@ WipeBoxyWaitDisp                    = 0x0011ea40; // type:func
 wipeBoxyWaitReq                     = 0x0011ecb0; // type:func
 
 sndtap_wipe                         = 0x00187000; // size:0x30
+wipe_scratch_ctrl                   = 0x001871b8; // size:0x30
 ldmap                               = 0x001871e8; // size:0xA0
 jimaku_str                          = 0x001872a8; // size:0x8
 wipe_para_str                       = 0x001872b0; // size:0x10

@@ -40,6 +40,8 @@ extern VCLR_PARA vclr_para_disp;
 /* .sbss */
 extern PR_SCENEHANDLE ldmap_hdl;
 
+void wipeParaOutReq(void);
+
 void wipeSndReq(SNDTAP_WIPE_ENUM req) {
     SNDTAP *sndtap_pp;
 
@@ -103,8 +105,51 @@ static void LocalBufCopy(int disp) {
     sceGsSyncPath(0, 0);
 }
 
-INCLUDE_ASM("main/wipe", wipeTimeGetInWait);
-int wipeTimeGetInWait(/* a0 4 */ int time, /* a1 5 */ WSHC_ENUM wshc_enum);
+int wipeTimeGetInWait(int time, WSHC_ENUM wshc_enum) {
+    WIPE_SCRATCH_CTRL* wscc_pp;
+    int maxt;
+    int ret;
+    int i;
+    int stp, endp;
+    int lngT, lngN;
+
+    wscc_pp = &wipe_scratch_ctrl[wshc_enum];
+    maxt = wscc_pp->frt_pp[wscc_pp->frt_size - 1].frame;
+    maxt = time % maxt;
+
+    endp = -1;
+    for (i = 0, stp = 0; i < wscc_pp->frt_size; i++) {
+        if (wscc_pp->frt_pp[i].frame == maxt) {
+            stp = i;
+            endp = i;
+            break;
+        }
+
+        if (maxt > wscc_pp->frt_pp[i].frame) {
+            stp = i;
+        }
+
+        if (maxt < wscc_pp->frt_pp[i].frame) {
+            endp = i;
+            break;
+        }
+    }
+
+    if (endp == -1) {
+        endp = stp;
+    }
+
+    lngT = wscc_pp->frt_pp[endp].frame - wscc_pp->frt_pp[stp].frame;
+    lngN = maxt - wscc_pp->frt_pp[stp].frame;
+    if (lngT == 0) {
+        ret = wscc_pp->frt_pp[stp].data;
+    } else {
+        ret = wscc_pp->frt_pp[endp].data - wscc_pp->frt_pp[stp].data;
+        ret = ret * lngN / lngT + wscc_pp->frt_pp[stp].data;
+    }
+
+    return ret;
+}
 
 static void lddisp_init_pr(void) {
     LDMAP *ldmap_pp;
@@ -378,30 +423,27 @@ void WipeInReqSame(void) {
     LocalBufCopy(0);
 }
 
-#ifndef NON_MATCIHNG
-INCLUDE_ASM("main/wipe", WipeOutReq);
-#else
 void WipeOutReq(void) {
-    switch (wipe_type) {
-    case WIPE_TYPE_PARA:
-        wipeParaOutReq();
-        return;
-    case WIPE_TYPE_BOXY_WAIT:
-        wipeSndStop();
-        /* fallthrough? */
-    case WIPE_TYPE_SAME:
-    case WIPE_TYPE_YES_NO:
-    case WIPE_TYPE_BOXY:
-        MtcKill(MTC_TASK_WIPECTRL);
+    if (wipe_type == WIPE_TYPE_SAME) {
+        MtcKill(0xf);
         wipe_end_flag = 1;
-        return;
-    default:
+    } else if (wipe_type == WIPE_TYPE_YES_NO) {
+        MtcKill(0xf);
+        wipe_end_flag = 1;
+    } else if (wipe_type == WIPE_TYPE_PARA) {
+        wipeParaOutReq();
+    } else if (wipe_type == WIPE_TYPE_BOXY) {
+        MtcKill(0xf);
+        wipe_end_flag = 1;
+    } else if (wipe_type == WIPE_TYPE_BOXY_WAIT) {
+        wipeSndStop();
+        MtcKill(0xf);
+        wipe_end_flag = 1;
+    } else {
         wipe_end_flag = 0;
-        MtcExec(WipeLoadOutDisp, MTC_TASK_WIPECTRL);
-        return;
+        MtcExec(WipeLoadOutDisp, 0xf);        
     }
 }
-#endif
 
 int WipeEndCheck(void) {
     return wipe_end_flag;
