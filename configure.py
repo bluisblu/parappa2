@@ -46,6 +46,12 @@ COMPILE_CMD_CPP = (
 # CALCULATE PROGRESS TODO:
 # python3 -m mapfile_parser progress build/SCPS_150.17.map asm asm/nonmatchings/
 
+def exec_shell(command: List[str], stdout = subprocess.PIPE) -> str:
+    ret = subprocess.run(
+        command, stdout=stdout, stderr=subprocess.PIPE, text=True
+    )
+    return ret.stdout
+
 def clean():
     if os.path.exists(".splache"):
         os.remove(".splache")
