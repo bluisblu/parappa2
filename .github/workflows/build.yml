@@ -52,5 +52,5 @@ jobs:
     - name: Upload progress report
       uses: actions/upload-artifact@v4
       with:
-        name: report.json
+        name: ntscj_july12_report
         path: ./progress/report.json
