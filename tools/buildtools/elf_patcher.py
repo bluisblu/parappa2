@@ -24,6 +24,21 @@ SECTIONS_TO_REALIGN_PER_TOOL: dict[str, dict[str, int]] = {
     },
 }
 
+SPECIFIC_ALIGNMENTS: dict[str, dict[str, int]] = {
+    "pack.bss.s.o": {
+        ".bss": 0x40,
+    },
+    "etc.bss.s.o": {
+        ".bss": 0x8,
+    },
+    "mcctrl.bss.s.o": {
+        ".bss": 0x8,
+    },
+    "menu.bss.s.o": {
+        ".bss": 0x8,
+    },
+}
+
 spimdisasm.common.GlobalConfig.VERBOSE = False
 spimdisasm.common.GlobalConfig.QUIET = True
 
@@ -42,6 +57,12 @@ if args.section_align is not None:
         sect, align_str = entry.split(":")
         align = int(align_str, 0)
         section_align_override[sect] = align
+
+# Override specific alignments
+specific_alignments = SPECIFIC_ALIGNMENTS.get(elf_path.name)
+if specific_alignments:
+    print(f"Applying overriden alignment on \"{elf_path.name}\"")
+    section_align_override.update(specific_alignments)
 
 elf_bytes = bytearray(elf_path.read_bytes())
 
@@ -68,13 +89,5 @@ for i, sect in enumerate(elf_file.sectionHeaders):
         # Patch the alignment of the section
         fmt = spimdisasm.common.GlobalConfig.ENDIAN.toFormatString() + "I"
         struct.pack_into(fmt, elf_bytes, addralign_pointer, new_alignment)
-
-        # new_size = align_up(sect.size, new_alignment)
-        # # Patch the size of the section
-        # fmt = spimdisasm.common.GlobalConfig.ENDIAN.toFormatString() + "I"
-        # struct.pack_into(fmt, elf_bytes, size_pointer, new_size)
-
-        # print(name)
-        # print(elf_bytes[section_offset:section_offset+0x28])
 
 elf_path.write_bytes(elf_bytes)
