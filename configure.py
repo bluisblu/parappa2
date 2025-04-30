@@ -9,16 +9,16 @@ import shutil
 import subprocess
 import sys
 import re
+import json
 
-from   pathlib     import Path
-from   typing      import Dict, List, Set, Union
-from   collections import defaultdict
+from pathlib import Path
+from typing import Dict, List, Set, Union, Any, Literal, cast
 
 import ninja_syntax
 
 import splat
 import splat.scripts.split as split
-from   splat.segtypes.linker_entry import LinkerEntry
+from splat.segtypes.linker_entry import LinkerEntry
 
 ROOT = Path(__file__).parent
 TOOLS_DIR = ROOT / "tools"
@@ -33,23 +33,17 @@ PRE_ELF_PATH = f"build/{BASENAME}.elf"
 COMMON_INCLUDES = "-Iinclude -Isrc -isystem include/sdk/ee -isystem include/sdk -isystem include/gcc -isystem include/gcc/gcc-lib"
 COMPILER_DIR = f"{TOOLS_DIR}/cc/ee-gcc2.96/bin"
 
-COMPILER_FLAGS     = "-O2 -G8 -gstabs"
+COMPILER_FLAGS = "-O2 -G8 -gstabs"
 COMPILER_FLAGS_CPP = "-O2 -G8 -gstabs -x c++ -fno-exceptions -fno-strict-aliasing"
 
-COMPILE_CMD = (
-    f"{COMPILER_DIR}/ee-gcc -c {COMMON_INCLUDES} {COMPILER_FLAGS}"
-)
-COMPILE_CMD_CPP = (
-    f"{COMPILER_DIR}/ee-gcc -c {COMMON_INCLUDES} {COMPILER_FLAGS_CPP}"
-)
+COMPILE_CMD = f"{COMPILER_DIR}/ee-gcc -c {COMMON_INCLUDES} {COMPILER_FLAGS}"
+COMPILE_CMD_CPP = f"{COMPILER_DIR}/ee-gcc -c {COMMON_INCLUDES} {COMPILER_FLAGS_CPP}"
 
 # CALCULATE PROGRESS TODO:
 # python3 -m mapfile_parser progress build/SCPS_150.17.map asm asm/nonmatchings/
 
-def exec_shell(command: List[str], stdout = subprocess.PIPE) -> str:
-    ret = subprocess.run(
-        command, stdout=stdout, stderr=subprocess.PIPE, text=True
-    )
+def exec_shell(command: List[str], stdout=subprocess.PIPE) -> str:
+    ret = subprocess.run(command, stdout=stdout, stderr=subprocess.PIPE, text=True)
     return ret.stdout
 
 def clean():
@@ -65,23 +59,6 @@ def clean():
     shutil.rmtree("assets", ignore_errors=True)
     shutil.rmtree("build", ignore_errors=True)
 
-def gp_hack(filepath):
-    filename = os.path.basename(filepath)
-    if filename in GP_HACK_FILENAME_TABLE:
-        replacements = GP_HACK_REPLACE_TABLE.get(filename, [])
-
-        print(f"(HACK) Removing %gp_rel references on problematic file \"{filename}\"")
-
-        with open(filepath, "r") as file:
-            lines = file.readlines()
-
-        for line_number, new_line in replacements:
-            if 0 <= line_number < len(lines):
-                lines[line_number] = new_line + "\n"
-        
-        with open(filepath, "w") as file:
-            file.writelines(lines)
-
 # https://github.com/Fantaskink/SOTC/blob/44d5744b0a1725da85c980ea1389e544d1802f23/configure.py#L177-L214
 # Pattern to workaround unintended nops around loops
 COMMENT_PART = r"\/\* (.+) ([0-9A-Z]{2})([0-9A-Z]{2})([0-9A-Z]{2})([0-9A-Z]{2}) \*\/"
@@ -93,11 +70,11 @@ SLOOP_PROBLEMATIC_FUNCS = [
     "TsGetRankingList.s",
     "TsOption_Draw.s",
     "TsNAMEINBox_Flow.s",
-    "_TsCELBackObjDraw.s"
+    "_TsCELBackObjDraw.s",
 ]
 
 def patch_branch_instructions(folder: str, func: str = None) -> None:
-    print(f"(HACK) Applying short loop fix on \"{folder}\"")
+    print(f'(HACK) Applying short loop fix on "{folder}"')
     for root, dirs, files in os.walk(folder):
         for filename in files:
             filepath = os.path.join(root, filename)
@@ -157,7 +134,7 @@ def eucjp_convert():
 def write_permuter_settings():
     with open("permuter_settings.toml", "w") as f:
         f.write(
-            f"""compiler_command = "tools/cc/ee-gcc2.96/bin/ee-gcc -c -Iinclude -Iinclude/sdk/ee -Iinclude/gcc -Iinclude/gcc/gcc-lib -O2 -G8 -gstabs -D__GNUC__"
+            """compiler_command = "tools/cc/ee-gcc2.96/bin/ee-gcc -c -Iinclude -Iinclude/sdk/ee -Iinclude/gcc -Iinclude/gcc/gcc-lib -O2 -G8 -gstabs -D__GNUC__"
 assembler_command = "mips-linux-gnu-as -march=r5900 -mabi=eabi -Iinclude"
 compiler_type = "gcc"
 
@@ -167,7 +144,6 @@ compiler_type = "gcc"
 "tools/cc/ee-gcc2.96/bin/ee-gcc" = "ee-gcc2.9-991111-01"
 """
         )
-
 
 def build_stuff(linker_entries: List[LinkerEntry]):
     built_objects: Set[Path] = set()
@@ -199,7 +175,7 @@ def build_stuff(linker_entries: List[LinkerEntry]):
 
     # Rules
     cross = "mips-linux-gnu-"
-    ld_args = f"-EL -T config/undefined_syms_auto.txt -T config/undefined_funcs_auto.txt -T config/undefined_syms.txt -Map $mapfile -T $in -o $out"
+    ld_args = "-EL -T config/undefined_syms_auto.txt -T config/undefined_funcs_auto.txt -T config/undefined_syms.txt -Map $mapfile -T $in -o $out"
 
     ninja.rule(
         "as",
@@ -281,6 +257,162 @@ def build_stuff(linker_entries: List[LinkerEntry]):
         implicit=[ELF_PATH],
     )
 
+def generate_objdiff_configuration(config: dict[str, Any]):
+    """
+    Generate `objdiff.json` configuration from splat YAML config.
+
+    Parse splat YAML config to get a list of the TUs that need to
+    be diffed and create appropriate `units` for objdiff to process.
+
+    Target objects need to be extracted separately (see the
+    `make <lang>-make-asm` command) in order for objdiff to find the
+    target files.
+    """
+    segments: list[Any] = config["segments"]
+
+    tu_to_diff: list[tuple[Literal["asm", "c"], str]] = []
+
+    for segment in segments:
+        if not (isinstance(segment, dict) and segment["name"] == "main"):
+            # we are looking for the main segment
+            continue
+
+        subsegments = cast(list[Any], segment["subsegments"])
+
+        for subsegment in subsegments:
+            if isinstance(subsegment, list):
+                if len(subsegment) != 3:
+                    # entry is not complete => skip it
+                    continue
+
+                _, subs_type, subs_name = cast(tuple[int, str, str], subsegment)
+
+            elif isinstance(subsegment, dict):
+                subs_type = cast(int, subsegment["type"])
+                subs_name = cast(str, subsegment["name"])
+
+            else:
+                raise RuntimeError("invalid subsegment type")
+
+            if subs_type in ("asm", "c", "cpp"):
+                # if subs_name in ("os/tim2",) or subs_name.startswith("sdk/"):
+                if subs_name.startswith("sdk/"):
+                    # -> skip SDK as it's not part of the game files
+                    continue
+
+                tu_to_diff.append((subs_type, subs_name))
+
+    units: list[dict[str, Any]] = []
+
+    decomp_tu_count: int = 0
+
+    for tu_type, tu_name in tu_to_diff:
+        tu_obj_suffix = f".{tu_type}.o" # .c.o or .cpp.o
+
+        target_path = Path("obj", tu_name).with_suffix(tu_obj_suffix)
+
+        # since we only compile fully decompiled TUs, the
+        # "c" type implies that the TU is complete
+        is_decompiled = tu_type in ("c", "cpp")
+
+        category = Path(tu_name).parts[0]
+
+        if is_decompiled:
+            # compose the build path as "build/src/path/of/tu.{c,cpp}.o"
+            base_path = Path("build", "src", tu_name).with_suffix(tu_obj_suffix)
+            decomp_tu_count += 1
+        else:
+            # use dummy object for incomplete (not yet decompiled) TUs:
+            # expected/obj/dummy.c.o
+            base_path = Path("obj", "dummy").with_suffix(".c.o")
+
+        units.append(
+            {
+                "name": tu_name,
+                "target_path": str(target_path),
+                "base_path": str(base_path),
+                "metadata": {"progress_categories": [category]},
+            }
+        )
+
+    objdiff_json: dict[str, Any] = {
+        "$schema": "https://raw.githubusercontent.com/encounter/objdiff/main/config.schema.json",
+        "custom_make": "true",
+        "custom_args": [],
+        "build_target": False,
+        "build_base": False,
+        "watch_patterns": [],
+        "units": units,
+    }
+
+    objdiff_path = Path("objdiff.json")
+
+    with objdiff_path.open(mode="w") as fw:
+        json.dump(objdiff_json, fw, indent=2)
+
+    print(
+        f"Wrote objdiff configuration ({len(units)} units) to {objdiff_path} ({decomp_tu_count} decompiled)"
+    )
+
+def build_objdiff_objects():
+    # obj_path = Path("obj")
+    objdiff_path = Path("objdiff.json")
+
+    dummy_path = Path("obj", "dummy").with_suffix(".c.o")
+
+    objdiff_conf = json.loads(objdiff_path.read_text())
+
+    units = objdiff_conf["units"]
+
+    build_jobs: list[tuple[Path, Path]] = []
+
+    for unit in units:
+        # name: str = unit["name"]
+        target_path: Path = Path(unit["target_path"])
+        base_path: Path = Path(unit["base_path"])
+
+        if base_path == dummy_path:
+            continue
+
+        asm_path = Path("asm", *target_path.parts[1:]).with_suffix("").with_suffix(".s")
+
+        assert asm_path.exists()
+
+        build_jobs.append((asm_path, target_path))
+
+    # compile objects
+
+    cross = "mips-linux-gnu-"
+
+    dummy_c_path = Path("obj", "dummy.c")
+    dummy_o_path = Path("obj", "dummy.c.o")
+
+    # create the empty source (touch)
+    dummy_c_path.parent.mkdir(parents=True, exist_ok=True)
+    dummy_c_path.open(mode="a").close()
+    command = f"{COMPILE_CMD} {dummy_c_path} -o {dummy_o_path} && {cross}strip {dummy_o_path} -N dummy-symbol-name"
+    subprocess.run(command, shell=True)
+    dummy_c_path.unlink()
+
+    for asm_path, target_path in build_jobs:
+        command = (
+            f"cpp {COMMON_INCLUDES} {asm_path} -o - | "
+            f"iconv -f=UTF-8 -t=EUC-JP {asm_path} | "
+            f"{cross}as -no-pad-sections -EL -march=5900 -mabi=eabi -Iinclude -o {target_path} && "
+            f"python3 tools/buildtools/elf_patcher.py {target_path} gas"
+        )
+
+        asm_text = asm_path.read_text()
+        asm_text = re.sub(r" ACC,", " $ACC,", asm_text)
+        asm_text = re.sub(r" Q, ", " $Q, ", asm_text)
+        asm_text = re.sub(r", Q\n", ", $Q\n", asm_text)
+        asm_text = re.sub(r" R, ", " $R, ", asm_text)
+        asm_text = re.sub(r", R\n", ", $R\n", asm_text)
+        asm_path.write_text(asm_text)
+
+        target_path.parent.mkdir(parents=True, exist_ok=True)
+
+        subprocess.run(command, shell=True)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Configure the project")
@@ -308,11 +440,20 @@ if __name__ == "__main__":
         help="Do not patch branch instructions on specific functions to combat an assembler bug",
         action="store_true",
     )
+    parser.add_argument(
+        "-objdiff",
+        "--objdiff",
+        help="Output objdiff JSONs (requires existing build)",
+        action="store_true"
+    )
     args = parser.parse_args()
 
     if args.clean:
-        clean()
-    
+        if args.objdiff:
+            print("warning: --objdiff enabled with --clean. Clean will be skipped.")
+        else:
+            clean()
+
     if args.cleansrc:
         shutil.rmtree("src", ignore_errors=True)
 
@@ -325,10 +466,19 @@ if __name__ == "__main__":
     write_permuter_settings()
 
     if not args.no_short_loop_fix:
-        apply_short_loop_fix()
+        if args.clean:
+            apply_short_loop_fix()
+        else:
+            print("warning: Not a clean build. Skipping short loop fix.")
 
     if not args.no_eucjp_converting:
-        eucjp_convert()
+        if args.clean:
+            eucjp_convert()
+        else:
+            print("warning: Not a clean build. Skipping EUC-JP conversion.")
 
-    if not os.path.isfile("compile_commands.json"):
-        exec_shell(["ninja", "-t", "compdb"], open("compile_commands.json", "w"))
+    exec_shell(["ninja", "-t", "compdb"], open("compile_commands.json", "w"))
+
+    if args.objdiff:
+        generate_objdiff_configuration(split.config)
+        build_objdiff_objects()

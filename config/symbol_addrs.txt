@@ -231,11 +231,11 @@ Tim2TransColor_TBP                  = 0x00105060; // type:func
 
 tim2ColorTypeTbl                    = 0x001808d8; // size:0x18
 
-tp                                  = 0x01c5d380; // allow_duplicated:True
-tp                                  = 0x01c5d3e0; // allow_duplicated:True
-tp                                  = 0x01c5d440; // allow_duplicated:True
-tp                                  = 0x01c5d4a0; // allow_duplicated:True
-tp                                  = 0x01c5d500; // allow_duplicated:True
+tp.87                               = 0x01c5d380; // size:0x60
+tp.94                               = 0x01c5d3e0; // size:0x60
+tp.98                               = 0x01c5d440; // size:0x60
+tp.111                              = 0x01c5d4a0; // size:0x60
+tp.115                              = 0x01c5d500; // size:0x60
 
 // main/cdctrl.c
 PackIntGetDecodeSize                = 0x00105120; // type:func
