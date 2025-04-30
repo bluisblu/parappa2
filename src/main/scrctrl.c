@@ -44,8 +44,12 @@ int follow_scr_tap_memory_cnt;
 int follow_scr_tap_memory_cnt_load;
 int commake_str_cnt;
 
+/* .bss - static */
+extern BNG_STR bng_str;
+
 static void bonusScoreDraw(void);
 static void LessonRoundDisp(SCRRJ_LESSON_ROUND_ENUM type);
+static void bonusPointSave();
 
 int GetCurrentTblNumber(void) {
     return currentTblNumber;
@@ -70,7 +74,7 @@ DISP_LEVEL RANK_LEVEL2DISP_LEVEL_HK(RANK_LEVEL lvl) {
         DLVL_GOOD,  DLVL_GOOD,  DLVL_GOOD,
         DLVL_BAD,   DLVL_BAD,   DLVL_BAD,
         DLVL_AWFUL, DLVL_AWFUL, DLVL_AWFUL,
-        DLVL_MAX,   DLVL_MAX,   DLVL_MAX, 5
+        DLVL_MAX,   DLVL_MAX,   DLVL_MAX, DLVL_HK_MAX
     };
 
     return lvl_tbl[lvl];
@@ -718,7 +722,8 @@ void tapLevelChange(SCORE_INDV_STR *sindv_pp) {
         /* Stage 8 specific logic */
         if (global_data.play_step == PSTEP_GAME && global_data.play_stageL == 8) {
             if (sindv_pp->scrdat_pp != NULL) {
-                if ((u_int)(sindv_pp->scrdat_pp->sndrec_num - 24) < 3) {
+                if (sindv_pp->scrdat_pp->sndrec_num > 23 &&
+                    sindv_pp->scrdat_pp->sndrec_num < 27) {
                     add_move = old_num;
                     printf("st8 sp same num:%d sndLine:%d\n", old_num, sindv_pp->scrdat_pp->sndrec_num);
                 }
@@ -1339,21 +1344,45 @@ static int exh_nombar_sub(/* s2 18 */ EXAM_CHECK *ec_pp)
 
 INCLUDE_ASM("main/scrctrl", exh_mbar_key_out);
 
-INCLUDE_ASM("main/scrctrl", exh_mbar_time_out);
+/* static */ int exh_mbar_time_out(EXAM_CHECK *ec_pp) {
+    int ret;
 
-INCLUDE_ASM("main/scrctrl", exh_mbar_num_out);
+    ret = -ec_pp->oth_num;
+    if (ec_pp->ted_num != 0) {
+        if (ec_pp->oth_num == 0) {
+            ret = 0;
+        } else if (ec_pp->oth[0].th_num == ec_pp->ted[0].th_num) {
+            ret = 0;
+        }
+    }
+
+    return ret;
+}
+
+/* static */ int exh_mbar_num_out(EXAM_CHECK *ec_pp) {
+    int ret;
+
+    ret = ec_pp->ted_num - ec_pp->oth_num;
+    return (ret >= 0) ? -ret : ret;
+}
 
 INCLUDE_ASM("main/scrctrl", exh_yaku);
 
-INCLUDE_ASM("main/scrctrl", exh_yaku_original);
+/* static */ int exh_yaku_original(EXAM_CHECK *ec_pp) {
+    return exh_yaku(ec_pp, 0);
+}
 
-INCLUDE_ASM("main/scrctrl", exh_yaku_hane);
+/* static */ int exh_yaku_hane(EXAM_CHECK *ec_pp) {
+    return exh_yaku(ec_pp, 1);
+}
 
 INCLUDE_ASM("main/scrctrl", exh_allkey_out);
 
 INCLUDE_ASM("main/scrctrl", exh_allkey_out_nh);
 
-INCLUDE_ASM("main/scrctrl", exh_command);
+/* static */ int exh_command(EXAM_CHECK *ec_pp) {
+    return 0;
+}
 
 INCLUDE_ASM("main/scrctrl", exh_renda_out);
 
@@ -1887,9 +1916,17 @@ int ScrEndWaitLoop(void) {
 
 INCLUDE_ASM("main/scrctrl", bonusGameInit);
 
-INCLUDE_ASM("main/scrctrl", bonusGameCntPls);
+static int bonusGameCntPls(void) {
+    bng_str.bonus_cnt++;
+    return bng_str.bonus_cnt;
+}
 
-INCLUDE_ASM("main/scrctrl", bonusPointSave);
+static void bonusPointSave() {
+    ingame_common_str.BonusScore = bng_str.ok_cnt - bng_str.ng_cnt;
+    if (ingame_common_str.BonusScore < 0) {
+        ingame_common_str.BonusScore = 0;
+    }
+}
 
 INCLUDE_ASM("main/scrctrl", bngTapEventCheck);
 void bngTapEventCheck(/* s1 17 */ SCORE_INDV_STR *sindv_pp, /* t0 8 */ int num, /* s3 19 */ int id);

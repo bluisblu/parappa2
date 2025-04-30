@@ -517,6 +517,32 @@ typedef enum {
     BNGAKE_H5 = 35
 } BNG_ACT_K_ENUM;
 
+typedef enum {
+    BNGKA_NOTHING = 0,
+    BNGKA_LIFT = 1,
+    BNGKA_LIFTED = 2,
+    BNGKA_LIFT_NG = 3,
+    BNGKA_BLOW = 4,
+    BNGKA_BREAK = 5
+} BNG_KOTAMA_ACT_ENUM;
+
+typedef struct { // 0xc
+    /* 0x0 */ int wait_time;
+    /* 0x4 */ int wait_next_time;
+    /* 0x8 */ BNG_KOTAMA_ACT_ENUM bng_kotama_act_enum;
+} BNG_KOTAMA;
+
+typedef struct { // 0x4c
+    /* 0x00 */ int now_time;
+    /* 0x04 */ int st_time;
+    /* 0x08 */ int end_time;
+    /* 0x0c */ int ok_cnt;
+    /* 0x10 */ int ng_cnt;
+    /* 0x14 */ int renzoku_cnt;
+    /* 0x18 */ BNG_KOTAMA bng_kotama[4];
+    /* 0x48 */ int bonus_cnt;
+} BNG_STR;
+
 int GetCurrentTblNumber(void);
 
 void ScrTapDataTrans(SNDREC *sndrec_pp, int bank, void *data_top);
