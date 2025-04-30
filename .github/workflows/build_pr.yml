@@ -50,4 +50,5 @@ jobs:
     - name: Upload progress report
       uses: actions/upload-artifact@v4
       with:
+        name: report.json
         path: ./progress/report.json
