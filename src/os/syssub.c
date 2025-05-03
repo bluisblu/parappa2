@@ -2,7 +2,7 @@
 
 #include "os/system.h"
 
-PAD_SYSD sysPad[2] = {};
+PAD_SYSD sysPad[2] PR_ALIGNED(64) = {};
 
 static u_long128 pad_dma_buf[2][16];
 static u_long128 ChangeDrawAreaPacket[12];

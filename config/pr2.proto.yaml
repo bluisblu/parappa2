@@ -12,6 +12,7 @@ options:
     
     extensions_path: tools/splat_ext
     symbol_addrs_path: config/symbol_addrs.txt
+    reloc_addrs_path: config/reloc_addrs.txt
     undefined_funcs_auto_path: config/undefined_funcs_auto.txt
     undefined_syms_auto_path:  config/undefined_syms_auto.txt
     
@@ -140,7 +141,6 @@ segments:
           # - [0x54ad0, asm, nalib/navector] # Header
         - [0x54e80, cpp, prlib/contour]
         - [0x553e8, cpp, prlib/dma]
-          # - [0x554a8, asm, nalib/stub_0x554a8]
           # - [0x554a8, asm, nalib/navector] # Header
           # - [0x555d8, asm, nalib/navector]
 
@@ -172,7 +172,7 @@ segments:
         - [0x662d0, asm, sdk/newlib]
         
         # .vutext
-        - [0x79040, data, vutext]
+        - [0x79040, databin, vutext]
         
         # .data
         - [0x7b900, data]
@@ -220,9 +220,29 @@ segments:
         - [0x28ddb0, data, nalib/napacket]
         - [0x28ddc0, data, nalib/navector]
         - [0x28dde0, data, nalib/namatrix]
+
+        - [0x28def0, data, sdk/graphdev]
+        - [0x28df40, data, sdk/libdma]
+        - [0x28dff0, data, sdk/libgifpk]
+        - [0x28e000, data, sdk/libpad]
+        - [0x28e044, data, sdk/klib]
+        - [0x28e054, data, sdk/glue]
+        - [0x28e060, data, sdk/intr]
+        - [0x28e808, data, sdk/kprintf]
+        - [0x28e810, data, sdk/sifcmd]
+        - [0x28e814, data, sdk/sifrpc]
+        - [0x28e818, data, sdk/filestub]
+        - [0x28e8ac, data, sdk/eeloadfile]
+        - [0x28e8b4, data, sdk/initsys]
+        - [0x28e8bc, data, sdk/thread]
+        - [0x28e8c0, data, sdk/libvu0]
+        - [0x28e900, data, sdk/eecdvd]
+        - [0x290370, data, sdk/libmc]
+
+        - [0x290388, data, sdk/newlib]
         
         # .vudata
-        - [0x291ed0, data, vudata]
+        - [0x291ed0, databin, vudata]
         
         # .rodata
         - [0x291f00, .rodata, dbug/dbgmsg]

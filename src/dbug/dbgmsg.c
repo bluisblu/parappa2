@@ -1,10 +1,13 @@
 #include "dbug/dbgmsg.h"
+
+/* Debug font texture (TIM2) */
+/* todo(poly): this is supposed to be an integer array */
+char msg8x8data[] = {
 #include "dbug/msg8x8data.h"
+};
 
 static u_long128 dbgPacket[4096];
 static sceGifPacket gifPacket;
-
-char padding_bss_dbgmsg[8];
 
 /* .sbss */
 extern sceDmaChan *dbgDmaC;

@@ -121,31 +121,27 @@ static SCENECTRL* getOutsideCtrlScene(int time){
     return scenectrl_pp;
 }
 
-#ifndef NON_MATCIHNG
-INCLUDE_ASM("main/drawctrl", bra_tap_GetNext);
-#else
-float* bra_tap_GetNext(/* a0 4 */ PR_MODELHANDLE model) {
-    /* a0 4 */ int i;
-    /* f1 39 */ float tmp_f = PrGetContourBlurAlpha(model);
-    /* s0 16 */ float *ret;
+float* bra_tap_GetNext(PR_MODELHANDLE model) {
+    int    i;
+    float  tmp_f;
+    float *ret;
+
+    ret = NULL;
+    tmp_f = PrGetContourBlurAlpha(model);
 
     if (tmp_f == -1.0f) {
         return NULL;
     }
 
-    if (bra_tap[0][0] == tmp_f) {
-        ret = &bra_tap[1][0];
-    } else {
-        for (i = 0; i < 10; i++) {
-            if (bra_tap[i][0] != tmp_f) {
-                ret = &bra_tap[i][0];
-            }
+    for (i = 0; i < PR_ARRAYSIZEU(bra_tap) - 1; i++) {
+        if (bra_tap[i][0] == tmp_f) {
+            ret = &bra_tap[i + 1][0];
+            break;
         }
     }
 
     return ret;
 }
-#endif
 
 INCLUDE_ASM("main/drawctrl", bra_title_GetNext);
 
@@ -183,40 +179,31 @@ void BallThrowInitDare(int dare) {
     WorkClear(&bthrow_ctrl[dare], sizeof(BTHROW_CTRL));
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("main/drawctrl", vs06BomAdr);
-void* vs06BomAdr(/* a0 4 */ OBJBTHROW_TYPE thtype, /* t0 8 */ int time);
-#else
-static void* vs06BomAdr(/* a0 4 */ OBJBTHROW_TYPE thtype, /* t0 8 */ int time) {
-    u_short bomdat_tea[12] = 
-    {
-        0x178, 0x177, 0x176, 0x175, 0x174, 0x173,
-        0x172, 0x171, 0x170, 0x16F, 0x16E, 0x16D 
+static void* vs06BomAdr(OBJBTHROW_TYPE thtype, int time) {
+    u_short bomdat_tea[12] = {
+        0x178, 0x177, 0x176, 0x175,
+        0x174, 0x173, 0x172, 0x171,
+        0x170, 0x16f, 0x16e, 0x16d,
     };
-
-    u_short bomdat_pa[12] = 
-    {
-        0x184, 0x183, 0x182, 0x181, 0x180, 0x17F,
-        0x17E, 0x17D, 0x17C, 0x17B, 0x17A, 0x179
+    u_short bomdat_pa[12] = {
+        0x184, 0x183, 0x182, 0x181,
+        0x180, 0x17f, 0x17e, 0x17d,
+        0x17c, 0x17b, 0x17a, 0x179,
     };
+    u_short *bomdat;
 
-    u_short num;
-
-    if (global_data.play_step == PSTEP_VS) {
-        if (time >= 12) {
-            return NULL;
-        }
-
-        if (thtype == OBJBTHROW_PARAPPA) {
-            num = bomdat_pa[time];
-        } else {
-            num = bomdat_tea[time];
-        }
-
-        return GetIntAdrsCurrent(num);
+    if (global_data.play_step != PSTEP_VS || time >= 12) {
+        return NULL;
     }
+
+    if (thtype == OBJBTHROW_PARAPPA) {
+        bomdat = bomdat_pa;
+    } else {
+        bomdat = bomdat_tea;
+    }
+
+    return GetIntAdrsCurrent(bomdat[time]);
 }
-#endif
 
 void BallThrowReq(void *mdlh, OBJBTHROW_TYPE thtype, void *texpp, void *mdlhoming) {
     BTHROW_STR *bt_pp;
@@ -288,7 +275,7 @@ void BallThrowPoll(void) {
                         if (bts_pp->use & 2) {
                             float *pos_pp;
 
-                            bts_pp->use &= 0xFD;
+                            bts_pp->use &= 0xfd;
                             
                             pos_pp = PrGetModelScreenPosition(bts_pp->mdl_adr);
                             
@@ -441,10 +428,6 @@ void* DrawTmpBuffGetArea(int size) {
     return ret;
 }
 
-INCLUDE_RODATA("main/drawctrl", D_00393128);
-
-INCLUDE_RODATA("main/drawctrl", D_00393140);
-
 void DrawObjdatInit(int size, OBJDAT *od_pp, PR_SCENEHANDLE prf) {
     int    i;
     void  *tmp_adr;
@@ -486,11 +469,7 @@ const int drawctrl_rodata_padding[] = { 0, 0 };
 void DrawObjdatReset(int size, OBJDAT *od_pp) {
     int i;
 
-    if (size <= 0) {
-        return;
-    }
-
-    for (i = size; i != 0; i--, od_pp++){
+    for (i = 0; i < size; i++, od_pp++) {
         /* not assigned to any variables */
         GetIntAdrsCurrent(od_pp->objdat_num);
 
@@ -639,30 +618,25 @@ static void DrawObjStrKill(SCENE_OBJDATA *scn_pp, int num) {
     scn_pp->objstr_pp[num].PRtimeOld = -1;
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("main/drawctrl", GetSpfTimeCtrl);
-#else
-static u_int GetSpfTimeCtrl(/* a0 4 */ OBJDAT *objdat_pp, /* v0 2 */ u_int frame) {
-    /* a2 6 */ SPF_STR *spf_str_pp;
-    /* v0 2 */ u_int max_cnt;
-    /* v0 2 */ u_int ret;
+static u_int GetSpfTimeCtrl(OBJDAT *objdat_pp, u_int frame) {
+    SPF_STR *spf_str_pp;
+    u_int    max_cnt;
+    u_int    ret;
 
-    spf_str_pp = (SPF_STR*)objdat_pp->handle;
+    spf_str_pp = objdat_pp->handle;
     max_cnt = (spf_str_pp->maxFrame * 2) - 2;
-
-    if (max_cnt >= frame) {
-        max_cnt = frame;
+    if (max_cnt < frame) {
+        frame = max_cnt;
     }
 
-    if (max_cnt & 1) {
-        ret = (spf_str_pp->frame[max_cnt / 2] + spf_str_pp->frame[(max_cnt / 2) + 1]) * 0.5f;
+    if (frame & 0x1) {
+        ret = (spf_str_pp->frame[frame / 2] + spf_str_pp->frame[(frame / 2) + 1]) / 2;
     } else {
-        ret = spf_str_pp->frame[max_cnt / 2];
+        ret = spf_str_pp->frame[frame / 2];
     }
 
     return ret;
 }
-#endif
 
 void camOtherKill(OBJACTPRG *objactprg_pp, int objactprg_num, int oya_num) {
     int i;

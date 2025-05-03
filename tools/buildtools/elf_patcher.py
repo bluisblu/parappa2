@@ -25,6 +25,7 @@ SECTIONS_TO_REALIGN_PER_TOOL: dict[str, dict[str, int]] = {
 }
 
 SPECIFIC_ALIGNMENTS: dict[str, dict[str, int]] = {
+    # .bss
     "pack.bss.s.o": {
         ".bss": 0x40,
     },
@@ -58,10 +59,14 @@ if args.section_align is not None:
         align = int(align_str, 0)
         section_align_override[sect] = align
 
+if elf_path.parent.name == "sdk":
+    # SDK seems to have 0x4 alignment on .data
+    section_align_override.setdefault(".data", 0x4)
+
 # Override specific alignments
 specific_alignments = SPECIFIC_ALIGNMENTS.get(elf_path.name)
 if specific_alignments:
-    print(f"Applying overriden alignment on \"{elf_path.name}\"")
+    print(f"Applying overriden alignment on: \"{elf_path.name}\"")
     section_align_override.update(specific_alignments)
 
 elf_bytes = bytearray(elf_path.read_bytes())

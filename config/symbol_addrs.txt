@@ -21,12 +21,13 @@ DbgMsgClearUserPkt                  = 0x001006d0; // type:func
 DbgMsgSetColorUserPkt               = 0x001007f0; // type:func
 DbgMsgSetZ                          = 0x00100830; // type:func
 
-msg8x8data                          = 0x0017a970; // type:s32 size:0x41C
+msg8x8data                          = 0x0017a970; // type:s32 size:0x1070 can_reference:false
+
 dbgDmaC                             = 0x00399a00; // type:s32 size:0x4
 MSGCOL                              = 0x00399a08; // type:u8 size:0x3
 MSGSIZE                             = 0x00399a10; // type:u16 size:0x4
 MSGZPOP                             = 0x00399a14; // type:u32
-dbgPacket                           = 0x00399d60; // type:s8 size:0x10000 ignore:true
+dbgPacket                           = 0x00399d60; // type:s8 size:0x10000
 gifPacket                           = 0x003a9d60; // size:0x10
 tinfo                               = 0x003a9d70; // size:0x18
 
@@ -74,9 +75,9 @@ mtcStack_CTRL                       = 0x003a9d90; // type:s8 size:0x1000
 mtcStack_MAIN                       = 0x003aad90; // type:s8 size:0x1000
 mtcStack_02                         = 0x003abd90; // type:s8 size:0x100
 mtcStack_03                         = 0x003abe90; // type:s8 size:0x800
-mtcStack_04                         = 0x003ac690; // type:s8 size:0x1000 ignore:true
-mtcStack_05                         = 0x003ad690; // type:s8 size:0x4000 ignore:true
-mtcStack_06                         = 0x003b1690; // type:s8 size:0x100 ignore:true
+mtcStack_04                         = 0x003ac690; // type:s8 size:0x1000
+mtcStack_05                         = 0x003ad690; // type:s8 size:0x4000
+mtcStack_06                         = 0x003b1690; // type:s8 size:0x100
 mtcStack_07                         = 0x003b1790; // type:s8 size:0x4000
 mtcStack_08                         = 0x003b5790; // type:s8 size:0x100
 mtcStack_09                         = 0x003b5890; // type:s8 size:0x100
@@ -88,7 +89,7 @@ mtcStack_0E                         = 0x003b7b90; // type:s8 size:0x100
 mtcStack_0F                         = 0x003b7c90; // type:s8 size:0x1000
 
 mtcTaskConB                         = 0x003b8c90; // size:0x400
-mtcStack_Ctrl                       = 0x003b9090; // size:0x1000 ignore:true
+mtcStack_Ctrl                       = 0x003b9090; // size:0x1000
 th_para_Ctrl                        = 0x003ba090; // size:0x30
 
 // os/syssub.c
@@ -2114,6 +2115,9 @@ scePadSetActDirect                  = 0x00158d88; // type:func
 scePadSetActAlign                   = 0x00158e40; // type:func
 scePadInfoPressMode                 = 0x00159080; // type:func
 scePadEnterPressMode                = 0x001590e0; // type:func
+
+// intr.c
+srcfile                             = 0x0038d060; // type:s32 size:0x740 can_reference:false
 
 // klib.s
 StartThread                         = 0x00159640; // type:func

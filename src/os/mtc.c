@@ -1,6 +1,6 @@
 #include "os/mtc.h"
 
-static char mtcStack_CTRL[MTC_TASK_SIZE_CTRL];
+static char mtcStack_CTRL[MTC_TASK_SIZE_CTRL] PR_ALIGNED(16);
 static char mtcStack_MAIN[MTC_TASK_SIZE_MAIN];
 static char mtcStack_02[MTC_TASK_SIZE_02];
 static char mtcStack_03[MTC_TASK_SIZE_03];
@@ -37,7 +37,6 @@ char* mtcStack[16] = {
 };
 
 struct SemaParam mtcSemaPara = { 0, 0, 0, 0, 0, 0 }; 
-int _data_mtc_pad_[] = { 0, 0, 0, 0, 0, 0 };
 
 /* .sdata */
 int mtcCurrentTask = 0;

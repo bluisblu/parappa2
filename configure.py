@@ -331,17 +331,27 @@ def generate_objdiff_configuration(config: dict[str, Any]):
                 "name": tu_name,
                 "target_path": str(target_path),
                 "base_path": str(base_path),
+                "scratch": {
+                    "platform": "ps2",
+                    "compiler": "ee-gcc2.9-991111-01",
+                    "c_flags": "-O2 -G8 -gstabs",
+                    "preset_id": 118 # Preset ID for PaRappa the Rapper 2
+                },
                 "metadata": {"progress_categories": [category]},
             }
         )
 
     objdiff_json: dict[str, Any] = {
         "$schema": "https://raw.githubusercontent.com/encounter/objdiff/main/config.schema.json",
-        "custom_make": "true",
+        "custom_make": "ninja",
         "custom_args": [],
         "build_target": False,
-        "build_base": False,
-        "watch_patterns": [],
+        "build_base": True,
+        "watch_patterns": [
+            # "src/**/*.h",
+            # "src/**/*.c",
+            # "src/**/*.cpp"
+        ],
         "units": units,
     }
 
