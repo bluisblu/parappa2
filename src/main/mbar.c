@@ -255,7 +255,25 @@ INCLUDE_ASM("main/mbar", ExamDispReq);
 
 INCLUDE_ASM("main/mbar", ExamDispReset);
 
-INCLUDE_ASM("main/mbar", examScore2Level);
+float examScore2Level(long score) {
+    float ret_lvl = score / 140.0f;
+
+    if (ret_lvl > 0) {
+        ret_lvl += 0.2;
+    } else {
+        ret_lvl -= 0.2;
+    }
+
+    if (ret_lvl > 1.0) {
+        ret_lvl = 1.0f;
+    }
+
+    if (ret_lvl < -1.0) {
+        ret_lvl = -1.0f;
+    }
+
+    return ret_lvl;
+}
 
 INCLUDE_ASM("main/mbar", ExamDispOn);
 
@@ -288,10 +306,6 @@ void MbarInit(int stg) {
 }
 
 INCLUDE_ASM("main/mbar", MbarReset);
-
-INCLUDE_RODATA("main/mbar", D_00393440);
-
-INCLUDE_RODATA("main/mbar", D_00393448);
 
 INCLUDE_RODATA("main/mbar", D_00393450);
 
@@ -361,7 +375,7 @@ void MbarGuideLightMake(MBARR_CHR *mbarr_pp, int mbtime) {
     u_char col = 128;
 
     if (mbtime < 144u) {
-        col = (u_char)(((144 - mbtime) * 128) / 144) + 128;
+        col = (144 - mbtime) * 128 / 144 + 128u;
     }
 
     mbarr_pp->r = mbarr_pp->g = mbarr_pp->b = col;

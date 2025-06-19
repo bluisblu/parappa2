@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 30.644442,
+    "fuzzy_match_percent": 30.70956,
     "total_code": "343988",
-    "matched_code": "98952",
-    "matched_code_percent": 28.766119,
+    "matched_code": "99176",
+    "matched_code_percent": 28.831238,
     "total_data": "220876",
     "matched_data": "121060",
     "matched_data_percent": 54.809032,
     "total_functions": 1433,
-    "matched_functions": 709,
-    "matched_functions_percent": 49.476624,
+    "matched_functions": 710,
+    "matched_functions_percent": 49.546406,
     "total_units": 70
   },
   "units": [
@@ -3452,21 +3452,21 @@
     {
       "name": "main/mbar",
       "measures": {
-        "fuzzy_match_percent": 13.712463,
+        "fuzzy_match_percent": 15.200638,
         "total_code": "15052",
-        "matched_code": "2064",
-        "matched_code_percent": 13.712462,
+        "matched_code": "2288",
+        "matched_code_percent": 15.200637,
         "total_data": "224",
         "total_functions": 82,
-        "matched_functions": 22,
-        "matched_functions_percent": 26.82927,
+        "matched_functions": 23,
+        "matched_functions_percent": 28.04878,
         "total_units": 1
       },
       "sections": [
         {
           "name": ".text",
           "size": "15208",
-          "fuzzy_match_percent": 13.712463,
+          "fuzzy_match_percent": 15.200638,
           "metadata": {}
         },
         {
@@ -3482,7 +3482,7 @@
         {
           "name": ".rodata",
           "size": "224",
-          "fuzzy_match_percent": 70.53571,
+          "fuzzy_match_percent": 63.392857,
           "metadata": {}
         }
       ],
@@ -3675,6 +3675,7 @@
         {
           "name": "examScore2Level",
           "size": "224",
+          "fuzzy_match_percent": 100.0,
           "metadata": {}
         },
         {
@@ -11178,16 +11179,16 @@
     {
       "id": "main",
       "measures": {
-        "fuzzy_match_percent": 46.278015,
+        "fuzzy_match_percent": 46.45861,
         "total_code": "124036",
-        "matched_code": "54536",
-        "matched_code_percent": 43.96788,
+        "matched_code": "54760",
+        "matched_code_percent": 44.14847,
         "total_data": "42772",
         "matched_data": "37540",
         "matched_data_percent": 87.7677,
         "total_functions": 570,
-        "matched_functions": 386,
-        "matched_functions_percent": 67.7193,
+        "matched_functions": 387,
+        "matched_functions_percent": 67.89474,
         "total_units": 17
       }
     },

@@ -2202,8 +2202,15 @@ __floatdisf                         = 0x00169a20; // type:func
 __udivdi3                           = 0x0016a1c8; // type:func
 __umoddi3                           = 0x0016a798; // type:func
 
+// ee/gcc/src/gcc/build/gcc/dp-bit.c
+dpadd                               = 0x0016b0e8; // type:func
+dpsub                               = 0x0016b140; // type:func
+dpcmp                               = 0x0016b6d0; // type:func
+dptofp                              = 0x0016b978; // type:func
+
 // ee/gcc/src/gcc/build/gcc/fp-bit.c
 fptoui                              = 0x0016cbc8; // type:func
+fptodp                              = 0x0016ccc8; // type:func
 
 // ee/gcc/src/gcc/cp/new2.cc
 __builtin_delete                    = 0x0016dde8; // type:func
