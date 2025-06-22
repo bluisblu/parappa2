@@ -47,6 +47,10 @@ For any questions, we have a home at the [PS1/PS2 Decompilation Discord server](
 3. `./configure.py` (use `-c` to do a clean split.)
 4. `ninja`
 
+To generate/update the progress report:
+1. After a successful build, run `./configure.py --objdiff`
+2. `./tools/objdiff-cli report generate -p . -o progress/report.json -f json-pretty`
+
 ### asm-differ setup
 1. After a successful build, create a folder named `expected`
 2. Copy the `build` folder inside the `expected` folder.

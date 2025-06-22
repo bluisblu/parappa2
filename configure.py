@@ -39,9 +39,6 @@ COMPILER_FLAGS_CPP = "-O2 -G8 -gstabs -x c++ -fno-exceptions -fno-strict-aliasin
 COMPILE_CMD = f"{COMPILER_DIR}/ee-gcc -c {COMMON_INCLUDES} {COMPILER_FLAGS}"
 COMPILE_CMD_CPP = f"{COMPILER_DIR}/ee-gcc -c {COMMON_INCLUDES} {COMPILER_FLAGS_CPP}"
 
-# CALCULATE PROGRESS TODO:
-# python3 -m mapfile_parser progress build/SCPS_150.17.map asm asm/nonmatchings/
-
 def exec_shell(command: List[str], stdout=subprocess.PIPE) -> str:
     ret = subprocess.run(command, stdout=stdout, stderr=subprocess.PIPE, text=True)
     return ret.stdout

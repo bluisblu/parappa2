@@ -14,6 +14,9 @@ extern NIKO_CHAN_STR niko_chan_str_vs[];
 extern NIKO_CHAN_STR *niko_chan_str_pp;
 extern int niko_chan_str_cnt;
 
+/* .data */
+extern TIM2_DAT tim2spr_tbl_tmp1[];
+
 /* .bss */
 extern int conditionFramCnt[4];
 extern MBAR_REQ_STR mbar_req_str[5];
@@ -417,9 +420,31 @@ INCLUDE_ASM("main/mbar", MbarDispGuiScene);
 
 INCLUDE_ASM("main/mbar", MbarDispGuiSceneMbarArea);
 
-INCLUDE_ASM("main/mbar", lessonTim2InfoGet);
+TIM2_DAT* lessonTim2InfoGet(void) {
+    return &tim2spr_tbl_tmp1[52];
+}
 
+#ifndef NON_MATCHING
 INCLUDE_ASM("main/mbar", lessonCl2InfoGet);
+#else /* requires .rodata migration */
+TIM2_DAT* lessonCl2InfoGet(SCRRJ_LESSON_ROUND_ENUM type) {
+    u_short le_num[10] = {
+        0x2d, /* SCRRJ_LR_LESSON_1 */
+        0x2e, /* SCRRJ_LR_LESSON_2 */
+        0x2f, /* SCRRJ_LR_LESSON_3 */
+        0x30, /* SCRRJ_LR_LESSON_4 */
+        0x31, /* SCRRJ_LR_LESSON_5 */
+
+        0x2d, /* SCRRJ_LR_ROUND_1 */
+        0x2e, /* SCRRJ_LR_ROUND_2 */
+        0x2f, /* SCRRJ_LR_ROUND_3 */
+        0x30, /* SCRRJ_LR_ROUND_4 */
+        0x31, /* SCRRJ_LR_ROUND_5 */
+    };
+
+    return &tim2spr_tbl_tmp1[le_num[type]];
+}
+#endif
 
 INCLUDE_ASM("main/mbar", MbarDemoCharDisp);
 

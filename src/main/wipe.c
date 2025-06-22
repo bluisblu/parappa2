@@ -106,7 +106,7 @@ static void LocalBufCopy(int disp) {
 }
 
 int wipeTimeGetInWait(int time, WSHC_ENUM wshc_enum) {
-    WIPE_SCRATCH_CTRL* wscc_pp;
+    WIPE_SCRATCH_CTRL *wscc_pp;
     int maxt;
     int ret;
     int i;
@@ -118,7 +118,9 @@ int wipeTimeGetInWait(int time, WSHC_ENUM wshc_enum) {
     maxt = time % maxt;
 
     endp = -1;
-    for (i = 0, stp = 0; i < wscc_pp->frt_size; i++) {
+    stp  = 0;
+
+    for (i = 0; i < wscc_pp->frt_size; i++) {
         if (wscc_pp->frt_pp[i].frame == maxt) {
             stp = i;
             endp = i;
