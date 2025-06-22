@@ -1,8 +1,13 @@
 #include "main/effect.h"
 
+#include <stdio.h>
+
 /* .lit4 */
 float FLT_00398F38; /* UG_WaveDisp    -> 6.2831855  */
 float FLT_00398F3C; /* UG_NoodlesDisp -> 0.12822828 */
+
+extern sceGsStoreImage gs_simage_EFFECTTMP;
+extern sceGsLoadImage gs_loadimg;
 
 #define WV_SCREEN_W 640
 #define WV_SCREEN_H 224
@@ -351,5 +356,68 @@ void CG_NoodlesDisp(NOODLES_STR *ndl_pp, sceGsFrame *frame_pp, int pri, int time
 
 INCLUDE_RODATA("main/effect", D_00393400);
 
-/* NOTE: Uses the scratchpad */
-INCLUDE_ASM("main/effect", FD_MonocroDisp);
+void FD_MonocroDisp(MONOCRO_STR *mono_pp, int tbp, int w, int h) {
+    u_char *dat_pp;
+    int i, j, k;
+    short sizew, sizeh;
+    u_short ctmp;
+    
+    for (i = 0; i < h; i += 32) {
+        sizeh = 32;
+        if (sizeh > h - i) {
+            sizeh = h - i;
+        }
+        
+        for (j = 0; j < w; j += 128) {
+            sizew = 128;
+            if (sizeh > w - j) {
+                sizew = w - j;
+            }
+
+            dat_pp = (u_char*)0x70000000;
+            sceGsSetDefStoreImage(&gs_simage_EFFECTTMP, tbp, w / 64, 0, j, i, sizew, sizeh);
+            FlushCache(0);
+
+            if (sceGsExecStoreImage(&gs_simage_EFFECTTMP, (u_long128*)0x70000000) < 0) {
+                printf("vramsave Timeout error!!\n");
+                return;
+            }
+
+            sceGsSyncPath(0, 0);
+
+            for (k = 0; k < 4096; k++) {
+                u_short mono = (dat_pp[0] + dat_pp[1] + dat_pp[2]);
+                mono /= 3;
+
+                ctmp = (mono_pp->pR * mono) / 128;
+                if (ctmp > 256) {
+                    ctmp = 255;
+                }
+                dat_pp[0] = ctmp;
+                
+                ctmp = (mono_pp->pG * mono) / 128;
+                if (ctmp > 256) {
+                    ctmp = 255;
+                }
+                dat_pp[1] = ctmp;
+                
+                ctmp = (mono_pp->pB * mono) / 128;
+                if (ctmp > 256) {
+                    ctmp = 255;
+                }
+                dat_pp[2] = ctmp;
+
+                dat_pp += 4;
+            }
+
+            sceGsSyncPath(0, 0);
+            FlushCache(0);
+
+            sceGsSetDefLoadImage(&gs_loadimg, tbp, w / 64, 0, j, i, sizew, sizeh);
+            FlushCache(0);
+
+            sceGsExecLoadImage(&gs_loadimg, (u_long128*)0x70000000);
+            sceGsSyncPath(0, 0);
+        }
+    }
+}

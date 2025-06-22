@@ -18,6 +18,9 @@ rom:0x6238 symbol:none reloc:MIPS_NONE
 rom:0x6354 symbol:none reloc:MIPS_NONE
 rom:0x63c8 symbol:none reloc:MIPS_NONE
 
+// main/effect.c: FD_MonocroDisp
+rom:0x19090 symbol:none reloc:MIPS_NONE
+
 // sdk/thread.c: InitThread
 rom:0x6225c symbol:_gp reloc:MIPS_HI16
 rom:0x62268 symbol:_gp reloc:MIPS_LO16
