@@ -12,7 +12,7 @@ static int usrMemPosEndCnt;
 
 void UsrMemClear(void) {
     usrMemPos[0] = (u_int)usrMemoryData;
-    usrMemPos[2047] = (u_int)usrMemoryData + sizeof(usrMemoryData);
+    usrMemPos[2047] = (u_int)&usrMemoryData[sizeof(usrMemoryData)];
     
     usrMemPosCnt = 0;
     usrMemPosEndCnt = 0;
@@ -25,7 +25,7 @@ void UsrMemClearTop(void) {
 
 void UsrMemClearEnd(void) {
     usrMemPosEndCnt = 0;
-    usrMemPos[2047] = (u_int)usrMemoryData + sizeof(usrMemoryData);
+    usrMemPos[2047] = (u_int)&usrMemoryData[sizeof(usrMemoryData)];
 }
 
 u_int UsrMemGetAdr(int id) {
