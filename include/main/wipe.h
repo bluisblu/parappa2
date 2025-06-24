@@ -74,7 +74,34 @@ typedef struct { // 0x10
     /* 0xc */ void *spa_hdl;
 } WIPE_PARA_STR;
 
+void wipeSndReq(SNDTAP_WIPE_ENUM req);
+void wipeSndStop(void);
+void wipeSndFileTrans(void);
+
+int wipeTimeGetInWait(int time, WSHC_ENUM wshc_enum);
+
+void WipeLoadInDispNR(void);
+void WipeLoadOutDispNR(void);
+
+void WipeInReq(void);
+void WipeInReqSame(void);
 void WipeOutReq(void);
+
 int WipeEndCheck(void);
+
+void wipeYesNoDispReq(void);
+void wipeYesNoDispEnd(void);
+
+void WipeParaColorSet(u_char r, u_char g, u_char b);
+
+void WipeEnd(void);
+
+void wipeParaInReq(void);
+void wipeParaInReqByeBye(void);
+void wipeParaInReqMove(void);
+void wipeParaOutReq(void);
+
+void wipeBoxyInReq(void);
+void wipeBoxyWaitReq(void);
 
 #endif

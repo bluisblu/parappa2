@@ -2,6 +2,7 @@
 
 #include "os/cmngifpk.h"
 #include "os/syssub.h"
+
 #include "main/etc.h"
 
 /* .data */
@@ -208,7 +209,7 @@ void SubtCtrlPrint(JIMAKU_STR *jstr_pp, int line, int time, int lang) {
         if ((time >= jstr_tmp_pp->jimaku_dat_pp[i].starTime) &&
             (time <  jstr_tmp_pp->jimaku_dat_pp[i].endTime)) {
             SubtClear();
-            SubtMsgPrint(jstr_tmp_pp->jimaku_dat_pp[i].txtData[lang], SUBT_POSX, SUBT_POSY, CHECK_LANG(lang), 0);
+            SubtMsgPrint(jstr_tmp_pp->jimaku_dat_pp[i].txtData[lang], SUBT_POSX, SUBT_POSY, lang == LANG_JAPANESE, 0);
             SubtFlash();
             return;
         }
@@ -222,7 +223,7 @@ void SubtTapPrint(u_char *tap_msg_pp, int lang) {
     }
 
     SubtClear();
-    SubtMsgPrint(tap_msg_pp, SUBT_POSX, SUBT_POSY, CHECK_LANG(lang), 2);
+    SubtMsgPrint(tap_msg_pp, SUBT_POSX, SUBT_POSY, lang == LANG_JAPANESE, 2);
     SubtFlash();
 }
 
@@ -236,7 +237,7 @@ void SubtMenuCtrlPrint(u_char *msg_pp, int xp, int yp, int lang) {
     yp += 1936;
 
     SubtClear();
-    SubtMsgPrint(msg_pp, xp, yp, CHECK_LANG(lang), 0);
+    SubtMsgPrint(msg_pp, xp, yp, lang == LANG_JAPANESE, 0);
     SubtFlash();
 }
 
@@ -332,10 +333,10 @@ void SubtTapPrintWake(u_char *tap_msg_pp, int lang, int lng, int nowp) {
         return;
     }
 
-    cntmax = SubtMsgDataKaijyouCnt(tap_msg_pp, CHECK_LANG(lang));
+    cntmax = SubtMsgDataKaijyouCnt(tap_msg_pp, lang == LANG_JAPANESE);
     if (cntmax >= 3) {
         cntmax = ((cntmax + 1) / 2 * nowp) / lng * 2;
-        tap_msg_pp = SubtMsgDataPos(tap_msg_pp, CHECK_LANG(lang), cntmax);
+        tap_msg_pp = SubtMsgDataPos(tap_msg_pp, lang == LANG_JAPANESE, cntmax);
     }
 
     SubtTapPrint(tap_msg_pp, lang);
@@ -355,7 +356,7 @@ void SubtCtrlPrintBoxyWipe(JIMAKU_STR *jstr_pp, int line, int time, int lang, vo
             
             kanjiset_tmp_pp = SubtKanjiSet(code_pp);
 
-            lang_f = CHECK_LANG(lang);
+            lang_f = (lang == LANG_JAPANESE);
             if (lang_f) {
                 lang_f = 2;
             }

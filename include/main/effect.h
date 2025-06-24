@@ -4,13 +4,9 @@
 #include "common.h"
 
 #include <eetypes.h>
+
 #include <eestruct.h>
-#include <libgraph.h>
 #include <libgifpk.h>
-
-#include "os/cmngifpk.h"
-
-#include <math.h>
 
 typedef enum {
     WM_WSLICE = 0,
@@ -87,7 +83,24 @@ typedef struct { // 0x3
     /* 0x2 */ u_char pB;
 } MONOCRO_STR;
 
-void CG_FadeDisp(FADE_MAKE_STR *fade_pp, int pri, sceGsFrame *texFr_pp);
+void CG_WaveInit(WAVE_STR *wstr);
+void CG_WaveInitEasy(WAVE_STR *wstr, short x, short y, short w, short h, WMODE_ENUM wmode);
+void UG_WaveDisp(WAVE_STR *wstr, sceGsFrame *frame_pp, sceGifPacket *wavePkSpr);
+void CG_WaveDisp(WAVE_STR *wstr, sceGsFrame *frame_pp, int pri);
+
+void UG_AlpDisp(PLH_STR *plh_pp, sceGsFrame *frame_pp, sceGifPacket *alpPkSpr);
+void CG_AlpDisp(PLH_STR *plh_pp, sceGsFrame *frame_pp, int pri);
+
 void UG_MozaikuDisp(MOZAIKU_STR *moz_pp, sceGsFrame *frame_pp, sceGifPacket *mozPkSpr);
+void CG_MozaikuDisp(MOZAIKU_STR *moz_pp, sceGsFrame *frame_pp, int pri);
+
+void UG_FadeDisp(FADE_MAKE_STR *fade_pp, sceGifPacket *fadePkSpr, sceGsFrame *texFr_pp);
+void UG_FadeDisp2(FADE_MAKE_STR *fade_pp, sceGifPacket *fadePkSpr, sceGsFrame *texFr_pp, float scale);
+void CG_FadeDisp(FADE_MAKE_STR *fade_pp, int pri, sceGsFrame *texFr_pp);
+
+void UG_NoodlesDisp(NOODLES_STR *ndl_pp, sceGsFrame *frame_pp, sceGifPacket *ndlPkSpr, int time);
+void CG_NoodlesDisp(NOODLES_STR *ndl_pp, sceGsFrame *frame_pp, int pri, int time);
+
+void FD_MonocroDisp(MONOCRO_STR *mono_pp, int tbp, int w, int h);
 
 #endif

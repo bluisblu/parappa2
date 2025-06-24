@@ -2,9 +2,12 @@
 #define MBAR_H
 
 #include "common.h"
-#include <eetypes.h>
 
 #include "main/scrctrl.h"
+#include "main/sprite.h"
+
+#include <eetypes.h>
+#include <libgifpk.h>
 
 typedef enum {
     NIKO_KAGE = 0,
@@ -24,6 +27,13 @@ typedef enum {
     MBAR_PARAPPA_VS = 553,
     MBAR_BOXY_VS = 2089
 } MBAR_REQ_ENUM;
+
+typedef enum {
+    VSMT_NONE = 0,
+    VSMT_UP = 1,
+    VSMT_DW = 2,
+    VSMT_MAX = 3
+} VS_MV_TYPE;
 
 typedef enum {
     MBC_NONE = 0,
@@ -70,6 +80,13 @@ typedef enum {
     MBC_GLINE_T = 37,
     MBC_MAX = 38
 } MBC_ENUM;
+
+typedef enum {
+    MBWINDOW_NORMAL = 0,
+    MBWINDOW_UP = 1,
+    MBWINDOW_DOWN = 2,
+    MBWINDOW_MAX = 3
+} MBWINDOW_ENUM;
 
 typedef struct { // 0x38
     /* 0x00 */ u_long GsTex0;
@@ -119,7 +136,97 @@ typedef struct { // 0x18
     /* 0x17 */ u_char a;
 } MBARR_CHR;
 
-void MbarSetCtrlTime(int mctime);
+typedef struct { // 0x28
+    /* 0x00 */ MBC_ENUM mbc_enum;
+    /* 0x04 */ int xp;
+    /* 0x08 */ int yp;
+    /* 0x0c */ int xp2;
+    /* 0x10 */ int yp2;
+    /* 0x14 */ int ofsx;
+    /* 0x18 */ int ofsy;
+    /* 0x1c */ int ofsx2;
+    /* 0x20 */ int ofsy2;
+    /* 0x24 */ u_char r;
+    /* 0x25 */ u_char g;
+    /* 0x26 */ u_char b;
+    /* 0x27 */ u_char a;
+} MBARR_CHR2;
+
+void examCharSet(EX_CHAR_DISP *ecd_pp, sceGifPacket *gifpk_pp);
+
+void MbarMemberClear(int stg);
+
+void examCharBasic(EX_CHAR_DISP *ecd_pp, TIM2_DAT *tim2_dat_pp);
+void examCharScaleSet(EX_CHAR_DISP *ecd_pp, float scx, float scy);
+void examCharCltSet(EX_CHAR_DISP *ecd_pp, TIM2_DAT *tim2_dat_pp);
+void examCharPosSet(EX_CHAR_DISP *ecd_pp, int xp, int yp);
+void examCharUVWHSet(EX_CHAR_DISP *ecd_pp, u_short u, u_short v, u_short w, u_short h);
+void examCharAlphaSet(EX_CHAR_DISP *ecd_pp, u_short on_off);
+void examCharKidoSet(EX_CHAR_DISP *ecd_pp, u_char rc, u_char gc, u_char bc);
+
+void MbarNikoHookUse(void);
+void MbarNikoVsUse(void);
+void MbarNikoUnUse(void);
+void MbarNikoSet(int num, int ofs);
+
+void MbarHookUseInit(void);
+void MbarHookUnUse(void);
+void MbarHookUseOK(void);
+void MbarHookUseNG(void);
+
+void vsAnimationInit(void);
+void vsAnimationReq(int ply, long scrMoto, long scrSaki, VS_MV_TYPE vt);
+void vsAnimationReset(int ply, long scr);
+
+void metFrameInit(void);
+void conditionFrameInit(void);
+
+void ExamDispInit(void);
+void ExamDispPlySet(GLOBAL_PLY *ply, int pos);
+void ExamDispReq(int ply, int plmi);
+void ExamDispReset(void);
+float examScore2Level(long score);
+void examNumDisp(sceGifPacket *ex_gif_pp, long score, short x, short y, int keta, u_char *coldat_pp, int plmi);
+void ExamDispSet(void);
+void ExamDispSubt(void);
+
+void MbarInit(int stg);
+void MbarReset(void);
 void MbarReq(MBAR_REQ_ENUM mm_req, TAPSET *ts_pp, int curr_time, SCR_TAP_MEMORY *tm_pp, int tm_cnt, int lang, int tapdat_size, TAPDAT *tapdat_pp, GUI_CURSOR_ENUM guic);
+void MbarSetCtrlTime(int mctime);
+
+void MbarGifInit(void);
+void MbarGifTrans(int pri);
+
+void MbarCharSet(MBARR_CHR *mb_pp);
+void MbarCharSet2(MBARR_CHR2 *mb_pp);
+
+void MbarWindowSet(MBWINDOW_ENUM wenum);
+
+void MbarSclRotMake(MBARR_CHR *mbarr_pp, int mbtime);
+void MbarGuideLightMake(MBARR_CHR *mbarr_pp, int mbtime);
+int MbarFlashMake(MBARR_CHR *mbarr_pp, MBARR_CHR *mbarr_moto_pp, int mbtime, int fltype);
+
+void MbarBackSet(MBAR_REQ_STR *mr_pp);
+
+void MbarDisp(void);
+
+/* Scene control programs */
+int MbarDispScene(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
+int MbarDispSceneDraw(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
+int MbarDispSceneVsDraw(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
+/* Scene control programs end */
+
+void MbarDispSceneVsDrawInit(void);
+
+/* Scene control programs */
+int MbarDispGuiScene(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
+int MbarDispGuiSceneMbarArea(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
+/* Scene control programs end */
+
+TIM2_DAT* lessonTim2InfoGet();
+TIM2_DAT* lessonCl2InfoGet(SCRRJ_LESSON_ROUND_ENUM type);
+
+void MbarDemoCharDisp(void);
 
 #endif

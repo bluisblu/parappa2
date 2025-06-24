@@ -1,5 +1,7 @@
 #include "os/usrmem.h"
 
+#include <stdio.h>
+
 /* .bss */
 extern char usrMemoryData[25690112]; /* ~25 MB */
 extern u_int usrMemPos[2048];

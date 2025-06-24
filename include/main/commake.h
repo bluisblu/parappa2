@@ -7,7 +7,7 @@
 
 typedef struct { // 0x4
     /* 0x0 */ u_short keyId;
-    /* 0x2 */ short int timeOfs;
+    /* 0x2 */ short timeOfs;
 } CM_STR;
 
 typedef struct { // 0x1c4

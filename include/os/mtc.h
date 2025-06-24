@@ -6,10 +6,6 @@
 #include <libgraph.h>
 #include <eekernel.h>
 
-#include <stdio.h>
-
-#include "dbug/syori.h"
-
 typedef enum {
     MTC_TASK_CTRL       = 0x0,
     MTC_TASK_MAIN       = 0x1,
@@ -77,15 +73,18 @@ typedef struct { // 0x40
 } MTC_TASK_CONB;
 
 void MtcChangeThCtrl(void* x);
+
 void MtcInit(void);
 void MtcQuit(void);
-void MtcStart(void* ctrlTh_pp);
-void MtcExec(void* prg_pp, long level);
+
+void MtcStart(void (*ctrlTh_pp)(void* x));
+void MtcExec(void (*prg_pp)(void* x), long level);
 void MtcWait(long wt);
 void MtcKill(long level);
 void MtcPause(long level);
 void MtcContinue(long level);
 void MtcExit(void);
+
 int MtcGetCondition(long level);
 int MtcResetCheck(void);
 

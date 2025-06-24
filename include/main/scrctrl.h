@@ -3,17 +3,10 @@
 
 #include "common.h"
 
-#include "os/syssub.h"
-#include "os/system.h"
+#include <eetypes.h>
 
-#include "main/subt.h"
-#include "main/cdctrl.h"
-#include "main/mcctrl.h"
-#include "main/sprite.h"
-#include "main/drawctrl.h"
-#include "main/stdat.h"
 #include "main/etc.h"
-#include "main/p3str.h"
+#include "main/stdat.h"
 
 typedef struct { // 0x6
     /* 0x0 */ u_short prg;
@@ -545,35 +538,112 @@ typedef struct { // 0x4c
 
 int GetCurrentTblNumber(void);
 
+DISP_LEVEL RANK_LEVEL2DISP_LEVEL(RANK_LEVEL lvl);
+DISP_LEVEL RANK_LEVEL2DISP_LEVEL_HK(RANK_LEVEL lvl);
+
+void ScrTapDbuffCtrlInit(void *data_top, int bk0, int bk1);
+u_int ScrTapDbuffSet(SNDREC *sndrec_pp);
+void ScrTapDbuffSetSp(SNDREC *sndrec_pp, int id);
+void ScrTapDbuffClear(void);
+
+void ScrTapCtrlInit(void *data_top);
+
 void ScrTapDataTrans(SNDREC *sndrec_pp, int bank, void *data_top);
+int ScrTapDataTransCheck(void);
+
+void ScrTapReq(int id, int box, int num);
+void ScrTapReqStop(int box);
+
+void vsTapdatSetMemorySave(void);
+void vsTapdatSetMemoryLoad(void);
+void vsTapdatSet(SCORE_INDV_STR *sindv_pp);
+void vsTapdatSetMoto(SCORE_INDV_STR *sindv_pp);
+
+void ScrLineSafeRefMode(void);
+
+int ScrDrawTimeGet(int line);
+int ScrDrawTimeGetFrame(int line);
+
+void KeyCntClear(int *key_pp);
+
+SCRREC* ScrCtrlCurrentSearch(SCORE_INDV_STR *sindv_pp, int index, int frame);
+
+void ScrCtrlIndvInit(STDAT_DAT *sdat_pp);
+
+void ScrCtrlExamClear(SCR_EXAM_STR *sexam_pp);
+void ScrCtrlExamClearIndv(SCR_EXAM_STR *sexam_pp);
+
+int ScrCtrlIndvNextTime(SCORE_INDV_STR *sindv_pp, int Ncnt);
+int ScrCtrlIndvNextReadLine(SCORE_INDV_STR *sindv_pp, int ckf);
+
+int getLvlTblRand(TAPLVL_DAT *taplvl_dat_pp);
+
 void ScrCtrlIndvNextRead(SCORE_INDV_STR *sindv_pp, int tap_res_f);
 
-/* static - temp */
-TAPSET* IndvGetTapSetAdrs(SCORE_INDV_STR *sindv_pp);
+void intIndvStatusSet(SCORE_INDV_STR *sindv_pp, u_int CKF, u_int STF, u_int UNF);
+void allIndvNextContinue(void);
+void allIndvGoContinue(void);
 
-void tapReqGroupTapClear(PLAYER_INDEX pindex);
+void otherIndvPause(int num);
+void otherIndvTapReset(int num);
+
 void selectIndvTapResetPlay(int num);
 
-int GetDrawLine(int scr_line);
-float GetLineTempo(int scr_line);
+void IndivMoveChange(SCORE_INDV_STR *sindv_pp, int goto_time, SCRLINE_ENUM goto_line);
+
+void useIndevAllMove(int goto_time, SCRLINE_ENUM goto_line);
+void useIndevSndKill(void);
+
+void useAllClearKeySnd(void);
+
+int useIndevSndKillOther(int num);
+
+int TapKeyCheckNum(TAPSET *tapset_pp, int keyId, int ng_f);
+
+TAPDAT* TapKeyGetDatPP(TAPSET *tapset_pp, int keyId, int keyCnt, int ng_f, u_char *keyNumSave);
+
+void tapReqGroupInit(void);
+void tapReqGroupTapClear(PLAYER_INDEX pindex);
+void tapReqGroup(TAPCT *tapct_pp, PLAYER_INDEX pindex, int sndId, u_char *tappress_pp);
+void tapReqGroupPoll(void);
+
+void tapEventCheck(SCORE_INDV_STR *sindv_pp, int Ttime, int Ctime, int num);
+
+void ScrMoveSetSub(SCORE_INDV_STR *sindv_pp, int Pnum, int sub_job, int sub_time, int goto_job, int goto_time, int start_move_line, int start_move_time);
+
+int ScrExamSetCheck(SCORE_INDV_STR *sindv_pp, int Pnum, int ctime_next, int indvTime);
+
+void subjobEvent(SCORE_INDV_STR *sindv_pp, int ctime_next);
+
+void ScrMbarReq(int mbarTime);
+
+void allTimeCallbackTimeSetChanTempo(int time);
+
+int SetIndvDrawTblLine(SCORE_INDV_STR *sindv_pp);
+
+void ScrCtrlMainLoop(void *x);
 
 GET_TIME_TYPE GetTimeType(int scr_line);
 int GetTimeOfset(int scr_line);
+int GetSubtLine(int scr_line);
+int GetDrawLine(int scr_line);
+float GetLineTempo(int scr_line);
 
+void SetLineChannel(int scr_line);
+int SetIndvCdChannel(SCORE_INDV_STR *sindv_pp);
 int CheckIndvCdChannel(SCORE_INDV_STR *sindv_pp, u_char *chantmp);
 
 void ScrCtrlInit(STDAT_DAT *sdat_pp, void *data_top);
 void ScrCtrlQuit(void);
+
 int ScrCtrlInitCheck(void);
 void ScrCtrlGoLoop(void);
 
 int ScrEndCheckScore(void);
 int ScrEndCheckTitle(void);
 int ScrEndCheckFadeOut(void);
+int ScrEndWaitLoop(void);
 
-TIM2_DAT* lessonTim2InfoGet(void);
-TIM2_DAT* lessonCl2InfoGet(SCRRJ_LESSON_ROUND_ENUM type);
-
-void vsAnimationReset(int ply, long scr);
+void bngTapEventCheck(SCORE_INDV_STR *sindv_pp, int num, int id);
 
 #endif

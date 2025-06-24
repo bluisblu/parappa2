@@ -24,4 +24,9 @@ typedef struct { // 0x10
     /* 0x10 */ PACK_LIST pack_list[0];
 } PACK_STR;
 
+u_int PackGetDecodeSize(u_char *fp_r);
+int PackDecode(u_char *fp_r, u_char *fp_w);
+int PackGetAdrs(u_int adrs, int num);
+void PackDbgList(u_int adrs);
+
 #endif

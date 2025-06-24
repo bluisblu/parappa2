@@ -3,6 +3,8 @@
 
 #include "common.h"
 
+#include <eetypes.h>
+
 #include "main/etc.h"
 #include "main/mcctrl.h"
 
@@ -53,5 +55,6 @@ typedef struct { // 0x58
 } P3GAMESTATE;
 
 int MenuMemCardCheck(void);
+int MenuCtrl(MENU_STR *menu_str_ptr);
 
 #endif

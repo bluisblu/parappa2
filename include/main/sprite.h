@@ -4,9 +4,6 @@
 #include "common.h"
 
 #include <eetypes.h>
-#include <libgifpk.h>
-#include <libdma.h>
-#include <libgraph.h>
 
 #define PR_TEX0(x) (*(sceGsTex0*)&x->GsTex0)
 #define PR_TEX1(x) (*(sceGsTex1*)&x->GsTex1)
@@ -28,8 +25,7 @@ typedef struct { // 0xc
     /* 0xa */ u_short h;
 } LERO_TIM2_PT;
 
-enum
-{
+enum {
     LERO_ENUM_1 = 0,
     LERO_ENUM_2 = 1,
     LERO_ENUM_3 = 2,

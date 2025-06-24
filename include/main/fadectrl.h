@@ -3,12 +3,6 @@
 
 #include "common.h"
 
-#include <eeregs.h>
-#include <eestruct.h>
-
-#include "os/mtc.h"
-#include "main/effect.h"
-
 typedef enum {
     FMODE_BLACK_IN = 0,
     FMODE_BLACK_OUT = 256,

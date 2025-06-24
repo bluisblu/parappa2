@@ -1,5 +1,8 @@
 #include "os/cmngifpk.h"
 
+#include <libdma.h>
+#include <libgraph.h>
+
 #include <stdio.h>
 
 /* static--move to bss! */

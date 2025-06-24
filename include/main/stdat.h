@@ -30,11 +30,11 @@ typedef struct { // 0x38
     /* 0x34 */ char *strec_name;
 } STDAT_REC;
 
-FILE_STR file_str_logo_file;
-FILE_STR file_str_menu_file;
-FILE_STR file_str_extra_file[10];
+extern FILE_STR file_str_logo_file;
+extern FILE_STR file_str_menu_file;
+extern FILE_STR file_str_extra_file[10];
 
-STDAT_REC stdat_rec[19];
+extern STDAT_REC stdat_rec[19];
 
 void stDatFirstFileSearch(void);
 

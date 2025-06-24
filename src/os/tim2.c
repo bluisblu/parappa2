@@ -1,5 +1,10 @@
 #include "os/tim2.h"
 
+#include "main/sprite.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+
 /* TIM2 pixel format table */
 int tim2ColorTypeTbl[] = {
     SCE_GS_PSMCT32, SCE_GS_PSMCT16, SCE_GS_PSMCT24, SCE_GS_PSMCT32,

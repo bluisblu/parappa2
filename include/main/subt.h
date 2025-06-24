@@ -48,21 +48,20 @@ typedef struct { // 0x4
 typedef MCODE_DAT MCODE_ASCII;
 typedef u_char *MESS[2];
 
-#define CHECK_LANG(lang) (lang == LANG_JAPANESE)
-
 void SubtInit(void);
 void* SubtKanjiSet(void *adrs);
 void SubtClear();
 void SubtFlash();
 void SubtMcodeSet(int code);
 
-// poly: comment this out for the moment
+/* (poly): Conflicts with static `codeKanjiCheck` symbol in menu/menufont.c */
 // MCODE_DAT* codeKanjiCheck(u_char dat0, u_char dat1);
 
 void SubtMsgPrint(u_char *msg_pp, int xp, int yp, int jap_flag, int mline);
 void SubtCtrlInit(void *adrs, int ser_f);
 void SubtCtrlPrint(JIMAKU_STR *jstr_pp, int line, int time, int lang);
 void SubtTapPrint(u_char *tap_msg_pp, int lang);
+
 void SubtMenuCtrlInit(void *adrs);
 void SubtMenuCtrlPrint(u_char *msg_pp, int xp, int yp, int lang);
 

@@ -4,7 +4,7 @@
 #include "common.h"
 
 #include <eetypes.h>
-#include <../libcdvd.h>
+#include <libcdvd.h>
 
 #define PACKINT_MAGIC (0x44332211)
 
@@ -88,7 +88,9 @@ int PackIntDecodeWait(u_char *fp_r, u_char *fp_w, int wait_hline);
 
 void CdctrlInit(void);
 void CdctrlQuit(void);
+
 void CdctrlMasterVolSet(u_int vol);
+
 int CdctrlSerch(FILE_STR *fstr_pp);
 
 void intReadSub(void);

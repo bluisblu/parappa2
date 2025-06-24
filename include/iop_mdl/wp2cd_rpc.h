@@ -3,14 +3,6 @@
 
 #include "common.h"
 
-#include <eekernel.h>
-#include <eetypes.h>
-#include <sifrpc.h>
-
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-
 // WP2 commands
 #define WP2_NONE                 (0)
 

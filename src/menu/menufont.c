@@ -1,6 +1,7 @@
 #include "menu/menufont.h"
 
-#include <string.h>
+#include "main/etc.h"
+#include "menu/mntm2hed.h"
 
 /* .data */
 extern u_long SubtGsTex0_TmpMenuFont[3];

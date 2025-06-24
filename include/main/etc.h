@@ -12,8 +12,7 @@ typedef struct { // 0x180
     /* 0x000 */ TAPLVL_DAT taplvl_dat[16];
 } TAPLVL_STR;
 
-typedef enum
-{
+typedef enum {
     PSTEP_SERIAL,
     PSTEP_HOOK,
     PSTEP_GAME,
@@ -23,8 +22,7 @@ typedef enum
     PSTEP_MAX
 } PLAY_STEP;
 
-typedef enum
-{
+typedef enum {
     PCODE_NONE = 1,
     PCODE_TEACHER = 2,
     PCODE_PARA = 4,
@@ -148,43 +146,37 @@ typedef enum {
     DTBL_ENUM_VS_TOP = 0
 } DRAW_TBL_ENUM;
 
-typedef enum
-{
+typedef enum {
     PLAY_MODE_SINGLE,
     PLAY_MODE_VS_MAN,
     PLAY_MODE_VS_COM,
     PLAY_MODE_MAX
 } PLAY_MODE;
 
-typedef enum
-{
+typedef enum {
     PLAY_TYPE_NORMAL,
     PLAY_TYPE_ONE,
     PLAY_TYPE_MAX
 } PLAY_TYPE;
 
-typedef enum
-{
+typedef enum {
     PLAY_TABLE_NORMAL,
     PLAY_TABLE_EASY,
     PLAY_TABLE_MAX
 } PLAY_TABLE_MODE;
 
-typedef enum
-{
+typedef enum {
     FGF_VSYNC,
     FGF_CD
 } TIME_GET_FLAG;
 
-typedef enum 
-{
+typedef enum {
     LM_FIX,
     LM_AUTO,
     LM_MAX
 } LEVEL_MOVE_ENUM;
 
-typedef enum
-{
+typedef enum {
     LVS_1,
     LVS_2,
     LVS_3,
@@ -192,16 +184,14 @@ typedef enum
     LVS_MAX
 } LEVEL_VS_ENUM;
 
-typedef enum
-{
+typedef enum {
     DEMOF_OFF,
     DEMOF_DEMO,
     DEMOF_REPLAY,
     DEMOF_MAX
 } DEMO_FLAG_ENUM;
 
-typedef enum
-{
+typedef enum {
     TLL_NORMAL,
     TLL_LV01,
     TLL_LV02,
@@ -222,8 +212,7 @@ typedef enum
     TLL_MAX
 } TAP_LINE_LEVEL_ENUM;
 
-typedef enum
-{
+typedef enum {
     TCT_LV00,
     TCT_LV01,
     TCT_LV02,
@@ -245,8 +234,7 @@ typedef enum
     TCT_START = 7
 } TAP_CTRL_LEVEL_ENUM;
 
-typedef enum
-{
+typedef enum {
     TRND_R1,
     TRND_R2,
     TRND_R3,
@@ -254,8 +242,7 @@ typedef enum
     TRND_MAX
 } TAP_ROUND_ENUM;
 
-typedef enum
-{
+typedef enum {
     RLVL_COOL = 0,
     RLVL_COOL_GOOD = 1,
     RLVL_GOOD_COOL = 2,
@@ -429,6 +416,19 @@ typedef struct { // 0x338
 } GLOBAL_DATA;
 
 typedef enum {
+	P3_STAGE_0,
+	P3_STAGE_1,
+	P3_STAGE_2,
+	P3_STAGE_3,
+	P3_STAGE_4,
+	P3_STAGE_5,
+	P3_STAGE_6,
+	P3_STAGE_7,
+	P3_STAGE_8,
+	P3_STAGE_MAX,
+} P3_STAGE_ENUM;
+
+typedef enum {
     LANG_ENGLISH = 0,
     LANG_JAPANESE = 1,
     LANG_MAX = 2
@@ -491,8 +491,7 @@ typedef enum {
     HCNG_MAX = 4
 } HAT_CHANGE_ENUM;
 
-enum
-{
+enum {
     INTNUM_SUBT_CODE,
     INTNUM_NOODLE_TEX
 };
@@ -516,20 +515,54 @@ typedef struct { // 0x8
     /* 0x4 */ u_char *hknum_pp;
 } HKL_PKSTR;
 
+void GlobalInit(void);
+
+P3_STAGE_ENUM clearStageCheck(void);
+
 void GlobalTimeInit(GLOBAL_DATA *gl_pp);
 void GlobalSetTempo(GLOBAL_DATA *gl_pp, float tempo);
-void GlobalPlySet(GLOBAL_DATA *gl_pp, PLAY_STEP stp, int stage_num);
+void GlobalTimeJobChange(TIME_GET_FLAG tfg);
+void GlobalTimeJob(void);
+int GlobalTimeGet(void);
+int GlobalSndTimeGet(void);
+int GlobalSndSampleGet(void);
 
 TAP_ROUND_ENUM GetHatRound(void);
-int GlobalSndSampleGet(void);
-void TimeCallbackTimeSetChan(TCBK_CHANNEL_ENUM chan, u_int time);
+
+int GlobalMendererUseCheck(void);
+void GlobalLobcalCopy(void);
+void GlobalPlySet(GLOBAL_DATA *gl_pp, PLAY_STEP stp, int stage_num);
+
+PAD_TYPE GetPcode2PadType(PLAYER_CODE player_code);
+
+void TimeCallbackSet(void);
 u_int TimeCallbackTimeGetChan(int chan);
-void GlobalTimeJobChange(TIME_GET_FLAG tfg);
+void TimeCallbackTimeSetChan(int chan, u_int time);
 void TimeCallbackTimeSetChanTempo(int chan, u_int time, float tempo);
+u_int TimeCallbackTimeGet(void);
+void TimeCallbackTimeSet(u_int time);
+
 PLAYER_INDEX Pcode2Pindex(PLAYER_CODE pc);
+int GetKeyCode2Index(int code);
 int GetIndex2KeyCode(int index);
+int GetIndex2PressId(int index);
+int GetKeyCode2PressId(int code);
+
+TAP_LINE_LEVEL_ENUM ChangeTapLevel(TAP_LINE_LEVEL_ENUM now_lvl);
+
+void UsrPrInitScene(void);
+void UsrPrQuitScene(void);
 void UsrPrSetScene(void);
+
 void SpuBankSet(void);
+void SpuBankSetAll(void);
+
+void inCmnInit(int stg);
+int inCmnHookMaxLineCnt(int stg);
+HKLV_SNDREC_ENUM inCmnHookMaxLinePknum(int stg, int line);
+int inCmnHookSet(int stg);
+
 int inCmnHook2GameCheck(int pack_id);
+void inCmnHook2GameSave(int level);
 
 #endif

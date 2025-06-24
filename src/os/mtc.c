@@ -111,7 +111,7 @@ void MtcQuit(void) {
     }
 }
 
-void MtcStart(void *ctrlTh_pp) {
+void MtcStart(void (*ctrlTh_pp)(void* x)) {
     MtcExec(ctrlTh_pp, MTC_TASK_CTRL);
 
     mtcCurrentTask = -1;
@@ -120,7 +120,7 @@ void MtcStart(void *ctrlTh_pp) {
     WaitSema(mtcSemaEnd);
 }
 
-void MtcExec(void *prg_pp, long level) {
+void MtcExec(void (*prg_pp)(void* x), long level) {
     struct ThreadParam *th_pp;
     MTC_TASK_CONB      *mc_pp = &mtcTaskConB[level];
 

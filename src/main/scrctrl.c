@@ -1,11 +1,22 @@
 #include "main/scrctrl.h"
 
-#include "main/drawctrl.h"
+#include "os/cmngifpk.h"
+#include "os/mtc.h"
+#include "os/syssub.h"
+#include "os/system.h"
+
 #include "main/mbar.h"
+#include "main/mcctrl.h"
+#include "main/p3str.h"
+#include "main/sprite.h"
 
 #include "iop_mdl/tapctrl_rpc.h"
 
 #include <prlib/prlib.h>
+
+#include <libpad.h>
+
+#include <stdio.h>
 
 /* data */
 extern u_int thnum_tbl[4];
@@ -50,6 +61,8 @@ extern BNG_STR bng_str;
 static void bonusScoreDraw(void);
 static void LessonRoundDisp(SCRRJ_LESSON_ROUND_ENUM type);
 static void bonusPointSave();
+void bonusGameCtrl(/* a0 4 */ int time);
+TAPSET* IndvGetTapSetAdrs(/* a0 4 */ SCORE_INDV_STR *sindv_pp);
 
 int GetCurrentTblNumber(void) {
     return currentTblNumber;
@@ -1367,6 +1380,7 @@ INCLUDE_ASM("main/scrctrl", exh_mbar_key_out);
 }
 
 INCLUDE_ASM("main/scrctrl", exh_yaku);
+int exh_yaku(/* s2 18 */ EXAM_CHECK *ec_pp, /* s6 22 */ int hane_flag);
 
 /* static */ int exh_yaku_original(EXAM_CHECK *ec_pp) {
     return exh_yaku(ec_pp, 0);

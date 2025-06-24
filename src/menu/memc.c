@@ -1,7 +1,5 @@
 #include "menu/memc.h"
 
-#include <libmc.h>
-
 #include <stdio.h>
 #include <string.h>
 
@@ -484,6 +482,7 @@ int memc_get_dir_continue(sceMcTblGetDir *dir, int max) {
 }
 
 INCLUDE_ASM("menu/memc", memc_mansub_ErrChk);
+int memc_mansub_ErrChk(/* a0 4 */ int result);
 
 static int memc_mansub_Open(char *name, u_int type) {
     int        re;

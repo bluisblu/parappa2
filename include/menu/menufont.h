@@ -3,14 +3,12 @@
 
 #include "common.h"
 
-#include "main/etc.h"
-#include "main/subt.h"
+#include <eetypes.h>
 
-#include "menu/mntm2hed.h"
+#include "main/subt.h"
 #include "menu/pksprite.h"
 
-enum
-{
+enum {
     SUBTN_ETC_CODE,
     SUBTN_KANJI_CODE,
     SUBTN_PADSYM_CODE,
@@ -48,5 +46,18 @@ typedef struct { // 0x10
     /* 0x8 */ u_int abgr;
     /* 0xc */ u_int pad;
 } MNFONT_INFO;
+
+void MenuFont_ASC2EUC(char *des, char *src);
+
+void MENUSubtSetKanji(void *kanji_data_top);
+void MENUSubt_PadFontSw(int flg);
+void MENUSubt_PadFontArrowSet(int flg);
+
+int MENUSubtGetLine(u_char *str, int lflg);
+
+void MENUSubtPut(SPR_PKT pk, SPR_PRM *spr, int x, int y, u_int abgr, int flg, u_char *str, int lflg);
+void MENUFontPutL(SPR_PKT pk, SPR_PRM *spr, int x, int y, u_int abgr, int flg, u_char *str);
+void MENUFontPutS(SPR_PKT pk, SPR_PRM *spr, int x, int y, u_int abgr, int flg, u_char *str);
+void MENUFontPutR(SPR_PKT pk, SPR_PRM *spr, int x, int y, u_int abgr, int flg, u_char *str, float dw);
 
 #endif

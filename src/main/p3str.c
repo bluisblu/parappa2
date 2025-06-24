@@ -1,7 +1,15 @@
 #include "main/p3str.h"
+
+#include "main/drawctrl.h"
 #include "main/etc.h"
 
-#include "prlib/prlib.h"
+#include "os/syssub.h"
+#include "os/system.h"
+#include "os/tim2.h"
+
+#include <prlib/prlib.h>
+
+#include <stdio.h>
 
 static u_int current_time_old = 0;
 

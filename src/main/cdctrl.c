@@ -1,18 +1,18 @@
 #include "main/cdctrl.h"
 
-#include "main/etc.h"
-#include "main/p3str.h"
-
 #include "os/mtc.h"
 #include "os/syssub.h"
 #include "os/tim2.h"
 #include "os/usrmem.h"
 
+#include "main/etc.h"
+#include "main/p3str.h"
+
 #include "iop_mdl/tapctrl_rpc.h"
 #include "iop_mdl/wp2cd_rpc.h"
 
+#include <eeregs.h>
 #include <sifdev.h>
-#include <eekernel.h>
 #include <stdio.h>
 
 /* sdata */

@@ -47,10 +47,30 @@ typedef struct { // 0x1c
     /* 0x18 */ u_int cl_vsoth_cnt;
 } MC_REP_CTRL;
 
+int setAscii2SjisCode(u_char *saki_pp, u_char *moto_pp);
+
+void mccReqInit(void);
+void mccReqSaveInit(void);
+void mccReqCtrlClr(void);
+
+void mccReqScrSet(MC_REP_SCR *mcr_scr_pp);
+MC_REP_SCR* mccReqScrGet(void);
+
 void mccReqLvlSet(u_int lvl);
 u_int mccReqLvlGet(void);
 
+void mccReqTapSet(u_int time, u_int useLine, u_int id, PLAYER_ENUM ply);
+void mccReqTapResetSet(PLAYER_ENUM ply);
+void mccReqTapHoldSet(PLAYER_ENUM ply);
+
 void mccReqVSOTHSAVEset(VSOTHSAVE *sv);
 int mccReqVSOTHSAVEget(VSOTHSAVE *sv);
+
+u_short mccReqTapGet(u_int time, u_int useLine, u_int *time_pp, PLAYER_ENUM ply);
+void mccReqTapForward(u_int time, u_int useLine);
+void mccReqTapForwardOwn(u_int time, u_int useLine, int ply);
+
+void mccLocalGlobalCopy(void);
+void mccGlobalLocalCopy(void);
 
 #endif

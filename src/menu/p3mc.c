@@ -2,10 +2,10 @@
 
 #include "menu/memc.h"
 
-#include <../libcdvd.h>
+#include <libcdvd.h>
 
-#include <stdio.h>
 #include <malloc.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 

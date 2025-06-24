@@ -1,6 +1,22 @@
 #include "os/system.h"
 
+#include "dbug/syori.h"
+
+#include "main/main.h"
+
+#include "os/cmngifpk.h"
+#include "os/mtc.h"
+
+#include <devvif0.h>
+#include <devvu0.h>
+#include <libcdvd.h>
+#include <limits.h>
+#include <sifcmd.h>
+#include <sifdev.h>
+#include <sifrpc.h>
+
 #include <stdio.h>
+#include <stdlib.h>
 
 extern int _end_addr;
 extern int _stack_size_addr;
@@ -94,7 +110,7 @@ static void firstClrFrameBuffer(void) {
         SCREEN_HEIGHT, 0, 0, 0, 0, 0
     );
 
-    sceDmaSync(sceDmaGetChan(SCE_DMA_GIF), 0, 0x7fffffff);
+    sceDmaSync(sceDmaGetChan(SCE_DMA_GIF), 0, INT_MAX);
     FlushCache(0);
 
     sceDmaSend(sceDmaGetChan(SCE_DMA_GIF), &vclr_dma);
@@ -227,7 +243,7 @@ static int FullAllocAndFree(void) {
     int stack_sizeX = _stack_size_addr;
     int endX = _end_addr;
 
-    int heap_size = 0x01FFEFE0 - ((endX + 0x1000) + stack_sizeX);
+    int heap_size = 0x01ffefe0 - ((endX + 0x1000) + stack_sizeX);
 
     free(malloc(heap_size));
     return heap_size;

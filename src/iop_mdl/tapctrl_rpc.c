@@ -1,5 +1,8 @@
 #include "iop_mdl/tapctrl_rpc.h"
 
+#include <eetypes.h>
+#include <sifrpc.h>
+
 #include <stdio.h>
 
 #define DATA_SIZE_NORMAL (16)

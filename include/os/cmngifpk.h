@@ -5,8 +5,6 @@
 
 #include <eetypes.h>
 #include <libgifpk.h>
-#include <libdma.h>
-#include <libgraph.h>
 
 typedef struct { // 0x8
     /* 0x0 */ u_long128 *pBase;

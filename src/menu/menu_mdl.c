@@ -1,15 +1,15 @@
 #include "menu/menu_mdl.h"
 
-#include <eestruct.h>
-#include <libvu0.h>
+#include "os/system.h"
 
 #include "main/cdctrl.h"
-#include "os/syssub.h"
-#include "os/system.h"
+
+#include "menu/menusub.h"
 
 #include <prlib/prlib.h>
 
 #include <math.h>
+#include <string.h>
 
 /* .data */
 extern PRPROOT PRP_RootTbl[];
@@ -169,6 +169,7 @@ void MNScene_Draw(MN_SCENE *pshdl) {
             PrRender(pshdl->scene);
             PrWaitRender();
         }
+
         if (pshdl->isDisp & 2) {
             TsMenu_CleanVram(DNUM_VRAM2);
 

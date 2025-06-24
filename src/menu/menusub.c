@@ -1,5 +1,9 @@
 #include "menu/menusub.h"
-#include "menu/menu_mdl.h"
+
+#include "os/syssub.h"
+
+#include <stdlib.h>
+#include <string.h>
 
 /* .sdata */
 extern TSTEX_INF *tblTex;

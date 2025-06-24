@@ -5,14 +5,6 @@
 
 #include <eetypes.h>
 
-#include "os/syssub.h"
-#include "os/system.h"
-#include "os/tim2.h"
-#include "main/drawctrl.h"
-#include "main/etc.h"
-
-#include <stdio.h>
-
 #define STR(x)  ((P3STR*)x)
 #define ADRD(x) ((ADRD*)&(x)->adrD)
 
@@ -54,25 +46,25 @@ typedef struct { // 0x10
 } P3STR_TRH;
 
 typedef enum {
-    OD_NONE = 0,
-    OD_COMMON = 1,
-    OD_VRAM = 2,
-    OD_SCENE = 3,
-    OD_DISPIN = 4,
-    OD_VRAMCLR = 5,
-    OD_FADE = 6,
-    OD_END = 7,
-    OD_MAX = 8
+    OD_NONE,
+    OD_COMMON,
+    OD_VRAM,
+    OD_SCENE,
+    OD_DISPIN,
+    OD_VRAMCLR,
+    OD_FADE,
+    OD_END,
+    OD_MAX,
 } OD_TYPE;
 
 typedef enum {
-    AF_SPM = 0,
-    AF_SPA = 1,
-    AF_SPC = 2,
-    AF_SPF = 3,
-    AF_TM2 = 4,
-    AF_CL2 = 5,
-    AF_NONE = 6
+    AF_SPM,
+    AF_SPA,
+    AF_SPC,
+    AF_SPF,
+    AF_TM2,
+    AF_CL2,
+    AF_NONE,
 } ADRD_FTYPE;
 
 typedef struct { // 0x10
@@ -83,21 +75,21 @@ typedef struct { // 0x10
 } ADRD;
 
 typedef enum {
-    SD_VRAM_AW = 0,
-    SD_VRAM_R1 = 1,
-    SD_VRAM_R2 = 2,
-    SD_VRAM_R3 = 3,
-    SD_VRAM_R4 = 4
+    SD_VRAM_AW,
+    SD_VRAM_R1,
+    SD_VRAM_R2,
+    SD_VRAM_R3,
+    SD_VRAM_R4,
 } SD_VRAM;
 
 typedef enum {
-    STE_MDL = 0,
-    STE_ANI = 1,
-    STE_ANIPOS = 2,
-    STE_CAM = 3,
-    STE_TM2 = 4,
-    STE_CL2 = 5,
-    STE_MAX = 6
+    STE_MDL,
+    STE_ANI,
+    STE_ANIPOS,
+    STE_CAM,
+    STE_TM2,
+    STE_CL2,
+    STE_MAX,
 } SCENE_TYPE_ENUM;
 
 typedef struct { // 0x20

@@ -8,6 +8,8 @@
 #include "main/etc.h"
 #include "main/effect.h"
 
+#include <prlib/prlib.h>
+
 typedef int (*OVL_FUNC)(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
 
 typedef enum {
@@ -216,22 +218,87 @@ typedef struct { // 0xc
     /* 0x8 */ void (*msg_pp)(char *buf);
 } DRAW_DBG_STR;
 
-int DrawFadeDisp(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
-int DrawMoveDispIn(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
+void outsideDrawSceneClear(void);
+int outsideDrawSceneReq(int (*prg_pp)(void *para_pp, int frame, int first_f, int useDisp, int drDisp), u_char pri, u_int useF, u_int drawF, void *param);
 
-int DrawVramClear(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
-void DrawCtrlTblChange(int ctrlTbl);
-int DrawTapReqTbl(int atap, int pindx, u_char *prs_pp);
+float* bra_tap_GetNext(PR_MODELHANDLE model);
+float* bra_title_GetNext(PR_MODELHANDLE model);
+float* bra_ret_GetNext(PR_MODELHANDLE model);
+
+void XAnimationLinkOption(PR_MODELHANDLE model, PR_ANIMATIONHANDLE animation, int first, int blumove, float time);
+void XAnimationPositionLink(PR_MODELHANDLE model, PR_ANIMATIONHANDLE animation, float time);
+
+void BallThrowSetFrame(int frame);
+void BallThrowInit(void);
+void BallThrowInitDare(int dare);
+void BallThrowReq(void *mdlh, OBJBTHROW_TYPE thtype, void *texpp, void *mdlhoming);
+void BallThrowTarget(void *mdlh, OBJBTHROW_TYPE thtype, int targetframe);
+void BallThrowPoll(void);
+int BallThrowPollScene(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
+
+void DrawTmpBuffInit(void);
+void DrawTmpBuffQuit(void *adrs);
+void* DrawTmpBuffGetArea(int size);
+
+void DrawObjdatInit(int size, OBJDAT *od_pp, PR_SCENEHANDLE prf);
+void DrawObjdatReset(int size, OBJDAT *od_pp);
+
+void DrawSceneInit(sceGsDrawEnv1 *draw_env, SCENE_OBJDATA *scene_pp, int useDisp);
+
+void DrawObjStrTapQuit(SCENE_OBJDATA *scn_pp, int num, u_int time);
+void DrawObjTapStrTapQuit(SCENE_OBJDATA *scn_pp, int req_num);
+
+void camOtherKill(OBJACTPRG *objactprg_pp, int objactprg_num, int oya_num);
+void posAniOtherKill(OBJACTPRG *objactprg_pp, int objactprg_num, int ani_num, int mod_num);
+
+void DrawSceneReset(SCENE_OBJDATA *scene_pp);
+void DrawSceneFirstSet(SCENE_OBJDATA *scene_pp);
 
 void Cl2MixTrans(int now_T, int max_T, u_char *cl2_0_pp, u_char *cl2_1_pp);
 
+void DrawObjPrReq(SCENE_OBJDATA *scene_pp);
+
+void DrawObjStrTapTimeNext(SCENE_OBJDATA *sod_pp);
+
+void DrawObjTapCtrl(SCENE_OBJDATA *sod_pp, DR_TAP_REQ *tap_pp, int tap_num);
+
+/* Overlay functions */
+int DrawSceneObjData(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
+int DrawDoubleDispIn(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
+int DrawVramClear(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
+int DrawMoveDispIn(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
+int DrawAlphaBlendDisp(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
 int DrawMozaikuDisp(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
+int DrawFadeDisp(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
+int DrawPlphaIndex8Disp(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
+int DrawTim2DIsp(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
+int DrawNoodlesDisp(void *para_pp,  int frame, int first_f, int useDisp, int drDisp);
+int DrawVramLocalCopy(void *para_pp, int frame, int first_f,  int useDisp, int drDisp);
+int DrawVramLocalCopy2(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
+/* Overlay functions end */
+
+void MendererCtrlTitle(void);
+void MendererCtrlTitleDera(void);
+void MendererReq(MEN_CTRL_ENUM menum);
+MEN_CTRL_ENUM GetMendererEnum(void);
+
+/* Overlay function */
+int MendererCtrlScene(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
+/* Overlay function end */
+
+int sceneConditionCheck(u_int cond_flag);
+void resetDrawSceneObjData(SCENESTR *scstr_pp);
 
 void DrawCtrlInit(EVENTREC *ev_pp, int ctrlTbl, void *dat_top);
 void DrawCtrlQuit(void);
-void DrawCtrlTimeSet(int time);
 
-void MendererCtrlTitle();
-void MendererCtrlTitleDera();
+void DrawCtrlTimeSet(int time);
+void DrawCtrlTblChange(int ctrlTbl);
+
+int DrawTapReqTbl(int atap, PLAYER_INDEX pindx, u_char *prs_pp);
+
+void ddbg_tctrl_sub(void);
+
+void DrawCtrlInitDebug(EVENTREC *ev_pp, int ctrlTbl, void *dat_top);
 
 #endif

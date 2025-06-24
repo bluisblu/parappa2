@@ -82,4 +82,26 @@ typedef struct { // 0x1154
     /* 0x1152 */ short CAniNo;
 } MN_SCENE;
 
+void MNSceneMusicFitTimerClear(void);
+void MNSceneMusicFitTimerFrame(void);
+int MNSceneGetMusicFitTimer(void);
+void MNScene_Init(MN_SCENE *pshdl, MN_SCENETBL *tbl, int bFocus);
+void MNScene_End(MN_SCENE *pshdl);
+void MNScene_Draw(MN_SCENE *pshdl);
+void MNScene_DispSw(MN_SCENE *pshdl, int sw);
+void MNScene_SetAnimete(MN_SCENE *pshdl);
+u_int MNScene_StartAnime(MN_SCENE *pshdl, int no, MNANM_TBL *anime);
+void MNScene_ContinueAnime(MN_SCENE *pshdl, int no, MNANM_TBL *anime);
+void MNScene_StopAnime(MN_SCENE *pshdl, int no);
+void MNScene_ExecAnime(MN_SCENE *pshdl);
+void MNScene_CopyState(MN_SCENE *pdhdl, MN_SCENE *pshdl);
+void MNScene_CopyStateMdl(MN_SCENE *pdhdl, MN_SCENE *pshdl);
+void MNScene_SetAnimeSpeed(MN_SCENE *pshdl, int nAnime, int speed);
+void MNScene_SetAnimeEnd(MN_SCENE *pshdl);
+void MNScene_SetAnimeBankEnd(MN_SCENE *pshdl, u_int bnk);
+int MNScene_isAnime(MN_SCENE *pshdl, int ltim);
+int MNScene_isAnimeBank(MN_SCENE *pshdl, int ltim, u_int bnk);
+int MNScene_isSeniAnime(MN_SCENE *pshdl);
+int MNScene_ModelDispSw(MN_SCENE *pshdl, int nmdl, int bsw);
+
 #endif

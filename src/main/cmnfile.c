@@ -1,5 +1,9 @@
 #include "main/cmnfile.h"
 
+#include "os/tim2.h"
+
+#include <stdio.h>
+
 /* Common files array */
 extern char common_ipk_start[];
 extern char common_ipk_end[];

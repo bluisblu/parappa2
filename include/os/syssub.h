@@ -4,14 +4,9 @@
 #include "common.h"
 
 #include <eetypes.h>
-#include <libdma.h>
-#include <libpad.h>
+
 #include <libgraph.h>
 #include <libgifpk.h>
-
-#include <stdlib.h>
-#include <malloc.h>
-#include <string.h>
 
 typedef enum {
     PAD_ENUM_NONE = 0,
@@ -148,6 +143,7 @@ void GGsSetLocalMoveImage(
 void GGsExecLocalMoveImage(sceGsMoveImage *lp);
 
 u_int randMakeMax(u_int max);
+
 char* ByteString(unsigned int n);
 
 u_int ReportHeapUsage(void);

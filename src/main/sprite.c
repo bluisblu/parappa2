@@ -1,5 +1,9 @@
 #include "main/sprite.h"
 
+#include <libdma.h>
+#include <libgifpk.h>
+#include <libgraph.h>
+
 #include <stdio.h>
 
 /* .sdata */

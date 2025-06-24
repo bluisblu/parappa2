@@ -1,23 +1,17 @@
 #include "menu/menudata.h"
 
-#include "os/system.h"
-
-#include "main/etc.h"
+#include "main/main.h"
 #include "main/subt.h"
-#include "main/cdctrl.h"
-#include "main/scrctrl.h"
+
+#include "menu/menufont.h"
+
+#include "os/mtc.h"
+#include "os/system.h"
+#include "os/tim2.h"
 
 #include "iop_mdl/tapctrl_rpc.h"
 
-/* Unsure where to put at the moment */
-typedef struct { // 0x8
-    /* 0x0 */ u_short bnkNo;
-    /* 0x4 */ SNDTAP *pTap;
-} VOICE_TBL;
-
-typedef struct { // 0x40
-    /* 0x00 */ int fno[4][4];
-} MN_CRWCL1_TBL;
+#include <libpad.h>
 
 /* data */
 /* static */ extern SNDTAP         sndtap_menu[];

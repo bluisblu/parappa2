@@ -1,5 +1,10 @@
 #include "main/effect.h"
 
+#include "os/cmngifpk.h"
+
+#include <libgraph.h>
+
+#include <math.h>
 #include <stdio.h>
 
 /* .lit4 */

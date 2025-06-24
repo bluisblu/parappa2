@@ -1,6 +1,12 @@
 #include "iop_mdl/wp2cd_rpc.h"
 
-#include <../libcdvd.h>
+#include <eekernel.h>
+
+#include <libcdvd.h>
+#include <sifrpc.h>
+
+#include <stdio.h>
+#include <string.h>
 
 #define DATA_SIZE_STRING (64)
 #define DATA_SIZE_NORMAL (16)

@@ -1,24 +1,19 @@
 #include "main/drawctrl.h"
 
-#include <eetypes.h>
-#include <eestruct.h>
-#include <libpad.h>
-#include <sifdev.h>
-#include <stdio.h>
-
-#include "dbug/dbgmsg.h"
 #include "dbug/vramsave.h"
 
-#include "os/tim2.h"
+#include "os/mtc.h"
 #include "os/syssub.h"
 #include "os/system.h"
-#include "os/cmngifpk.h"
+#include "os/tim2.h"
 
-#include "main/p3str.h"
 #include "main/cdctrl.h"
 #include "main/sprite.h"
+#include "main/p3str.h"
 
-#include <prlib/prlib.h>
+#include <libpad.h>
+
+#include <stdio.h>
 
 /* .data */
 extern float bra_tap[10][2];
@@ -758,6 +753,7 @@ INCLUDE_ASM("main/drawctrl", drawUseDrDispCheckInit);
 /* static */ void drawUseDrDispCheckInit(void);
 
 INCLUDE_ASM("main/drawctrl", drawDispCheckSub);
+int drawDispCheckSub(/* a0 4 */ u_int drD, /* a1 5 */ u_int *dat_pp);
 
 /* static */ int drawUseDispCheck(/* a0 4 */ int useD) {
     return drawDispCheckSub(useD, &useDispFlag);
@@ -772,6 +768,7 @@ INCLUDE_ASM("main/drawctrl", DrawScenectrlReq);
 /* static */ int DrawScenectrlReq(/* s0 16 */ SCENECTRL *scenectrl_pp, /* s2 18 */ u_int time);
 
 INCLUDE_ASM("main/drawctrl", MendererCtrlInit);
+void MendererCtrlInit(void);
 
 INCLUDE_ASM("main/drawctrl", MendererCtrlTitle);
 

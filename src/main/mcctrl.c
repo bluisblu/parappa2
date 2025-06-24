@@ -1,6 +1,5 @@
 #include "main/mcctrl.h"
 
-#include "os/syssub.h"
 #include "os/system.h"
 
 #include <string.h>

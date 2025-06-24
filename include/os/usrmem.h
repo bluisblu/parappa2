@@ -2,9 +2,8 @@
 #define USRMEM_H
 
 #include "common.h"
-#include <eetypes.h>
 
-#include <stdio.h>
+#include <eetypes.h>
 
 void UsrMemClear(void);
 void UsrMemClearTop(void);

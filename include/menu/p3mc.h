@@ -4,6 +4,7 @@
 #include "common.h"
 
 #include <eetypes.h>
+
 #include <libmc.h>
 
 typedef struct { // 0x14
@@ -102,5 +103,29 @@ typedef struct { // 0x3b00
     /* 0x0034 */ u_char UserHeadTmp[9860];
     /* 0x26c0 */ sceMcTblGetDir dirTable[81];
 } GETUSER_WORK;
+
+int P3MC_InitReady(void);
+int P3MC_GetSaveSize(int size, int mode);
+void P3MC_SetCheckSaveSize(int mode, int fsize, int csize);
+int P3MC_CheckChange(void);
+void P3MC_CheckChangeClear(void);
+void P3MC_CheckChangeSet(void);
+int P3MC_CheckIsNewSave(int mode);
+void P3MC_DeleteDataWork(MCRWDATA_HDL *phdl);
+MCRWDATA_HDL* P3MC_MakeDataWork(int dsize, USER_DATA *puser);
+int P3MC_GetUserStart(int mode, P3MC_USRLST *pUsrLst, int bFirst);
+void P3MC_GetUserEnd(void);
+int P3MC_GetUserCheck(void);
+void P3MC_AddUser(P3MC_USRLST *pUser, int mode, USER_DATA *puser);
+int P3MC_SortUser(P3MC_USRLST *pUser, int mode, int isSave);
+int P3MC_CheckBrokenUser(P3MC_USRLST *pUser, int mode);
+void P3MC_OpeningCheckStart(void);
+void P3MC_OpeningCheckEnd(void);
+int P3MC_OpeningCheck(void);
+int P3MC_LoadUser(int mode, int fileNo, MCRWDATA_HDL *pdhdl, int flg);
+int P3MC_LoadCheck(void);
+void P3MC_SetUserWorkTime(USER_DATA *puser);
+int P3MC_SaveUser(MCRWDATA_HDL *pdhdl, int flg);
+int P3MC_SaveCheck(void);
 
 #endif

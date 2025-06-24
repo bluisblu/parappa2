@@ -1,13 +1,12 @@
 #include "main/etc.h"
 
-#include "os/syssub.h"
 #include "os/system.h"
-
-#include "main/cdctrl.h"
 
 #include "iop_mdl/tapctrl_rpc.h"
 
 #include <prlib/prlib.h>
+
+#include <stdio.h>
 
 /* .sdata */
 extern PR_SCENEHANDLE usrSceneHandle;
@@ -235,8 +234,8 @@ u_int TimeCallbackTimeGetChan(int chan) {
     return vsync_time[chan];
 }
 
-void TimeCallbackTimeSetChan(TCBK_CHANNEL_ENUM chan, u_int time) {
-    if ((int)chan >= 51) {
+void TimeCallbackTimeSetChan(int chan, u_int time) {
+    if (chan >= 51) {
         printf("Time Callback Channel ERROR!!\n");
         return;
     }

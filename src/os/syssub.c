@@ -2,6 +2,13 @@
 
 #include "os/system.h"
 
+#include <libpad.h>
+
+#include <malloc.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 PAD_SYSD sysPad[2] PR_ALIGNED(64) = {};
 
 static u_long128 pad_dma_buf[2][16];

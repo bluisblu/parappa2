@@ -1,12 +1,9 @@
 #include "menu/menu.h"
 
 #include "os/mtc.h"
-#include "os/system.h"
 
-#include "main/wipe.h"
-
-#include "menu/menusub.h"
 #include "menu/menudata.h"
+#include "menu/menusub.h"
 
 #include <prlib/prlib.h>
 
@@ -46,7 +43,6 @@ int MenuMemCardCheck(void) {
     TsMenu_RankingClear();
     TsMenu_Init(0, NULL);
 
-    // Start menu rendering
     menuDrawReq();
     MenuMsgInit();
 

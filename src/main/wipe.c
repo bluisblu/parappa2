@@ -1,20 +1,20 @@
 #include "main/wipe.h"
 
-#include "main/subt.h"
-#include "main/effect.h"
-#include "main/sprite.h"
-#include "main/cmnfile.h"
-#include "main/scrctrl.h"
-
+#include "os/cmngifpk.h"
 #include "os/mtc.h"
-#include "os/tim2.h"
 #include "os/syssub.h"
 #include "os/system.h"
-#include "os/cmngifpk.h"
+#include "os/tim2.h"
+
+#include "main/cmnfile.h"
+#include "main/drawctrl.h"
+#include "main/scrctrl.h"
+#include "main/sprite.h"
+#include "main/subt.h"
 
 #include "iop_mdl/tapctrl_rpc.h"
 
-#include <prlib/prlib.h>
+#include <stdio.h>
 
 /* .data */
 extern SNDTAP sndtap_wipe[];

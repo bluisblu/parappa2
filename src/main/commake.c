@@ -1,4 +1,7 @@
 #include "main/commake.h"
+
+#include "os/syssub.h"
+
 #include "main/scrctrl.h"
 
 void comMakingNo15(CM_STR_CTRL *cmstr_pp);

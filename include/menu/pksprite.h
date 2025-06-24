@@ -4,8 +4,9 @@
 #include "common.h"
 
 #include <eetypes.h>
-#include <eestruct.h>
+
 #include <libdma.h>
+#include <libgraph.h>
 #include <libvu0.h>
 
 typedef struct { // 0x40
@@ -179,5 +180,70 @@ typedef struct { // 0x60
     /* 0x50 */ u_long xyz2_3;
     /* 0x58 */ u_long pad;
 } SprTagCG;
+
+u_long128* TsInitUPacket(TsUSERPKT *pk, u_long128 *buf, u_int size);
+void TsEndUPacket(TsUSERPKT *pk);
+void TsDrawUPacket(TsUSERPKT *up);
+
+void PkTEX0_Add(SPR_PKT pkt, u_long texreg);
+void PkTEX1_Add(SPR_PKT pkt, u_long texreg);
+void PkCLAMP_Add(SPR_PKT pkt, u_long texrp);
+void PkALPHA_Add(SPR_PKT pkt, u_long alpreg);
+void PkTEST_Add(SPR_PKT pkt, u_long testsw);
+void PkSCISSOR_Add(SPR_PKT pkt, short x, short y, short w, short h);
+void PkDefSCISSOR_Add(SPR_PKT pkt);
+void PkOFFSET_Add(SPR_PKT pkt, int x, int y);
+void PkPABE_Add(SPR_PKT pkt, u_int flg);
+void PkFBA_Add(SPR_PKT pkt, u_int flg);
+void PkCCLAMP_Add(SPR_PKT pkt, u_int flg);
+
+void PkTEX0_SetAdd(SPR_PKT pkt, int vram, int w, int h, int isLinear);
+
+u_int GetDToneColor(u_int sbgr, u_int dbgr, int ton);
+u_int GetToneColorA(u_int abgr, int tona, int tonb, int tong, int tonr);
+u_int GetToneColorH(u_int abgr, int tona, int tonb, int tong, int tonr);
+
+void SetSprDefOfsXY(SPR_PRM *spr);
+void SetSprScreenXYWH(SPR_PRM *spr);
+
+void PkSprPkt_SetDrawEnv(SPR_PKT pkt, SPR_PRM *spr, sceGsDrawEnv1 *pdenv);
+
+void PkZBUFMask_Add(SPR_PKT pkt, int bMsk);
+
+void PkSprPkt_SetTexVram(SPR_PKT pkt, SPR_PRM *spr, sceGsDrawEnv1 *pdenv);
+void PkSprPkt_SetDefault(SPR_PKT pk, SPR_PRM *spr, sceGsDrawEnv1 *pdenv);
+
+void PkNSprite_Add(SPR_PKT pk, SPR_PRM *ppspr, int flg);
+void PkNSprite_Add2(SPR_PKT pk, SPR_PRM *ppspr, int flg);
+void PkNSprite_AddAdj(SPR_PKT pk, SPR_PRM *ppspr, int flg);
+
+void PkCRect_Add(SPR_PKT pk, SPR_PRM *ppspr, int flg);
+void PkCGRect_Add(SPR_PKT pk, SPR_PRM *ppspr, int flg);
+
+void _pkVU0RotMatrixZ(float rz);
+
+void PkRSprite_Add(SPR_PKT pk, SPR_PRM *ppspr, int flg);
+
+void PkCLine2_Add( SPR_PKT pk, SPR_PRM *ppspr, int flg);
+void PkCLineS_AddStart(SPR_PKT pk, SPR_PRM *ppspr, int flg);
+void PkCLineS_AddNext(SPR_PKT pk, SPR_PRM *ppspr, int flg);
+
+void PkPolyF3_Add(SPR_PKT pk, SPR_PRM *ppspr, int flg);
+void PkPolyF4_Add(SPR_PKT pk, SPR_PRM *ppspr, int flg);
+void PkPolyFT4_Add(SPR_PKT pk, SPR_PRM *ppspr, int flg);
+
+PKMESH* PkMesh_Create(int w, int h);
+void PkMesh_Delete(PKMESH *mesh);
+
+void PkMesh_SetXYWH(PKMESH *mesh, float px0, float py0, float sw, float sh);
+void PkMesh_SetUVWH(PKMESH *mesh, float ux0, float uy0, float uw, float uh);
+
+void PkCMesh_Add(SPR_PKT pk, SPR_PRM *spr, PKMESH *mesh);
+void PkFTMesh_Add(SPR_PKT pk, SPR_PRM *spr, PKMESH *mesh);
+
+void PkMesh_SetHLinOfs(PKMESH *mesh, int no, float x, float y);
+void PkMesh_SetVLinOfs(PKMESH *mesh, int no, float x, float y);
+void PkMesh_SetHLinOfsLRX(PKMESH *mesh, int no, float lofsx, float rofsx);
+void PkMesh_SetVLinOfsUDY(PKMESH *mesh, int no, float uofsy, float dofsy);
 
 #endif

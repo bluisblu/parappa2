@@ -6,11 +6,6 @@
 #include <eetypes.h>
 #include <libgraph.h>
 
-#include "main/sprite.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-
 #define TIM2_NONE   (0) // For use on ClutType when there is no CLUT data
 #define TIM2_RGB16  (1) // 16bit color (used for both ClutType and ImageType)
 #define TIM2_RGB24  (2) // 24bit color (only used with ImageType)

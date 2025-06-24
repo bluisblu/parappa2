@@ -2,8 +2,7 @@
 
 #include "os/syssub.h"
 
-#include "main/scrctrl.h"
-#include "main/sprite.h"
+#include <stdio.h>
 
 /* .data */
 extern TIM2_DAT tim2spr_tbl_tmp1[];

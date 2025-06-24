@@ -1,29 +1,30 @@
 #include "main/main.h"
 
-#include <eetypes.h>
-#include <libpad.h>
-
-#include "dbug/dbug.h"
 #include "dbug/dbgmsg.h"
+#include "dbug/dbug.h"
 
+#include "os/cmngifpk.h"
 #include "os/mtc.h"
+#include "os/syssub.h"
 #include "os/system.h"
 #include "os/usrmem.h"
 
-#include "main/etc.h"
-#include "main/wipe.h"
-#include "main/stdat.h"
-#include "main/p3str.h"
 #include "main/cdctrl.h"
 #include "main/cmnfile.h"
-#include "main/scrctrl.h"
+#include "main/etc.h"
 #include "main/fadectrl.h"
+#include "main/p3str.h"
+#include "main/scrctrl.h"
+#include "main/stdat.h"
+#include "main/wipe.h"
 
 #include "menu/menu.h"
 
 #include "iop_mdl/tapctrl_rpc.h"
 
-#include "prlib/prlib.h"
+#include <libpad.h>
+
+#include <stdio.h>
 
 /* .sdata */
 extern int urawaza_skip_bottun;
@@ -104,6 +105,7 @@ INCLUDE_RODATA("main/main", D_00393810);
 INCLUDE_RODATA("main/main", D_00393820);
 
 INCLUDE_ASM("main/main", dbg_select_disp);
+void dbg_select_disp(void);
 
 INCLUDE_RODATA("main/main", D_00393840);
 INCLUDE_RODATA("main/main", D_00393860);
@@ -116,6 +118,7 @@ INCLUDE_RODATA("main/main", D_00393910);
 
 #ifndef NON_MATCHING
 INCLUDE_ASM("main/main", dummyPlay);
+void dummyPlay(/* s0 16 */ int retTitle);
 #else
 static void dummyPlay(/* s0 16 */ int retTitle)
 {
@@ -840,44 +843,38 @@ void ura_check(void) {
     }
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("main/main", mainStart);
-void mainStart(/* a0 4 */ void *xx);
-#else
-void mainStart(/* a0 4 */ void *xx)
-{
-    extern int first_f; /* sdata 3996d8 */
-    /* s0 16 */ int retTitle;
+void mainStart(void *xx) {
+    /* sdata 3996d8 */ extern int first_f;
+    int retTitle;
 
-    // Init systems
     mccReqInit();
     CdctrlInit();
+
     PrInitializeModule(DBufDc.draw01.zbuf1);
     UsrPrInitScene();
 
     hat_change_enum = HCNG_AUTO;
 
-    // Init TapCtrl module
     TapCtInit();
     TapCt(0, 0, 0);
 
     TimeCallbackSet();
+    GlobalInit();
+    UsrMemClear();
+    SpuBankSetAll();
 
     menu_str.sel_menu_enum = SEL_MENU_STAGESEL;
     menu_str.mc_rep_str_p = &mc_rep_str;
     menu_str.game_status_p = &game_status;
 
-    // Load common textures and sounds
     cmnfTim2Trans();
     wipeSndFileTrans();
-
     CdctrlReadWait();
     printf("int read end\n");
 
     startUpDisp();
 
-    while (1)
-    {
+    while (1) {
         urawaza_levelsel_bottun = -1;
         titleDisp(first_f);
 
@@ -889,8 +886,7 @@ void mainStart(/* a0 4 */ void *xx)
         menu_str.sel_menu_enum = SEL_MENU_STAGESEL;
         game_status.demo_flagG = DEMOF_OFF;
 
-        while (1)
-        {
+        while (1) {
             UsrMemClear();
             SpuBankSet();
 
@@ -900,6 +896,9 @@ void mainStart(/* a0 4 */ void *xx)
             CdctrlRead(&file_str_menu_file, UsrMemAllocNext(), UsrMemAllocEndNext());
             CdctrlReadWait();
 
+            while (!WipeEndCheck()) {
+                MtcWait(1);
+            }
             WipeOutReq();
 
             PrSetStage(0);
@@ -907,15 +906,84 @@ void mainStart(/* a0 4 */ void *xx)
 
             retTitle = MenuCtrl(&menu_str);
 
-            if ((pad[0].shot & 4) && (pad[0].shot & 1))
-            {
+            if (pad[0].shot & 0x4 && pad[0].shot & 0x1) {
                 urawaza_skip_bottun = 1;
-            }
-            else
-            {
+            } else {
                 urawaza_skip_bottun = 0;
             }
+
+            if (pad[0].shot & 0x2 && pad[0].shot & 0x8 &&
+                game_status.play_modeG == PLAY_MODE_SINGLE) {
+                game_status.play_typeG = PLAY_TYPE_ONE;
+            } else {
+                game_status.play_typeG = PLAY_TYPE_NORMAL;
+            }
+
+            if (game_status.play_modeG == PLAY_MODE_SINGLE &&
+                game_status.play_typeG == PLAY_TYPE_NORMAL &&
+                game_status.roundG >= TRND_R4 &&
+                game_status.demo_flagG == DEMOF_OFF &&
+                game_status.play_table_modeG != PLAY_TABLE_EASY) {
+                urawaza_levelsel_bottun = urawazaKeyCheck();
+            } else {
+                urawaza_levelsel_bottun = -1;
+            }
+
+            if (game_status.play_typeG == PLAY_TYPE_ONE) {
+                if (game_status.endingFlag == 2) {
+                    game_status.endingFlag = 0;
+                }
+            
+                if (game_status.endingFlag == 3) {
+                    game_status.endingFlag = 0;
+                }
+            
+                if (game_status.endingFlag == 4) {
+                    game_status.endingFlag = 0;
+                }
+            }
+
+            if (game_status.play_table_modeG == PLAY_TABLE_EASY) {
+                if (game_status.endingFlag == 2) {
+                    game_status.endingFlag = 0;
+                }
+            
+                if (game_status.endingFlag == 3) {
+                    game_status.endingFlag = 0;
+                }
+            
+                if (game_status.endingFlag == 4) {
+                    game_status.endingFlag = 0;
+                }
+            }
+
+            if (dbg_select_str.debug_on && !retTitle) {
+                dbg_select_disp();
+            }
+
+            WipeInReq();
+            UsrMemClear();
+            SpuBankSet();
+
+            if (retTitle) {
+                break;
+            }
+
+            if (dbg_select_str.debug_on && dbg_select_str.non_play) {
+                while (!WipeEndCheck()) {
+                    MtcWait(1);
+                }
+                WipeOutReq();
+
+                dummyPlay(retTitle);
+            } else {
+                gamePlayDisp();
+            }
+
+            WipeInReq();
+            MtcWait(2);
+
+            urawaza_levelsel_bottun = -1;
         }
     }
 }
-#endif
