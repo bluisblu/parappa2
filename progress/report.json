@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 31.213299,
+    "fuzzy_match_percent": 31.367954,
     "total_code": "343988",
-    "matched_code": "105280",
-    "matched_code_percent": 30.605719,
+    "matched_code": "105812",
+    "matched_code_percent": 30.760374,
     "total_data": "220876",
     "matched_data": "121012",
     "matched_data_percent": 54.7873,
     "total_functions": 1433,
-    "matched_functions": 724,
-    "matched_functions_percent": 50.523376,
+    "matched_functions": 727,
+    "matched_functions_percent": 50.732727,
     "total_units": 70
   },
   "units": [
@@ -10619,14 +10619,14 @@
     {
       "name": "prlib/spadata",
       "measures": {
-        "fuzzy_match_percent": 1.6042781,
+        "fuzzy_match_percent": 6.345811,
         "total_code": "11220",
-        "matched_code": "180",
-        "matched_code_percent": 1.604278,
+        "matched_code": "712",
+        "matched_code_percent": 6.345811,
         "total_data": "64",
         "total_functions": 23,
-        "matched_functions": 1,
-        "matched_functions_percent": 4.347826,
+        "matched_functions": 4,
+        "matched_functions_percent": 17.391304,
         "total_units": 1
       },
       "sections": [
@@ -10649,7 +10649,7 @@
         {
           "name": ".text",
           "size": "11256",
-          "fuzzy_match_percent": 1.6042781,
+          "fuzzy_match_percent": 6.345811,
           "metadata": {}
         }
       ],
@@ -10657,12 +10657,14 @@
         {
           "name": "SearchSegment__C12SpaTrackBasef",
           "size": "320",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "0"
         },
         {
           "name": "GetValue__Ct8SpaTrack1Zif",
           "size": "164",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "320"
         },
@@ -10681,6 +10683,7 @@
         {
           "name": "IsVisible__C16SpaNodeAnimationf",
           "size": "48",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "1424"
         },
@@ -12659,16 +12662,16 @@
     {
       "id": "prlib",
       "measures": {
-        "fuzzy_match_percent": 8.263872,
+        "fuzzy_match_percent": 8.897357,
         "total_code": "83980",
-        "matched_code": "6940",
-        "matched_code_percent": 8.263872,
+        "matched_code": "7472",
+        "matched_code_percent": 8.897357,
         "total_data": "1292",
         "matched_data": "548",
         "matched_data_percent": 42.414864,
         "total_functions": 364,
-        "matched_functions": 52,
-        "matched_functions_percent": 14.285715,
+        "matched_functions": 55,
+        "matched_functions_percent": 15.109891,
         "total_units": 33
       }
     }

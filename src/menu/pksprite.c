@@ -508,7 +508,7 @@ void PkZBUFMask_Add(SPR_PKT pkt, int bMsk) {
 
     *pkt = (u_long128*)pk + 2;
 
-    ((sceGsZbuf*)*pk)[2].ZMSK = !!bMsk;
+    ((sceGsZbuf*)*pk)[2].ZMSK = (bMsk != 0);
 }
 
 INCLUDE_ASM("menu/pksprite", PkSprPkt_SetTexVram);
@@ -1005,6 +1005,7 @@ void PkMesh_Delete(PKMESH *mesh) {
     if (mesh == NULL) {
         return;
     }
+
     if (mesh->pmspt != NULL) {
         free(mesh->pmspt);
     }

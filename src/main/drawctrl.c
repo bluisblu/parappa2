@@ -13,6 +13,7 @@
 
 #include <libpad.h>
 
+#include <limits.h>
 #include <stdio.h>
 
 /* .data */
@@ -846,7 +847,7 @@ static void DrawCtrlMain(void *x) {
                     }
                 }
 
-                DrawScenectrlReq(scenectrl_pp, 0x7fffffff);
+                DrawScenectrlReq(scenectrl_pp, INT_MAX);
             }
         }
 

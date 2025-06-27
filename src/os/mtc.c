@@ -1,5 +1,9 @@
 #include "os/mtc.h"
 
+#include "dbug/syori.h"
+
+#include <stdio.h>
+
 static char mtcStack_CTRL[MTC_TASK_SIZE_CTRL] PR_ALIGNED(16);
 static char mtcStack_MAIN[MTC_TASK_SIZE_MAIN];
 static char mtcStack_02[MTC_TASK_SIZE_02];

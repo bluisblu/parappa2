@@ -2194,6 +2194,9 @@ sinf                                = 0x001654a0; // type:func
 // ee/gcc/src/newlib/libm/math/wf_atan2.c
 atan2f                              = 0x00165730; // type:func
 
+// ee/gcc/src/newlib/libm/math/wf_fmod.c
+fmodf                               = 0x00165858; // type:func
+
 // ee/gcc/src/gcc/libgcc2.c
 __main                              = 0x001680b0; // type:func
 __divdi3                            = 0x001680d0; // type:func

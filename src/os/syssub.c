@@ -4,6 +4,7 @@
 
 #include <libpad.h>
 
+#include <limits.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -519,7 +520,7 @@ void GGsExecLocalMoveImage(sceGsMoveImage *lp) {
     exl_dmatag.id = 0;
     exl_dmatag.next = (sceDmaTag*)lp;
 
-    sceDmaSync(sceDmaGetChan(SCE_DMA_GIF), 0, 0x7fffffff);
+    sceDmaSync(sceDmaGetChan(SCE_DMA_GIF), 0, INT_MAX);
     FlushCache(0);
     sceDmaSend(sceDmaGetChan(SCE_DMA_GIF), &exl_dmatag);
 }
