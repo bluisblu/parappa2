@@ -2051,6 +2051,9 @@ PrWaitDmaFinish__FUi                = 0x001543e8; // type:func
 
 chcr_table                          = 0x0038cd80; // size:0x28
 
+// nalib/navector.cpp
+_t8NaMATRIX3Zfi4i4$IDENT            = 0x0038ce20; // size:0x40
+
 //
 //
 // ** SCE SDK FUNCTIONS **

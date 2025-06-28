@@ -55,6 +55,3 @@ INCLUDE_ASM("prlib/dma", func_001544A8);
 INCLUDE_ASM("prlib/dma", func_00154558);
 
 INCLUDE_ASM("prlib/dma", func_00154580);
-
-/* nalib/navector.cpp */
-INCLUDE_ASM("prlib/dma", func_001545D8);

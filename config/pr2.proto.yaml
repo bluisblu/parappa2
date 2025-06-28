@@ -142,7 +142,7 @@ segments:
         - [0x54e80, cpp, prlib/contour]
         - [0x553e8, cpp, prlib/dma]
           # - [0x554a8, asm, nalib/navector] # Header
-          # - [0x555d8, asm, nalib/navector]
+        - [0x555d8, cpp, nalib/navector]
 
         - [0x55b58, asm, sdk/graphdev]
         - [0x57af0, asm, sdk/libdma]

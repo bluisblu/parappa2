@@ -1,16 +1,16 @@
 {
   "measures": {
-    "fuzzy_match_percent": 31.367954,
+    "fuzzy_match_percent": 31.552845,
     "total_code": "343988",
-    "matched_code": "105812",
-    "matched_code_percent": 30.760374,
+    "matched_code": "106448",
+    "matched_code_percent": 30.945265,
     "total_data": "220876",
     "matched_data": "121012",
     "matched_data_percent": 54.7873,
     "total_functions": 1433,
-    "matched_functions": 727,
-    "matched_functions_percent": 50.732727,
-    "total_units": 70
+    "matched_functions": 728,
+    "matched_functions_percent": 50.80251,
+    "total_units": 71
   },
   "units": [
     {
@@ -10619,14 +10619,14 @@
     {
       "name": "prlib/spadata",
       "measures": {
-        "fuzzy_match_percent": 6.345811,
+        "fuzzy_match_percent": 12.01426,
         "total_code": "11220",
-        "matched_code": "712",
-        "matched_code_percent": 6.345811,
+        "matched_code": "1348",
+        "matched_code_percent": 12.01426,
         "total_data": "64",
         "total_functions": 23,
-        "matched_functions": 4,
-        "matched_functions_percent": 17.391304,
+        "matched_functions": 5,
+        "matched_functions_percent": 21.73913,
         "total_units": 1
       },
       "sections": [
@@ -10643,13 +10643,13 @@
         {
           "name": ".rodata",
           "size": "64",
-          "fuzzy_match_percent": 25.0,
+          "fuzzy_match_percent": 12.5,
           "metadata": {}
         },
         {
           "name": ".text",
           "size": "11256",
-          "fuzzy_match_percent": 6.345811,
+          "fuzzy_match_percent": 12.01426,
           "metadata": {}
         }
       ],
@@ -10696,6 +10696,7 @@
         {
           "name": "IsEverIdentical__12SpaTransform",
           "size": "636",
+          "fuzzy_match_percent": 100.0,
           "metadata": {
             "demangled_name": "SpaTransform::IsEverIdentical"
           },
@@ -12506,16 +12507,16 @@
     {
       "name": "prlib/dma",
       "measures": {
-        "fuzzy_match_percent": 10.126582,
-        "total_code": "1896",
+        "fuzzy_match_percent": 39.02439,
+        "total_code": "492",
         "matched_code": "192",
-        "matched_code_percent": 10.126582,
+        "matched_code_percent": 39.024387,
         "total_data": "48",
         "matched_data": "48",
         "matched_data_percent": 100.0,
-        "total_functions": 5,
+        "total_functions": 4,
         "matched_functions": 1,
-        "matched_functions_percent": 20.0,
+        "matched_functions_percent": 25.0,
         "total_units": 1
       },
       "sections": [
@@ -12532,8 +12533,8 @@
         },
         {
           "name": ".text",
-          "size": "1904",
-          "fuzzy_match_percent": 10.126582,
+          "size": "496",
+          "fuzzy_match_percent": 39.02439,
           "metadata": {}
         }
       ],
@@ -12564,17 +12565,51 @@
           "size": "88",
           "metadata": {},
           "address": "408"
-        },
-        {
-          "name": "func_001545D8",
-          "size": "1404",
-          "metadata": {},
-          "address": "496"
         }
       ],
       "metadata": {
         "progress_categories": [
           "prlib"
+        ]
+      }
+    },
+    {
+      "name": "nalib/navector",
+      "measures": {
+        "total_code": "1404",
+        "matched_data_percent": 100.0,
+        "total_functions": 1,
+        "complete_data_percent": 100.0,
+        "total_units": 1
+      },
+      "sections": [
+        {
+          "name": ".bss",
+          "fuzzy_match_percent": 100.0,
+          "metadata": {}
+        },
+        {
+          "name": ".data",
+          "fuzzy_match_percent": 100.0,
+          "metadata": {}
+        },
+        {
+          "name": ".text",
+          "size": "1408",
+          "metadata": {}
+        }
+      ],
+      "functions": [
+        {
+          "name": "func_001545D8",
+          "size": "1404",
+          "metadata": {},
+          "address": "0"
+        }
+      ],
+      "metadata": {
+        "progress_categories": [
+          "nalib"
         ]
       }
     }
@@ -12662,17 +12697,27 @@
     {
       "id": "prlib",
       "measures": {
-        "fuzzy_match_percent": 8.897357,
-        "total_code": "83980",
-        "matched_code": "7472",
-        "matched_code_percent": 8.897357,
+        "fuzzy_match_percent": 9.818833,
+        "total_code": "82576",
+        "matched_code": "8108",
+        "matched_code_percent": 9.818833,
         "total_data": "1292",
         "matched_data": "548",
         "matched_data_percent": 42.414864,
-        "total_functions": 364,
-        "matched_functions": 55,
-        "matched_functions_percent": 15.109891,
+        "total_functions": 363,
+        "matched_functions": 56,
+        "matched_functions_percent": 15.426998,
         "total_units": 33
+      }
+    },
+    {
+      "id": "nalib",
+      "measures": {
+        "total_code": "1404",
+        "matched_data_percent": 100.0,
+        "total_functions": 1,
+        "complete_data_percent": 100.0,
+        "total_units": 1
       }
     }
   ]

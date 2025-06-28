@@ -50,6 +50,7 @@ u_int SpaTrackBase::SearchSegment(float arg0) const {
     return this->unk8;
 }
 
+template <>
 int* SpaTrack<int>::GetValue(float arg0) const {
     if (this->unk2 & 0x1) {
         float f13 = this->unkC[this->unk4 - 1];
@@ -84,7 +85,88 @@ bool SpaNodeAnimation::IsVisible(float arg0) const {
 
 INCLUDE_ASM("prlib/spadata", IsNodeVisible__C13SpaFileHeaderP7SpmNodef);
 
-INCLUDE_ASM("prlib/spadata", IsEverIdentical__12SpaTransform);
+bool SpaTransform::IsEverIdentical() {
+    switch (this->unk0) {
+    case 0:
+        if (this->unk14 == 1) {
+            bool v0 = false;
+            if (this->unk20[0][0] == 1.0f) {
+                if (this->unk20[0][1] != 1.0f) {
+                    return false;
+                }
+                if (this->unk20[0][2] == 1.0f) {
+                    v0 = true;
+                }
+            }
+            return v0;
+        }
+
+        return false;
+
+    case 1:
+        if (this->unk14 == 1) {
+            if (this->unk20[0][3] == 0.0f) {
+                return true;
+            }
+        }
+
+        return false;
+
+    case 2:
+    case 3:
+    case 4:
+        if (this->unk14 == 1) {
+            if (this->unk20[0][0] == 0.0f) {
+                return true;
+            }
+        }
+
+        return false;
+
+    case 5:
+        if (this->unk14 == 1) {
+            bool v0 = false;
+            if (this->unk20[0][0] == 0.0f) {
+                if (this->unk20[0][1] != 0.0f) {
+                    return false;
+                }
+                if (this->unk20[0][2] == 0.0f) {
+                    v0 = true;
+                }
+            }
+            return v0;
+        }
+
+        return false;
+
+    case 6:
+        if (this->unk14 == 1) {
+            return this->unk20.inl0();
+        }
+
+        return false;
+        
+    case 7:
+        if (this->unk14 == 1) {
+            bool v0 = false;
+            if (this->unk20[0][0] == 0.0f) {
+                if (this->unk20[0][1] != 0.0f) {
+                    return false;
+                }
+                if (this->unk20[0][2] == 0.0f) {
+                    v0 = true;
+                }
+            }
+            return v0;
+        }
+
+        return false;
+
+    default:
+        NaMATRIX<float, 4, 4>& a2 = NaMATRIX<float, 4, 4>::IDENT;
+        return a2.inl1();
+    }
+}
 
 int SpaNodeAnimation::Optimize() {
     int remove_count = 0;

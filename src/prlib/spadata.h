@@ -5,6 +5,8 @@
 
 #include <eetypes.h>
 
+#include <nalib/namatrix.h>
+
 class SpaTrackBase {
 public:
     u_int SearchSegment(float arg0) const;
@@ -28,7 +30,14 @@ private:
 
 class SpaTransform {
 public:
-    int IsEverIdentical();
+    bool IsEverIdentical();
+
+private:
+    u_char unk0;
+    char unk1[0x13];
+    int unk14;
+    char unk18[0x8];
+    NaMATRIX<float, 4, 4> unk20;
 };
     
 class SpaNodeAnimation {   

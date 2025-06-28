@@ -8,7 +8,7 @@
 #include "prlib/renderstuff.h"
 #include "prlib/scene.h"
 
-#include "nalib/navector.h"
+#include <nalib/navector.h>
 
 #include <eetypes.h>
 #include <eestruct.h>

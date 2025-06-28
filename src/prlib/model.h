@@ -5,7 +5,7 @@
 
 #include "prlib/microprogram.h"
 
-#include "nalib/navector.h"
+#include <nalib/navector.h>
 
 struct SpmFileHeader;
 
