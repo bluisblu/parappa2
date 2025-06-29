@@ -12,7 +12,7 @@ public:
     u_int SearchSegment(float arg0) const;
 
 protected:
-    char unk0[0x2];
+    PR_PADDING(unk0, 0x2);
     u_short unk2;
     u_int unk4;
     mutable u_int unk8;
@@ -34,9 +34,9 @@ public:
 
 private:
     u_char unk0;
-    char unk1[0x13];
+    PR_PADDING(unk1, 0x13);
     int unk14;
-    char unk18[0x8];
+    PR_PADDING(unk18, 0x8);
     NaMATRIX<float, 4, 4> unk20;
 };
     
@@ -45,8 +45,8 @@ public:
     bool IsVisible(float arg0) const;
     int Optimize();
 
-private:
-    char unk0[0x4];
+public:
+    PR_PADDING(unk0, 0x4);
     SpaTrack<int>* unk4;
     u_int unk8;
     SpaTransform** unkC;

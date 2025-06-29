@@ -1,5 +1,8 @@
 #include "prlib/spadata.h"
 
+#include "prlib/animation.h"
+#include "prlib/model.h"
+
 #include <math.h>
 
 u_int SpaTrackBase::SearchSegment(float arg0) const {
@@ -83,7 +86,38 @@ bool SpaNodeAnimation::IsVisible(float arg0) const {
     return *this->unk4->GetValue(arg0);
 }
 
-INCLUDE_ASM("prlib/spadata", IsNodeVisible__C13SpaFileHeaderP7SpmNodef);
+bool SpaFileHeader::IsNodeVisible(SpmNode* arg0, float arg1) const {
+    SpaNodeAnimation* a0 = this->unk50[arg0->unk150];
+    SpmNode* a2 = arg0->unk164;
+
+    if (a0 != NULL && a0->unk4 == NULL) {
+        a0 = NULL;
+    }
+
+    if (a2 != NULL) {
+        if (!(a2->unk154 & 0x4000)) {
+            return false;
+        }
+        if (a2->unk154 & 0x40000) {
+            if (a0 == NULL) {
+                arg0->unk154 |= 0x40000;
+                if (a2->unk154 & 0x4000) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+
+    if (a0 != NULL) {
+        arg0->unk154 |= 0x40000;
+        return a0->IsVisible(arg1);
+    }
+
+    arg0->unk154 &= ~0x40000;
+    return (arg0->unk154 & 0x20000) ? false : true;
+}
 
 bool SpaTransform::IsEverIdentical() {
     switch (this->unk0) {
@@ -169,19 +203,19 @@ bool SpaTransform::IsEverIdentical() {
 }
 
 int SpaNodeAnimation::Optimize() {
-    int remove_count = 0;
+    int removeCount = 0;
 
     for (int i = 0; i < this->unk8; i++) {
         SpaTransform* transform = this->unkC[i];
         if (transform == NULL || transform->IsEverIdentical()) {
-            remove_count++;
+            removeCount++;
             continue;
         }
-        this->unkC[i - remove_count] = this->unkC[i];
+        this->unkC[i - removeCount] = this->unkC[i];
     }
 
-    this->unk8 -= remove_count;
-    return remove_count;
+    this->unk8 -= removeCount;
+    return removeCount;
 }
 
 INCLUDE_ASM("prlib/spadata", GetLinearValue__Ct8SpaTrack1Zt8NaVECTOR2Zfi4Uif);

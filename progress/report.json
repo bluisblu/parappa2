@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 31.552845,
+    "fuzzy_match_percent": 31.609823,
     "total_code": "343988",
-    "matched_code": "106448",
-    "matched_code_percent": 30.945265,
+    "matched_code": "106644",
+    "matched_code_percent": 31.002245,
     "total_data": "220876",
     "matched_data": "121012",
     "matched_data_percent": 54.7873,
     "total_functions": 1433,
-    "matched_functions": 728,
-    "matched_functions_percent": 50.80251,
+    "matched_functions": 729,
+    "matched_functions_percent": 50.872295,
     "total_units": 71
   },
   "units": [
@@ -10619,14 +10619,14 @@
     {
       "name": "prlib/spadata",
       "measures": {
-        "fuzzy_match_percent": 12.01426,
+        "fuzzy_match_percent": 13.761141,
         "total_code": "11220",
-        "matched_code": "1348",
-        "matched_code_percent": 12.01426,
+        "matched_code": "1544",
+        "matched_code_percent": 13.761141,
         "total_data": "64",
         "total_functions": 23,
-        "matched_functions": 5,
-        "matched_functions_percent": 21.73913,
+        "matched_functions": 6,
+        "matched_functions_percent": 26.086956,
         "total_units": 1
       },
       "sections": [
@@ -10649,7 +10649,7 @@
         {
           "name": ".text",
           "size": "11256",
-          "fuzzy_match_percent": 12.01426,
+          "fuzzy_match_percent": 13.761141,
           "metadata": {}
         }
       ],
@@ -10690,6 +10690,7 @@
         {
           "name": "IsNodeVisible__C13SpaFileHeaderP7SpmNodef",
           "size": "196",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "1472"
         },
@@ -12697,16 +12698,16 @@
     {
       "id": "prlib",
       "measures": {
-        "fuzzy_match_percent": 9.818833,
+        "fuzzy_match_percent": 10.0561905,
         "total_code": "82576",
-        "matched_code": "8108",
-        "matched_code_percent": 9.818833,
+        "matched_code": "8304",
+        "matched_code_percent": 10.0561905,
         "total_data": "1292",
         "matched_data": "548",
         "matched_data_percent": 42.414864,
         "total_functions": 363,
-        "matched_functions": 56,
-        "matched_functions_percent": 15.426998,
+        "matched_functions": 57,
+        "matched_functions_percent": 15.70248,
         "total_units": 33
       }
     },
