@@ -293,8 +293,11 @@ def generate_objdiff_configuration(config: dict[str, Any]):
 
             if subs_type in ("asm", "c", "cpp"):
                 # if subs_name in ("os/tim2",) or subs_name.startswith("sdk/"):
-                if subs_name.startswith("sdk/"):
-                    # -> skip SDK as it's not part of the game files
+                if subs_name.startswith("sdk/") or subs_name.startswith("nalib/"):
+                    # Skip SDK as it's not part of the game files
+                    #
+                    # nalib can't be precisely measured because
+                    # it's mostly made of inlines, so skip it.
                     continue
 
                 tu_to_diff.append((subs_type, subs_name))

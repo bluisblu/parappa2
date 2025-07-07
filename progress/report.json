@@ -1,16 +1,16 @@
 {
   "measures": {
-    "fuzzy_match_percent": 31.870298,
-    "total_code": "343988",
+    "fuzzy_match_percent": 32.00091,
+    "total_code": "342584",
     "matched_code": "107540",
-    "matched_code_percent": 31.26272,
+    "matched_code_percent": 31.390842,
     "total_data": "220876",
     "matched_data": "121012",
     "matched_data_percent": 54.7873,
-    "total_functions": 1433,
+    "total_functions": 1432,
     "matched_functions": 739,
-    "matched_functions_percent": 51.570137,
-    "total_units": 71
+    "matched_functions_percent": 51.606144,
+    "total_units": 70
   },
   "units": [
     {
@@ -12601,46 +12601,6 @@
           "prlib"
         ]
       }
-    },
-    {
-      "name": "nalib/navector",
-      "measures": {
-        "total_code": "1404",
-        "matched_data_percent": 100.0,
-        "total_functions": 1,
-        "complete_data_percent": 100.0,
-        "total_units": 1
-      },
-      "sections": [
-        {
-          "name": ".bss",
-          "fuzzy_match_percent": 100.0,
-          "metadata": {}
-        },
-        {
-          "name": ".data",
-          "fuzzy_match_percent": 100.0,
-          "metadata": {}
-        },
-        {
-          "name": ".text",
-          "size": "1408",
-          "metadata": {}
-        }
-      ],
-      "functions": [
-        {
-          "name": "func_001545D8",
-          "size": "1404",
-          "metadata": {},
-          "address": "0"
-        }
-      ],
-      "metadata": {
-        "progress_categories": [
-          "nalib"
-        ]
-      }
     }
   ],
   "version": 2,
@@ -12737,16 +12697,6 @@
         "matched_functions": 67,
         "matched_functions_percent": 18.4573,
         "total_units": 33
-      }
-    },
-    {
-      "id": "nalib",
-      "measures": {
-        "total_code": "1404",
-        "matched_data_percent": 100.0,
-        "total_functions": 1,
-        "complete_data_percent": 100.0,
-        "total_units": 1
       }
     }
   ]
