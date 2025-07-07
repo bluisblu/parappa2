@@ -1,10 +1,15 @@
-#include "common.h"
+#include "prlib/database.h"
+
+/* .sdata */
+extern int databaseInitialized;
 
 INCLUDE_ASM("prlib/database", __16PrObjectDatabase);
 
 INCLUDE_ASM("prlib/database", _$_16PrObjectDatabase);
 
-INCLUDE_ASM("prlib/database", Initialize__16PrObjectDatabase);
+void PrObjectDatabase::Initialize() {
+    databaseInitialized = 1;
+}
 
 INCLUDE_ASM("prlib/database", Cleanup__16PrObjectDatabase);
 

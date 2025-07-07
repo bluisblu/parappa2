@@ -1,10 +1,37 @@
-#include "common.h"
+#include "prlib/renderstuff.h"
+
+#include "prlib/gifreg.h"
+#include "prlib/mfifo.h"
+#include "prlib/microprogram.h"
+
+#include <eeregs.h>
 
 INCLUDE_ASM("prlib/renderstuff", __13PrRenderStuff);
 
 INCLUDE_ASM("prlib/renderstuff", _$_13PrRenderStuff);
 
-INCLUDE_ASM("prlib/renderstuff", Initialize__13PrRenderStuffG9sceGsZbuf);
+void PrRenderStuff::Initialize(sceGsZbuf zbuf) {
+    this->unk20 = zbuf;
+    this->unk1C = 0;
+    this->unk28 = 0;
+
+    PrLoadMicroPrograms();
+
+    PrInitializeDmaStripGifRegister(zbuf);
+    PrInitializeMfifo();
+
+    /*
+     * Disable VIF DMAtag mismatch errors to
+     * avoid HW bug where these are triggered
+     * with valid packets, causing stalls.
+     *
+     * Though for VIF0 this bit is guaranteed
+     * to be set from the sceDevVif0Reset() call
+     * on InitSystem() (os/system.c).
+     */
+    *VIF0_ERR |= (1<<1);
+    *VIF1_ERR |= (1<<1);
+}
 
 INCLUDE_ASM("prlib/renderstuff", Cleanup__13PrRenderStuff);
 

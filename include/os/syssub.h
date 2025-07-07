@@ -9,12 +9,12 @@
 #include <libgifpk.h>
 
 typedef enum {
-    PAD_ENUM_NONE = 0,
-    PAD_ENUM_NEG = 32,
-    PAD_ENUM_NORMAL = 64,
-    PAD_ENUM_DSHOCK = 112,
-    PAD_ENUM_DSHOCK2 = 121,
-    PAD_ENUM_ANA = 80
+    PAD_ENUM_NONE = 0, /* None */
+    PAD_ENUM_NEG = 32, /* NeGcon controller */
+    PAD_ENUM_NORMAL = 64, /* Digital controller */
+    PAD_ENUM_DSHOCK = 112, /* DualShock */
+    PAD_ENUM_DSHOCK2 = 121, /* DualShock 2 */
+    PAD_ENUM_ANA = 80 /* Analog joystick */
 } PAD_ID;
 
 typedef enum { 
@@ -49,16 +49,16 @@ typedef enum {
 } PAD_VIB_ENUM;
 
 typedef struct { // 0x24
-    /* 0x00 */ PAD_ID padId;
-    /* 0x04 */ u_short old;
-    /* 0x06 */ u_short shot;
-    /* 0x08 */ u_short one;
-    /* 0x0a */ u_short off;
-    /* 0x0c */ u_char ana[4];
-    /* 0x10 */ u_char press[12];
-    /* 0x1c */ u_char padvib[2];
-    /* 0x1e */ u_short mshot;
-    /* 0x20 */ u_short mone;
+    /* 0x00 */ PAD_ID padId; /* Pad ID */
+    /* 0x04 */ u_short old; /* Button state from the previous frame. */
+    /* 0x06 */ u_short shot; /* Button state from the current frame. */
+    /* 0x08 */ u_short one; /* Newly pushed buttons on this frame. */
+    /* 0x0a */ u_short off; /* Newly released buttons on this frame. */
+    /* 0x0c */ u_char ana[4]; /* Analog data. */
+    /* 0x10 */ u_char press[12]; /* Pressure sensitivity data. */
+    /* 0x1c */ u_char padvib[2]; /* Vibration status to set. */
+    /* 0x1e */ u_short mshot; /* Mixed button state (Dig. + Ana.) from the current frame. */
+    /* 0x20 */ u_short mone; /* Newly pushed buttons (Dig. + Ana.) on this frame. */
 } PADD;
 
 typedef struct { // 0x40
@@ -158,4 +158,4 @@ sceGsFrame* DrawGetFrameP(DNUM_ENUM dnum);
 int DrawGetFbpPos(DNUM_ENUM dnum);
 int DrawGetTbpPos(DNUM_ENUM dnum);
 
-#endif // SYSSUB_H
+#endif /* SYSSUB_H */

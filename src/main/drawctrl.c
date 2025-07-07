@@ -15,6 +15,7 @@
 
 #include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 /* .data */
 extern float bra_tap[10][2];
@@ -1204,7 +1205,7 @@ static void ddbg_event_sub_bmp(void) {
     sceGsSetHalfOffset2(&DBufDc.draw12, 2048, 2048, 0);
     sceGsSetHalfOffset(&DBufDc.draw01,  2048, 2048, 0);
     sceGsSetHalfOffset2(&DBufDc.draw02, 2048, 2048, 0);
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
 
     ChangeDrawArea(DrawGetDrawEnvP(DNUM_DRAW));
 
@@ -1226,7 +1227,7 @@ static void ddbg_event_sub_bmp(void) {
     sceGsSetHalfOffset2(&DBufDc.draw12, 2048, 2048, 1);
     sceGsSetHalfOffset(&DBufDc.draw01,  2048, 2048, 1);
     sceGsSetHalfOffset2(&DBufDc.draw02, 2048, 2048, 1);
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
 
     ChangeDrawArea(DrawGetDrawEnvP(DNUM_DRAW));
 

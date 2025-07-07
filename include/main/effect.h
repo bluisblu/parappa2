@@ -103,4 +103,4 @@ void CG_NoodlesDisp(NOODLES_STR *ndl_pp, sceGsFrame *frame_pp, int pri, int time
 
 void FD_MonocroDisp(MONOCRO_STR *mono_pp, int tbp, int w, int h);
 
-#endif
+#endif /* EFFECT_H */

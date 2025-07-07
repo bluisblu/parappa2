@@ -104,4 +104,4 @@ int MNScene_isAnimeBank(MN_SCENE *pshdl, int ltim, u_int bnk);
 int MNScene_isSeniAnime(MN_SCENE *pshdl);
 int MNScene_ModelDispSw(MN_SCENE *pshdl, int nmdl, int bsw);
 
-#endif
+#endif /* MENU_MDL_H */

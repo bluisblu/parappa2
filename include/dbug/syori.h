@@ -8,4 +8,4 @@ void SyoriLineReset(void);
 int SyoriLineCnt(int num);
 void SyoriLineDisp(short xp, short yp);
 
-#endif
+#endif /* SYORI_H */

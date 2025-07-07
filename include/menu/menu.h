@@ -57,4 +57,4 @@ typedef struct { // 0x58
 int MenuMemCardCheck(void);
 int MenuCtrl(MENU_STR *menu_str_ptr);
 
-#endif
+#endif /* MENU_H */

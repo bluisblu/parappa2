@@ -98,4 +98,4 @@ void SprBox(SPR_PRIM *prm_pp);
 void SprWindow(u_int x, u_int y, u_int w, u_int h);
 void SprWindowDf(void);
 
-#endif
+#endif /* SPRITE_H */

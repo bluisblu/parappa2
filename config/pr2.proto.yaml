@@ -304,7 +304,7 @@ segments:
 
         - [0x2987e8, rodata, sdk/newlib]
         
-        # # .gcc_except_table
+        # .gcc_except_table
         - [0x299d80, rodatabin, gcc_except_table]
 
         # .lit4

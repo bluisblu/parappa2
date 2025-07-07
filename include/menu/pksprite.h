@@ -246,4 +246,4 @@ void PkMesh_SetVLinOfs(PKMESH *mesh, int no, float x, float y);
 void PkMesh_SetHLinOfsLRX(PKMESH *mesh, int no, float lofsx, float rofsx);
 void PkMesh_SetVLinOfsUDY(PKMESH *mesh, int no, float uofsy, float dofsy);
 
-#endif
+#endif /* PKSPRITE_H */

@@ -3,11 +3,8 @@
 
 #include "common.h"
 
-#include <libgraph.h>
+#include <eetypes.h>
 #include <libgifpk.h>
-#include <libdma.h>
-
-#include "os/tim2.h"
 
 void DbgMsgInit(void);
 void DbgMsgClear(void);
@@ -23,4 +20,4 @@ void DbgMsgClearUserPkt(sceGifPacket* usrPacket_pp);
 void DbgMsgSetColorUserPkt(u_char r, u_char g, u_char b, sceGifPacket* usrPacket_pp);
 void DbgMsgSetZ(int z);
 
-#endif
+#endif /* DBGMSG_H */

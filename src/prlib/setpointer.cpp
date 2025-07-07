@@ -3,6 +3,7 @@
 #include <eetypes.h>
 #include <eestruct.h>
 
+#include "prlib/microprogram.h"
 #include "prlib/model.h"
 
 void SpmFileHeader::ChangePointer() {
@@ -56,7 +57,7 @@ void SpmNode::ChangePointer(SpmFileHeader* arg0, SpmNode* arg1) {
         this->unk1A4 = (SpmNodeUnk*)arg0->CalculatePointer((void*)this->unk1A4);
         SpmNodeUnk* s0 = this->unk1A4;
         if (s0 != NULL) {
-            s0->unk194 = SCE_VIF1_SET_MSCAL(PrGetMicroProgramAddress(ePrMicroProgram_Unk2), 0);
+            s0->unk194 = SCE_VIF1_SET_MSCAL(PrGetMicroProgramAddress(eVumpContour), 0);
         }
     }
 

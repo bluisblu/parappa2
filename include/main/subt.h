@@ -71,4 +71,4 @@ u_char* SubtMsgDataPos(u_char *msg_pp, int jap_flag, int pos);
 void SubtTapPrintWake(u_char *tap_msg_pp, int lang, int lng, int nowp);
 void SubtCtrlPrintBoxyWipe(JIMAKU_STR *jstr_pp, int line, int time, int lang, void *code_pp);
 
-#endif
+#endif /* SUBT_H */

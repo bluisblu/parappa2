@@ -4,12 +4,6 @@
 #include "common.h"
 
 #include <eetypes.h>
-#include <libgraph.h>
-#include <sifdev.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "os/tim2.h"
 
 #define BMP(x) ((BMP_HEADER*)x)
 
@@ -39,4 +33,4 @@ void VramSaveBMPDouble(u_char *fname, int wsize, int hsize, int id);
 void VramTmpSave(u_char *save_pp, int wsize, int hsize, int id);
 void VramTmpSaveOutBMP(u_char *fname, int wsize, int hsize, int id, u_char *dst1_pp, u_char *dst2_pp);
 
-#endif // VRAMSAVE_H
+#endif /* VRAMSAVE_H */

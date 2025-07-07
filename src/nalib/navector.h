@@ -32,4 +32,4 @@ private:
     T v[t0];
 };
 
-#endif
+#endif /* NALIB_NAVECTOR_H */

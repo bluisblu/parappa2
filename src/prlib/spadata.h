@@ -52,4 +52,4 @@ public:
     SpaTransform** unkC;
 };
 
-#endif
+#endif /* PRLIB_SPADATA_H */

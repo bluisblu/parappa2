@@ -88,4 +88,4 @@ int Tim2TransX(void *adrs, int ofs_num);
 void Tim2Trans_TBP_MODE(void *adrs, int tbp, int mode);
 void Tim2TransColor_TBP(void *adrs, int tbp);
 
-#endif // TIM2_H
+#endif /* TIM2_H */

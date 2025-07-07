@@ -1,5 +1,9 @@
 #include "dbug/dbgmsg.h"
 
+#include "os/tim2.h"
+
+#include <libdma.h>
+
 /* Debug font texture (TIM2) */
 /* todo(poly): this is supposed to be an integer array */
 char msg8x8data[] = {
@@ -68,7 +72,7 @@ void DbgMsgFlash(void) {
     sceGifPkEnd(&gifPacket, 0, 0, 0);
     sceGifPkTerminate(&gifPacket);
 
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
     sceDmaSend(dbgDmaC, gifPacket.pBase);
     sceGsSyncPath(0, 0);
 }

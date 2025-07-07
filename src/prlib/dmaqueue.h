@@ -6,6 +6,9 @@
 #include <eetypes.h>
 #include <libdma.h>
 
+/* TODO(poly): Perhaps move to the common header? */
+#define PR_DECACHE(addr) (void*)((u_int)(addr) & 0x0fffffff)
+
 struct PrDmaList {
     int unk0;
     int unk4;
@@ -25,11 +28,19 @@ public:
     ~PrDmaQueue();
 
     void Initialize();
+    void Start();
+    void Append(void* tag);
+    void Wait();
+
+    u_int GetNextListAddr(PrDmaList* queue) {
+        return (u_int)PR_DECACHE(queue + 1);
+    }
+
 private:
-    PrDmaList* unk0;
-    int unk4;
-    int unk8;
-    int unkC;
+    PrDmaList* mQueue;
+    u_int mSize;
+    bool mStarted;
+    int mPos;
 };
 
-#endif
+#endif /* DMAQUEUE_H */

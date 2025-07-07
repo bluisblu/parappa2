@@ -9,4 +9,4 @@ u_int PrRandom();
 void  PrInitializeRandomPool();
 float PrFloatRandom();
 
-#endif
+#endif /* PRLIB_RANDOM_H */

@@ -21,4 +21,4 @@ typedef struct { // 0x1c4
     /* 0x1c0 */ int maxBox;
 } CM_STR_CTRL;
 
-#endif
+#endif /* COMMAKE_H */

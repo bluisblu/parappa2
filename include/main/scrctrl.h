@@ -646,4 +646,4 @@ int ScrEndWaitLoop(void);
 
 void bngTapEventCheck(SCORE_INDV_STR *sindv_pp, int num, int id);
 
-#endif
+#endif /* SCRCTRL_H */

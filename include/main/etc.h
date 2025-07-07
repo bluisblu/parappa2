@@ -565,4 +565,4 @@ int inCmnHookSet(int stg);
 int inCmnHook2GameCheck(int pack_id);
 void inCmnHook2GameSave(int level);
 
-#endif
+#endif /* ETC_H */

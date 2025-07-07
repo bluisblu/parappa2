@@ -39,6 +39,10 @@ rom:0x10df8 symbol:mcode_ascii-0x140 reloc:MIPS_LO16
 // main/effect.c: FD_MonocroDisp
 rom:0x19090 symbol:none reloc:MIPS_NONE
 
+// prlib/microprogram: CalculateEntryPoint
+rom:0x47dcc symbol:vump_top reloc:MIPS_HI16
+rom:0x47dd0 symbol:vump_top reloc:MIPS_LO16
+
 // sdk/thread.c: InitThread
 rom:0x6225c symbol:_gp reloc:MIPS_HI16
 rom:0x62268 symbol:_gp reloc:MIPS_LO16

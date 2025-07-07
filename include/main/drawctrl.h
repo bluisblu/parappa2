@@ -301,4 +301,4 @@ void ddbg_tctrl_sub(void);
 
 void DrawCtrlInitDebug(EVENTREC *ev_pp, int ctrlTbl, void *dat_top);
 
-#endif
+#endif /* DRAWCTRL_H */

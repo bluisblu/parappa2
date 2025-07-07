@@ -17,4 +17,4 @@ typedef struct { // 0x30
 
 MENU_TM2_HED* TsGetTM2Hed(int no);
 
-#endif
+#endif /* MNTM2HED_H */

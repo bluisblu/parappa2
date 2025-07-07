@@ -75,4 +75,4 @@ int MenuRoundTim2Trans(TAP_ROUND_ENUM round);
 int MenuStageCl1Trans(int nStage, int nRound);
 int MenuCoolCl1Trans(int nStage, int nPos, int nRound);
 
-#endif
+#endif /* MENUDATA_H */

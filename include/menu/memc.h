@@ -79,4 +79,4 @@ int memc_get_dir_continue(sceMcTblGetDir *dir, int max);
 
 int memc_manager(int mode);
 
-#endif
+#endif /* MEMC_H */

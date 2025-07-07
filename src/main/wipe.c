@@ -99,7 +99,7 @@ static void LocalBufCopy(int disp) {
     }
 
     GGsSetLocalMoveImage(&mi, dbp, 10, 0, 0, 0, sbp, 10, 0, 0, 0, 640, 224, 0);
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
 
     GGsExecLocalMoveImage(&mi);
     sceGsSyncPath(0, 0);

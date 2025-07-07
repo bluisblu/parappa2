@@ -202,4 +202,4 @@ void TsSetPNTransSpr(SPR_PKT pk, SPR_PRM *spr, int mx, int my, float wr, float d
 void TsCELBackEnd(void);
 int TsCELBackDraw(TsUSERPKT *UPacket, SPR_PRM *spr, int dispSw, int colNo);
 
-#endif
+#endif /* MENUSUB_H */

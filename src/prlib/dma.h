@@ -7,4 +7,4 @@
 
 void PrWaitDmaFinish(u_int dmaChannel);
 
-#endif
+#endif /* PRLIB_DMA_H */

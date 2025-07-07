@@ -3,6 +3,7 @@
 
 #include "common.h"
 
+#include <eetypes.h>
 #include <eestruct.h>
 
 class PrRenderStuff {
@@ -11,9 +12,12 @@ public:
     void Cleanup();
 
 private:
-    PR_PADDING(unk0, 0x10);
+    PR_PADDING(unk0, 0x1c);
+    int unk1C;
+    sceGsZbuf unk20;
+    int unk28;
 };
 
 extern PrRenderStuff prRenderStuff;
 
-#endif
+#endif /* PRLIB_RENDERSTUFF_H */

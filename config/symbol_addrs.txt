@@ -1590,7 +1590,11 @@ PkNSprite_Add2                      = 0x0013e9c0; // type:func
 PkNSprite_AddAdj                    = 0x0013ead0; // type:func
 PkCRect_Add                         = 0x0013ebe0; // type:func
 PkCGRect_Add                        = 0x0013ec98; // type:func
-rotcossin                           = 0x0013ed98; // type:func
+rotcossin                           = 0x0013ed98; // type:func size:0xb0
+_RotCosSin_01                       = 0x0013edbc; // type:label
+_RotCosSin_02                       = 0x0013edc4; // type:label
+_rcossin_01                         = 0x0013ee3c; // type:label
+_rcossin_02                         = 0x0013ee40; // type:label
 _pkVU0RotMatrixZ                    = 0x0013ee48; // type:func
 PkRSprite_Add                       = 0x0013ee90; // type:func
 PkCLine2_Add                        = 0x0013f0c0; // type:func
@@ -1853,6 +1857,11 @@ PrGetOutputVertexParameterSet__F22PrMICRO_PROGRAM_MODULE                        
 PrGetMendererCreateTextureAddress__Fv                                               = 0x00146f30; // type:func
 PrGetMendererDrawMeshAddress__Fv                                                    = 0x00146f38; // type:func
 
+MicroProgramEntryPoint                                                              = 0x01c831c0; // size:0x18
+
+MendererCreateTextureEntryPoint                                                     = 0x00399b98;
+MendererDrawMeshEntryPoint                                                          = 0x00399b9c;
+
 // prlib/spram.cpp
 Initialize__12PrSPRAM_DATAP13PrSceneObject                                          = 0x00146f40; // type:func
 InitializeModel__12PrSPRAM_DATAP13PrModelObject                                     = 0x00147ab8; // type:func
@@ -2053,6 +2062,13 @@ chcr_table                          = 0x0038cd80; // size:0x28
 
 // nalib/navector.cpp
 _t8NaMATRIX3Zfi4i4$IDENT            = 0x0038ce20; // size:0x40
+
+//
+//
+// ** VU MICROCODE (.vutext) **
+//
+//
+vump_dmatag                         = 0x00178040;
 
 //
 //

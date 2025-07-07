@@ -248,7 +248,7 @@ static int cdctrlReadSub(FILE_STR *fstr_pp, int ofs, int size, int buf) {
             return 0;
         }
             
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
         return 1;
     } else {
         int rfd = sceOpen(fstr_pp->fname, SCE_RDONLY);
@@ -270,7 +270,7 @@ static int cdctrlReadSub(FILE_STR *fstr_pp, int ofs, int size, int buf) {
         }
 
         sceClose(rfd);
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
         return 1;
     }
 
@@ -304,7 +304,7 @@ void intReadSub(void)
             }
         }
 
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
 
         if (PACK(head_read_pp)->head_size > 2048) {
             while (!cdctrlReadSub(cdctrl_str.fstr_pp, read_pos + 2048, ((PACK(head_read_pp)->head_size - 1) / 2048) * 2048, (int)(head_read_pp + 2048))) {
@@ -313,7 +313,7 @@ void intReadSub(void)
         }
 
         read_pos += PACK(head_read_pp)->head_size + PACK(head_read_pp)->name_size;
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
 
         /* Check if there's data present */
         if (PACK(head_read_pp)->data_size != 0) {
@@ -326,16 +326,16 @@ void intReadSub(void)
             }
 
             /* Read the data... */
-            FlushCache(0);
+            FlushCache(WRITEBACK_DCACHE);
             while (!cdctrlReadSub(cdctrl_str.fstr_pp, read_pos, PACK(head_read_pp)->data_size, (int)read_tmp_pp)) {
                 MtcWait(1);
             }
 
             /* ...and decode it */
-            FlushCache(0);
+            FlushCache(WRITEBACK_DCACHE);
             PackIntDecodeWait(read_tmp_pp, (u_char*)UsrMemAllocNext(), 230);
 
-            FlushCache(0);
+            FlushCache(WRITEBACK_DCACHE);
             if (cdctrl_str.tmp_area == NULL) {
                 usrFree(read_tmp_pp);
             }
@@ -438,7 +438,7 @@ void cdctrlReadData(void *x) {
         break;
     }
 
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
     MtcWait(1);
 
     cdctrl_str.status = 0;
@@ -500,7 +500,7 @@ void CdctrlMemIntgDecode(u_int rbuf, u_int setbuf) {
     while (1) {
         /* Copy the INT to our buffer */
         usrMemcpy(head_read_pp, (void*)rbuf, PACK(rbuf)->head_size);
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
         
         /* Check if we loaded a valid INT */
         if (PACK(head_read_pp)->id != PACKINT_MAGIC) {
@@ -511,7 +511,7 @@ void CdctrlMemIntgDecode(u_int rbuf, u_int setbuf) {
         }
 
         rbuf += PACK(head_read_pp)->head_size + PACK(head_read_pp)->name_size;
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
 
         /* Check if there's data present */
         if (PACK(head_read_pp)->data_size != 0) {
@@ -520,7 +520,7 @@ void CdctrlMemIntgDecode(u_int rbuf, u_int setbuf) {
             rbuf += PACK(head_read_pp)->data_size;
         }
 
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
 
         /* Handle the decoded data */
         switch (PACK(head_read_pp)->ftype) {
@@ -828,7 +828,7 @@ void CdctrlXTRset(FILE_STR *fstr_pp, u_int usebuf) {
         MtcWait(1);
     }
     
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
 
     if (STR(usebuf)->read_size > 2048) {
         while (!cdctrlReadSub(fstr_pp, 2048, STR(usebuf)->read_size - 2048, (int)(usebuf + 2048))) {
@@ -836,7 +836,7 @@ void CdctrlXTRset(FILE_STR *fstr_pp, u_int usebuf) {
         }
     }
 
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
 
     if (STR(usebuf)->channel != 0) {
         cdctrl_str.fstr_pp->mchan = STR(usebuf)->channel;
@@ -845,7 +845,7 @@ void CdctrlXTRset(FILE_STR *fstr_pp, u_int usebuf) {
     }
 
     WP2Ctrl(WP2_SETMODE, cdctrl_str.fstr_pp->mchan);
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
 
     tb_pp = STR(usebuf)->trbox_tr;
     for (i = 0; i < PR_ARRAYSIZE(STR(usebuf)->trbox_tr); i++, tb_pp++) {
@@ -856,13 +856,13 @@ void CdctrlXTRset(FILE_STR *fstr_pp, u_int usebuf) {
         pr_pp = (u_char*)UsrMemEndAlloc(tb_pp->press_size);
 
         UsrMemEndFree();
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
 
         while (!cdctrlReadSub(fstr_pp, tb_pp->read_pos, tb_pp->press_size, (int)pr_pp)) {
             MtcWait(1);
         }
 
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
 
         printf("dec size[%08x]\n", PackIntGetDecodeSize(pr_pp));
         printf("dec info trpos[%08x] read_pos[%08x] press_size[%08x]\n", tb_pp->trpos, tb_pp->read_pos, tb_pp->press_size);
@@ -870,7 +870,7 @@ void CdctrlXTRset(FILE_STR *fstr_pp, u_int usebuf) {
         PackIntDecodeWait(pr_pp, (u_char*)(tb_pp->trpos + usebuf), 230);
     }
 
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
     
     seek_pos = STR(usebuf)->seek;
 

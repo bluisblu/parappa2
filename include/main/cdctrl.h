@@ -140,4 +140,4 @@ void CdctrlSndFadeOut(int time);
 int CdctrlSndFadeOutCheck(void);
 void CdctrlSndFadeOutWait(int time);
 
-#endif
+#endif /* CDCTRL_H */

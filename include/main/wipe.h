@@ -104,4 +104,4 @@ void wipeParaOutReq(void);
 void wipeBoxyInReq(void);
 void wipeBoxyWaitReq(void);
 
-#endif
+#endif /* WIPE_H */

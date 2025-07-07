@@ -58,7 +58,7 @@ void SprFlash(void)
         sceGifPkEnd(&gifPkSpr, 0, 0, 0);
         sceGifPkTerminate(&gifPkSpr);
 
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
         sceDmaSend(sprDmaC, gifPkSpr.pBase);
         sceGsSyncPath(0, 0);
     }

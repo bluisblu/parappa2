@@ -50,4 +50,4 @@
 int WP2Init(void);
 int WP2Ctrl(int command, int data0);
 
-#endif
+#endif /* WP2CD_RPC_H */

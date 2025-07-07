@@ -48,4 +48,4 @@ void systemCtrlMain(void *xx);
 
 void mallocInit(void);
 
-#endif // SYSTEM_H
+#endif /* SYSTEM_H */

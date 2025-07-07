@@ -23,4 +23,4 @@ public:
 
 extern PrObjectDatabase prObjectDatabase;
 
-#endif
+#endif /* PRLIB_DATABASE_H */

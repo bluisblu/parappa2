@@ -23,4 +23,4 @@ u_int UsrMemEndAlloc(int size);
 void UsrMemFree(void);
 void UsrMemEndFree(void);
 
-#endif
+#endif /* USRMEM_H */

@@ -6,4 +6,4 @@
 int TapCtInit(void);
 int TapCt(int command, int data1, int data2);
 
-#endif
+#endif /* TAPCTRL_RPC_H */

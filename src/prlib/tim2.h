@@ -71,4 +71,4 @@ u_int               Tim2LoadClut(TIM2_PICTUREHEADER *ph);
 
 }
 
-#endif
+#endif /* PRLIB_TIM2_H */

@@ -31,8 +31,11 @@ void PrInitializeRandomPool() {
 }
 
 float PrFloatRandom() {
-    /* TODO: Function does not use goto,
-     * fix control flow. */
+    /*
+     * FIXME(poly):
+     *   Was a goto actually used here?
+     *   I can't get it to match without one. 
+     */
 generate_rand:
     float ret = PrRandom();
 

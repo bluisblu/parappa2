@@ -381,7 +381,7 @@ void FD_MonocroDisp(MONOCRO_STR *mono_pp, int tbp, int w, int h) {
 
             dat_pp = (u_char*)0x70000000;
             sceGsSetDefStoreImage(&gs_simage_EFFECTTMP, tbp, w / 64, 0, j, i, sizew, sizeh);
-            FlushCache(0);
+            FlushCache(WRITEBACK_DCACHE);
 
             if (sceGsExecStoreImage(&gs_simage_EFFECTTMP, (u_long128*)0x70000000) < 0) {
                 printf("vramsave Timeout error!!\n");
@@ -416,10 +416,10 @@ void FD_MonocroDisp(MONOCRO_STR *mono_pp, int tbp, int w, int h) {
             }
 
             sceGsSyncPath(0, 0);
-            FlushCache(0);
+            FlushCache(WRITEBACK_DCACHE);
 
             sceGsSetDefLoadImage(&gs_loadimg, tbp, w / 64, 0, j, i, sizew, sizeh);
-            FlushCache(0);
+            FlushCache(WRITEBACK_DCACHE);
 
             sceGsExecLoadImage(&gs_loadimg, (u_long128*)0x70000000);
             sceGsSyncPath(0, 0);

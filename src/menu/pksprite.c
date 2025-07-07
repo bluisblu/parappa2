@@ -151,7 +151,7 @@ void TsDrawUPacket(/* s1 17 */ TsUSERPKT *up)
             up->ptop = up->pkt[1 - up->idx].PaketTop | 0x20000000;
 
             PktChan = sceDmaGetChan(SCE_DMA_GIF);
-            FlushCache(0);
+            FlushCache(WRITEBACK_DCACHE);
 
             sceDmaSync(PktChan, 0, 0);
             sceDmaSend(PktChan, pk);

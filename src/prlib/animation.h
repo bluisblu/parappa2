@@ -17,4 +17,4 @@ public:
     bool IsNodeVisible(SpmNode* arg0, float arg1) const;    
 };
 
-#endif
+#endif /* PRLIB_ANIMATION_H */

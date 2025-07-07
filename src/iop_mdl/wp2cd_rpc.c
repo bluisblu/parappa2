@@ -1,7 +1,6 @@
 #include "iop_mdl/wp2cd_rpc.h"
 
 #include <eekernel.h>
-
 #include <libcdvd.h>
 #include <sifrpc.h>
 
@@ -38,7 +37,7 @@ int WP2Ctrl(int command, int data0) {
         *(sceCdlFILE*)sbuff = *(sceCdlFILE*)data0;
 
         strcpy((char*)sbuff, (char*)data0);
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
 
         while (sceSifCallRpc(&gCd, command, 0, sbuff, DATA_SIZE_STRING, sbuff, 64, NULL, NULL)) {
             printf("sceSifCallRpc wp2cd miss!\n");
@@ -46,14 +45,14 @@ int WP2Ctrl(int command, int data0) {
     } else {
         if (command == 0x8002) {
             strcpy((char*)sbuff, (char*)data0);
-            FlushCache(0);
+            FlushCache(WRITEBACK_DCACHE);
 
             while (sceSifCallRpc(&gCd, command, 0, (void*)data0, DATA_SIZE_STRING, sbuff, 64, 0, 0)) {
                 printf("sceSifCallRpc wp2cd miss!\n");
             }
         } else {
             sbuff[0] = data0;
-            FlushCache(0);
+            FlushCache(WRITEBACK_DCACHE);
 
             while (sceSifCallRpc(&gCd, command, 0, sbuff, DATA_SIZE_NORMAL, sbuff, 64, NULL, NULL)) {
                 printf("sceSifCallRpc wp2cd miss!\n");

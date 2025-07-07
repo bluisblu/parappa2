@@ -520,7 +520,7 @@ u_int Tim2LoadClut(TIM2_PICTUREHEADER *ph) {
              * into CSM1, then transfer. */
             for (int i = 0; i < ph->ClutColors / 16; i++) {
                 sceGsSetDefLoadImage(&li, cbp, 1, cpsm, (i & 1) * 8, (i >> 1) * 2, 8, 2);
-                FlushCache(0);
+                FlushCache(WRITEBACK_DCACHE);
 
                 /* Transfer CLUT data to GS and wait for completion. */
                 sceGsExecLoadImage(&li, pClut);
@@ -584,7 +584,7 @@ static void Tim2LoadTexture(int psm, u_int tbp, int tbw, int w, int h, u_long128
 
         /* Set up texture */
         sceGsSetDefLoadImage(&li, tbp, tbw, psm, 0, i, w, l);
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
 
         /* Transfer to VRAM */
         sceGsExecLoadImage(&li, p);

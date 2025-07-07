@@ -3,4 +3,4 @@
 
 struct SpcFileHeader {};
 
-#endif
+#endif /* PRLIB_CAMERA_H */

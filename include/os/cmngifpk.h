@@ -27,4 +27,4 @@ void CmnGifADPacketMake(sceGifPacket *gifP_pp, sceGsFrame *gsframe_pp);
 void CmnGifADPacketMake2(sceGifPacket *gifP_pp, sceGsFrame *gsframe_pp);
 int CmnGifADPacketMakeTrans(sceGifPacket *gifP_pp);
 
-#endif
+#endif /* CMNGIFPK_H */

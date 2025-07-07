@@ -19,4 +19,4 @@ typedef struct { // 0xc
 void FadeCtrlMain(void *x);
 void FadeCtrlReq(FADE_MODE fmode, int time);
 
-#endif
+#endif /* FADECTRL_H */

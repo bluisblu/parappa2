@@ -23,4 +23,4 @@ int cmnfTim2Trans(void);
 void* cmnfGetFileAdrs(int num);
 int cmnfGetFileSize(int num);
 
-#endif
+#endif /* CMNFILE_H */

@@ -58,4 +58,4 @@ void ura_check(void);
 
 void mainStart(void* xx);
 
-#endif
+#endif /* MAIN_H */

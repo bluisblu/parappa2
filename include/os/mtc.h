@@ -88,4 +88,4 @@ void MtcExit(void);
 int MtcGetCondition(long level);
 int MtcResetCheck(void);
 
-#endif
+#endif /* MTC_H */

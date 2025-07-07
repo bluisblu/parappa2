@@ -38,4 +38,4 @@ public:
     static NaMATRIX<float, 4, 4> IDENT;
 };
 
-#endif
+#endif /* NALIB_NAMATRIX_H */

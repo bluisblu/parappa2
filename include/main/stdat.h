@@ -38,4 +38,4 @@ extern STDAT_REC stdat_rec[19];
 
 void stDatFirstFileSearch(void);
 
-#endif
+#endif /* STDAT_H */

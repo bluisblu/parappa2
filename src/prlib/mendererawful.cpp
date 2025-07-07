@@ -41,7 +41,7 @@ void PrFadeFrameImage(float arg0) {
     sceDmaChan *chan = sceDmaGetChan(SCE_DMA_GIF);
     chan->chcr.TTE = 0;
 
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
     PrWaitDmaFinish(SCE_DMA_GIF);
     sceDmaSendN(chan, &mendererFadeData, 7);
 }

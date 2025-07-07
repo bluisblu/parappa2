@@ -209,14 +209,14 @@ int Tim2Load(TIM2INFO *info_pp, int img_pos, int col_pos) {
     static sceGsLoadImage tp;
 
     if (Tim2SetLoadImageI(info_pp, img_pos, &tp, 0, 0)) {
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
 
         sceGsExecLoadImage(&tp, (u_long128*)info_pp->image_pp);
         sceGsSyncPath(0, 0);
     }
 
     if (Tim2SetLoadImageC(info_pp, col_pos, &tp, 0, 0)) {
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
 
         sceGsExecLoadImage(&tp, (u_long128*)info_pp->clut_pp);
         sceGsSyncPath(0, 0);
@@ -262,13 +262,13 @@ int Tim2LoadSet(TIM2INFO *info_pp) {
     img_pos = PR_TEX0(info_pp->picturH).TBP0;
 
     if (Tim2SetLoadImageI(info_pp, img_pos, &tp, 0, 0)) {
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
         sceGsExecLoadImage(&tp, (u_long128*)info_pp->image_pp);
         sceGsSyncPath(0, 0);
     }
 
     if (Tim2SetLoadImageC(info_pp, col_pos, &tp, 0, 0)) {
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
         sceGsExecLoadImage(&tp, (u_long128*)info_pp->clut_pp);
         sceGsSyncPath(0, 0);
     }
@@ -315,7 +315,7 @@ int Tim2LoadSet(TIM2INFO *info_pp) {
         hs = HsizeAdj(ws, hs, dpsm);
         sceGsSetDefLoadImage(&tp, dtbp, dbw, dpsm, 0, 0, ws, hs);
 
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
         sceGsExecLoadImage(&tp, (u_long128*)adrs);
         sceGsSyncPath(0, 0);
     }
@@ -332,13 +332,13 @@ int Tim2LoadSetX(TIM2INFO *info_pp, TIM2INFO *infoX_pp) {
     img_pos = PR_TEX0(info_pp->picturH).TBP0;
 
     if (Tim2SetLoadImageIX(info_pp, img_pos, &tp, infoX_pp)) {
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
         sceGsExecLoadImage(&tp, (u_long128*)infoX_pp->image_pp);
         sceGsSyncPath(0,0);
     }
 
     if (Tim2SetLoadImageC(infoX_pp, col_pos, &tp, 0, 0))  {
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
         sceGsExecLoadImage(&tp, (u_long128*)infoX_pp->clut_pp);
         sceGsSyncPath(0,0);
     }
@@ -438,7 +438,7 @@ void Tim2Trans_TBP_MODE(void *adrs, int tbp, int mode) {
 
         sceGsSetDefLoadImage(&tp, tbp, dbw, mode, 0, ofsy, w, h_tmp);
 
-        FlushCache(0);
+        FlushCache(WRITEBACK_DCACHE);
         sceGsExecLoadImage(&tp, (u_long128*)tr_adr);
         sceGsSyncPath(0, 0);
 
@@ -472,7 +472,7 @@ void Tim2TransColor_TBP(void *adrs, int tbp) {
     
     sceGsSetDefLoadImage(&tp, tbp, 1, mode, 0, 0, w, h);
     
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
     sceGsExecLoadImage(&tp, (u_long128*)tr_adr);
     sceGsSyncPath(0, 0);
 }

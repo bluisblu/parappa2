@@ -172,4 +172,4 @@ void p3str_sort_disp(void);
 void p3StrPoll(u_int cur_time);
 void p3StrQuitSd(void);
 
-#endif
+#endif /* P3STR_H */

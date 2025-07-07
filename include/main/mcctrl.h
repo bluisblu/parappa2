@@ -73,4 +73,4 @@ void mccReqTapForwardOwn(u_int time, u_int useLine, int ply);
 void mccLocalGlobalCopy(void);
 void mccGlobalLocalCopy(void);
 
-#endif
+#endif /* MCCTRL_H */

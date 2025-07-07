@@ -71,4 +71,4 @@ public:
     void GetScreenPosition(NaVECTOR<float, 4>* arg0);
 };
 
-#endif
+#endif /* PRLIB_MODEL_H */

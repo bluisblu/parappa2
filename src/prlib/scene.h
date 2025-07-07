@@ -16,4 +16,4 @@ public:
     sceGsXyoffset unk58;
 };
 
-#endif
+#endif /* PRLIB_SCENE_H */

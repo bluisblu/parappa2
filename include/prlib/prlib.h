@@ -5,10 +5,10 @@
 #include <libgraph.h>
 #include <libvu0.h>
 
-typedef void *PR_MODELHANDLE;
-typedef void *PR_ANIMATIONHANDLE;
-typedef void *PR_CAMERAHANDLE;
-typedef void *PR_SCENEHANDLE;
+typedef void* PR_MODELHANDLE;
+typedef void* PR_ANIMATIONHANDLE;
+typedef void* PR_CAMERAHANDLE;
+typedef void* PR_SCENEHANDLE;
 
 /* model.cpp */
 void PrSetPostureWorkArea(u_int areaTop, int areaSize);
@@ -18,7 +18,7 @@ void  PrSetFrameRate(float frameRate);
 float PrGetFrameRate(void);
 
 void PrInitializeModule(sceGsZbuf zbuf);
-void PrCleanupModule();
+void PrCleanupModule(void);
 
 PR_SCENEHANDLE PrInitializeScene(sceGsDrawEnv1 *drawEnv, char *name, u_int fbp);
 void PrInitializeSceneDBuff(sceGsDBuff *buff, char *name, u_int fbp);
@@ -112,7 +112,7 @@ float PrGetContourBlurAlpha2(PR_MODELHANDLE model);
 
 float PrGetTransactionBlendRatio(PR_MODELHANDLE model);
 
-void PrSetModelDisturbance(PR_MODELHANDLE model, float disturbance);
+void  PrSetModelDisturbance(PR_MODELHANDLE model, float disturbance);
 float PrGetModelDisturbance(PR_MODELHANDLE model);
 
 u_int PrGetVertexNum(PR_MODELHANDLE model);
@@ -122,33 +122,33 @@ char* PrGetAnimationName(PR_ANIMATIONHANDLE animation);
 char* PrGetCameraName(PR_CAMERAHANDLE camera);
 char* PrGetSceneName(PR_SCENEHANDLE scene);
 
-void* PrGetRenderingStatistics();
+void* PrGetRenderingStatistics(void);
 
 void PrSetModelVisibillity(PR_MODELHANDLE model, u_int nodeIndex, u_int visible);
 
-PR_MODELHANDLE PrGetModelImage(PR_MODELHANDLE model);
+PR_MODELHANDLE     PrGetModelImage(PR_MODELHANDLE model);
 PR_ANIMATIONHANDLE PrGetAnimationImage(PR_ANIMATIONHANDLE animation);
-PR_CAMERAHANDLE PrGetCameraImage(PR_CAMERAHANDLE camera);
+PR_CAMERAHANDLE    PrGetCameraImage(PR_CAMERAHANDLE camera);
 
-void PrSetDebugParam(int param, int value);
-void PrSetDebugParamFloat(int param, float value);
-int PrGetDebugParam(int param);
+void  PrSetDebugParam(int param, int value);
+void  PrSetDebugParamFloat(int param, float value);
+int   PrGetDebugParam(int param);
 float PrGetDebugParamFloat(int param);
 
 /* menderer.cpp */
 void  PrDecelerateMenderer(int speed);
-void  PrRestartMenderer();
+void  PrRestartMenderer(void);
 
 void  PrSetMendererRatio(float ratio);
-float PrGetMendererRatio();
+float PrGetMendererRatio(void);
 
 void  PrSetMendererDirection(int direction);
-int   PrGetMendererDirection();
+int   PrGetMendererDirection(void);
 
 void  PrSetMendererColorModulation(int color);
-int   PrIsMendererColorModulation();
+int   PrIsMendererColorModulation(void);
 
 void  PrInitializeMenderer(u_int tbp, void *noodlePicture, u_int fbp);
-void  PrRenderMenderer();
+void  PrRenderMenderer(void);
 
-#endif
+#endif /* PRLIB_C_H */

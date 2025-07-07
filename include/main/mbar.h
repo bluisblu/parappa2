@@ -229,4 +229,4 @@ TIM2_DAT* lessonCl2InfoGet(SCRRJ_LESSON_ROUND_ENUM type);
 
 void MbarDemoCharDisp(void);
 
-#endif
+#endif /* MBAR_H */

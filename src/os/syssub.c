@@ -68,7 +68,7 @@ void GPadSysRead(void) {
         case scePadStateFindCTP1:
         case scePadStateStable:
             switch (sysP_pp->phase) {
-            case 0:
+            case 0: /* Initial phase */
                 id = scePadInfoMode(i, 0, InfoModeCurID, 0);
                 exid = scePadInfoMode(i, 0, InfoModeCurExID, 0);
 
@@ -82,10 +82,10 @@ void GPadSysRead(void) {
                     sysP_pp->pad_id = id;
 
                     switch (id) {
-                    case 4:
+                    case 4: /* Standard */
                         sysP_pp->phase = 40;
                         break;
-                    case 7:
+                    case 7: /* Analog */
                         sysP_pp->phase = 70;
                         break;
                     default:
@@ -95,30 +95,39 @@ void GPadSysRead(void) {
                 }
 
                 break;
-            case 40:
+            case 40: /* Initial standard pad phase */
                 if (scePadInfoMode(i, 0, InfoModeIdTable, -1) == 0) {
+                    /* Go to read phase if no modes */
                     sysP_pp->phase = 99;
                     break;
                 }
                 sysP_pp->phase++;
-            case 41:
+            case 41: /* Standard mode switch phase */
+                /* Try to switch to analog(?) mode */
                 if (scePadSetMainMode(i, 0, 1, 3) == 1) {
                     sysP_pp->phase++;
                 }
                 break;
             case 42:
                 if (scePadGetReqState(i, 0) == scePadReqStateFaild) {
+                    /* Switch failed, go back and keep trying. */
                     sysP_pp->phase--;
                 }
                 if (scePadGetReqState(i, 0) == scePadReqStateComplete) {
+                    /*
+                     * Switch successful, go back to the initial phase
+                     * to setup analog mode.
+                     */
                     sysP_pp->phase = 0;
                 }
                 break;
-            case 70:
-                if (scePadInfoAct(i, 0, -1, 0) == 0) {
+            case 70: /* Initial analog phase */
+                /* Get the number of actuators */
+                if (!scePadInfoAct(i, 0, -1, 0)) {
                     sysP_pp->phase = 99;
                     break;
                 }
+                /* Try to switch to analog(?) mode */
                 if (scePadSetMainMode(i, 0, 1, 3) == 1) {
                     sysP_pp->phase++;
                     break;
@@ -138,25 +147,34 @@ void GPadSysRead(void) {
                 break;
             case 71:
             case 77:
-                if (scePadGetReqState(i, 0) == 1) {
+                if (scePadGetReqState(i, 0) == scePadReqStateFaild) {
+                    /* Switch failed, go back and keep trying. */
                     sysP_pp->phase--;
                 }
-                if (scePadGetReqState(i, 0) == 0) {
+                if (scePadGetReqState(i, 0) == scePadReqStateComplete) {
+                    /* Switch succesful, go to actuator setup phase */
                     sysP_pp->phase = 80;
                 }
                 break;
-            case 80:
+            case 80: /* Analog actuator setup phase */
+                /* Get the number of actuators */
                 if (scePadInfoAct(i, 0, -1, 0) == 0) {
                     sysP_pp->phase = 99;
                 }
 
-                sysP_pp->act_align[0] = 0;
-                sysP_pp->act_align[1] = 1;
-                sysP_pp->act_align[2] = 255;
-                sysP_pp->act_align[3] = 255;
-                sysP_pp->act_align[4] = 255;
-                sysP_pp->act_align[5] = 255;
-
+                /*
+                 * Initialize actuator parameters:
+                 *
+                 * act_align[0] = Actuator 0
+                 * act_align[1] = Actuator 1
+                 * act_align[2...5] = Unused (0xff)
+                 */
+                sysP_pp->act_align[0] = 0x0;
+                sysP_pp->act_align[1] = 0x1;
+                sysP_pp->act_align[2] = 0xff;
+                sysP_pp->act_align[3] = 0xff;
+                sysP_pp->act_align[4] = 0xff;
+                sysP_pp->act_align[5] = 0xff;
                 WorkClear(sysP_pp->act_direct, 6);
 
                 if (scePadSetActAlign(i, 0, sysP_pp->act_align) == 0) {
@@ -166,15 +184,18 @@ void GPadSysRead(void) {
                 sysP_pp->phase++;
                 break;
             case 81:
-                if (scePadGetReqState(i, 0) == 1) {
+                if (scePadGetReqState(i, 0) == scePadReqStateFaild) {
+                    /* scePadSetActAlign failed. Try again. */
                     sysP_pp->phase--;
                 }
-                if (scePadGetReqState(i, 0) == 0) {
+                if (scePadGetReqState(i, 0) == scePadReqStateComplete) {
+                    /* scePadSetActAlign succeeded, go to read phase. */
                     sysP_pp->phase = 99;
                 }
                 break;
-            default:
-                if (scePadRead(i, 0, (u_char*)sysP_pp) == 0 || scePadInfoAct(i, 0, -1, 0) == 0) {
+            default: /* Read phase (default/99) */
+                if (scePadRead(i, 0, (u_char*)&sysP_pp->rdata) == 0 ||
+                    scePadInfoAct(i, 0, -1, 0) == 0) {
                     break;
                 }
                 scePadSetActDirect(i, 0, sysP_pp->act_direct);
@@ -195,6 +216,11 @@ void GPadSysRead(void) {
 void padMakeData(PADD *pad_pp, u_short paddata) {
     pad_pp->old = pad_pp->shot;
     pad_pp->shot = paddata;
+
+    /*
+     * pad_pp->one: Buttons just pushed on this frame.
+     * pad_pp->off: Buttons just released on this frame.
+     */
     pad_pp->one = (pad_pp->old ^ pad_pp->shot) & pad_pp->shot;
     pad_pp->off = (pad_pp->old ^ pad_pp->shot) & ~pad_pp->shot;
 }
@@ -209,17 +235,22 @@ void padOneOffBitCLear(PADD *pad_pp) {
 }
 
 void padNormalRead(PADD *pad_pp, u_char *rdata_pp) {
-    padMakeData(pad_pp, ~((rdata_pp[2] << 8) | rdata_pp[3])); /* Swap the endianness */
+    /*
+     * Join button state into a short and swap
+     * the state (prev. it was [0: pushed, 1: released]).
+     */
+    padMakeData(pad_pp, ~((rdata_pp[2] << 8) | rdata_pp[3]));
 }
 
 void padAnaRead(PADD *pad_pp, u_char *rdata_pp) {
-    int i;
-    u_char *temp = pad_pp->ana; /* TODO: figure out how to match this without this */
+    int     i;
+    u_char *ana_pp = pad_pp->ana;
 
+    /* Advance buffer into analog stick data. */
     rdata_pp += 4;
 
     for (i = 0; i < PR_ARRAYSIZE(pad_pp->ana); i++) {
-        temp[i] = rdata_pp[i];
+        ana_pp[i] = rdata_pp[i];
     }
 }
 
@@ -232,13 +263,14 @@ void padAnaRead0Clear(PADD *pad_pp) {
 }
 
 void padPrsRead(PADD *pad_pp, u_char *rdata_pp) {
-    int i;
-    u_char *temp = pad_pp->press; /* TODO: Also figure out how to match this without temp vars */
+    int     i;
+    u_char *prs_pp = pad_pp->press;
 
+    /* Advance buffer into pressure sensitivity data. */
     rdata_pp += 8;
 
     for (i = 0; i < PR_ARRAYSIZE(pad_pp->press); i++) {
-        temp[i] = rdata_pp[i];
+        prs_pp[i] = rdata_pp[i];
     }
 }
 
@@ -252,38 +284,36 @@ void padPrsRead0Clear(PADD *pad_pp) {
 
 void padPrsTreate(PADD *pad_pp) {
     u_short pad_pos[12] = {
-        SCE_PADLright,
-        SCE_PADLleft,
-        SCE_PADLup,
-        SCE_PADLdown,
-        SCE_PADRup,
-        SCE_PADRright,
-        SCE_PADRdown,
-        SCE_PADRleft,
-        SCE_PADL1,
-        SCE_PADR1,
-        SCE_PADL2,
-        SCE_PADR2
+        /* D-pad buttons */
+        SCE_PADLright, SCE_PADLleft,
+        SCE_PADLup,    SCE_PADLdown,
+
+        /* Face buttons */
+        SCE_PADRup,    SCE_PADRright,
+        SCE_PADRdown,  SCE_PADRleft,
+
+        /* Trigger buttons */
+        SCE_PADL1,     SCE_PADR1,
+        SCE_PADL2,     SCE_PADR2,
     };
 
-    u_int i;
+    int i;
     for (i = 0; i < PR_ARRAYSIZEU(pad_pos); i++) {
         if (pad_pp->shot & pad_pos[i]) {
-            if (pad_pp->press[i]) {
-                continue;
-            }
-            pad_pp->press[i] = 1;
-        } else {
             if (!pad_pp->press[i]) {
-                continue;
+                pad_pp->press[i] = 1;
             }
-            pad_pp->press[i] = 0;
+        } else {
+            if (pad_pp->press[i]) {
+                pad_pp->press[i] = 0;
+            }
         }
     }
 }
 
 void padActSet(PADD *pad_pp, PAD_SYSD *sysPad_pp) {
-    if (pad_pp) {
+    if (pad_pp != NULL) {
+        /* Set vibration info. */
         sysPad_pp->act_direct[0] = pad_pp->padvib[0];
         sysPad_pp->act_direct[1] = pad_pp->padvib[1];
     } else {
@@ -302,19 +332,19 @@ void padAnaMixPad(PADD *pad_pp) {
 
     pad_pp->mshot = pad_pp->shot;
 
-    // X axis
+    /* Analog X axis */
     if (pad_pp->ana[PAD_ANA_LX] < 0x40) {
         pad_pp->mshot |= SCE_PADLleft;
     }
-    if (pad_pp->ana[PAD_ANA_LX] > 0xBF) {
+    if (pad_pp->ana[PAD_ANA_LX] > 0xbf) {
         pad_pp->mshot |= SCE_PADLright;
     }
 
-    // Y axis
+    /* Analog Y axis */
     if (pad_pp->ana[PAD_ANA_LY] < 0x40) {
         pad_pp->mshot |= SCE_PADLup;
     }
-    if (pad_pp->ana[PAD_ANA_LY] > 0xBF) {
+    if (pad_pp->ana[PAD_ANA_LY] > 0xbf) {
         pad_pp->mshot |= SCE_PADLdown;
     }
 
@@ -325,16 +355,31 @@ void GPadRead(PADD *pad_pp) {
     int i;
 
     for (i = 0; i < PAD_NUM; i++, pad_pp++) {
-        if (sysPad[i].rdata[0] != NULL) {
+        if (sysPad[i].rdata[0] != 0) {
+            /* Pad connection wasn't successful. */
             pad0Clear(pad_pp);
         }
 
         switch (sysPad[i].rdata[1] & 0xf0) {
-        case PAD_ENUM_DSHOCK: // DualShock
+        case PAD_ENUM_DSHOCK: /* DualShock controller */
             padNormalRead(pad_pp, sysPad[i].rdata);
             padAnaRead(pad_pp, sysPad[i].rdata);
 
-            // DualShock 2
+            /*
+             * The DualShock2 has the same ID as the original
+             * DualShock, but we can detect for a DSHOCK2 by
+             * checking the data length instead (lower 4 bits).
+             *
+             * This check is hidden away in the enum:
+             * - PAD_ENUM_DSHOCK2 = 0111   1001
+             *                     \____/ \____/
+             *                  ID (DSHOCK)
+             *                          Data length
+             *
+             * If the current controller is a DSHOCK2, the
+             * data length will be 9*2 = 18 bytes (ignoring
+             * the first two bytes).
+             */
             if (sysPad[i].rdata[1] == PAD_ENUM_DSHOCK2) {
                 padPrsRead(pad_pp, sysPad[i].rdata);
                 pad_pp->padId = PAD_ENUM_DSHOCK2;
@@ -346,7 +391,7 @@ void GPadRead(PADD *pad_pp) {
 
             padActSet(pad_pp, &sysPad[i]);
             break;
-        case PAD_ENUM_NORMAL: // Normal controller
+        case PAD_ENUM_NORMAL: /* Digital controller */
             padNormalRead(pad_pp, sysPad[i].rdata);
             padAnaRead0Clear(pad_pp);
             padPrsRead0Clear(pad_pp);
@@ -354,7 +399,7 @@ void GPadRead(PADD *pad_pp) {
             pad_pp->padId = PAD_ENUM_NORMAL;
             padActSet(NULL, &sysPad[i]);
             break;
-        default: // Unknown/bad controller
+        default: /* Unknown/unsupported controller. */
             pad0Clear(pad_pp);
             padAnaRead0Clear(pad_pp);
             padPrsRead0Clear(pad_pp);
@@ -428,7 +473,7 @@ void ChangeDrawArea(sceGsDrawEnv1 *env_pp) {
 
     cmnDmaC = sceDmaGetChan(SCE_DMA_GIF);
 
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
 
     sceDmaSend(cmnDmaC, gifpk.pBase);
     sceGsSyncPath(0,0);
@@ -463,7 +508,7 @@ void ChangeDrawArea2(sceGsDrawEnv1 *env_pp) {
 
     cmnDmaC = sceDmaGetChan(SCE_DMA_GIF);
 
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
 
     sceDmaSend(cmnDmaC, gifpk.pBase);
     sceGsSyncPath(0,0);
@@ -521,7 +566,7 @@ void GGsExecLocalMoveImage(sceGsMoveImage *lp) {
     exl_dmatag.next = (sceDmaTag*)lp;
 
     sceDmaSync(sceDmaGetChan(SCE_DMA_GIF), 0, INT_MAX);
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
     sceDmaSend(sceDmaGetChan(SCE_DMA_GIF), &exl_dmatag);
 }
 

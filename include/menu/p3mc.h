@@ -4,7 +4,6 @@
 #include "common.h"
 
 #include <eetypes.h>
-
 #include <libmc.h>
 
 typedef struct { // 0x14
@@ -128,4 +127,4 @@ void P3MC_SetUserWorkTime(USER_DATA *puser);
 int P3MC_SaveUser(MCRWDATA_HDL *pdhdl, int flg);
 int P3MC_SaveCheck(void);
 
-#endif
+#endif /* P3MC_H */

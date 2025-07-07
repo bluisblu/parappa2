@@ -1,5 +1,14 @@
 #include "dbug/vramsave.h"
 
+#include "os/tim2.h"
+
+#include <eekernel.h>
+#include <libgraph.h>
+#include <sifdev.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+
 /* .data */
 extern /* static */ TIM2SETINFO tim2setinfo;
 extern sceGsStoreImage gs_simage;
@@ -169,7 +178,7 @@ void VramSaveBMPDouble(u_char *fname, int wsize, int hsize, int id) {
     tr_pp   = malloc(wsize * hsize * 6 + sizeof(BMP_HEADER));
 
     sceGsSetDefStoreImage(&gs_simage, (id * wsize * hsize) / 64, wsize / 64, 0, 0, 0, wsize, hsize);
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
 
     if (sceGsExecStoreImage(&gs_simage, (u_long128*)dst1_pp) < 0) {
         printf("vramsave Timeout error!!\n");
@@ -184,7 +193,7 @@ void VramSaveBMPDouble(u_char *fname, int wsize, int hsize, int id) {
     sceGsSyncPath(0, 0);
 
     sceGsSetDefStoreImage(&gs_simage, ((id ^ 1) * wsize * hsize) / 64, wsize / 64, 0, 0, 0, wsize, hsize);
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
 
     if (sceGsExecStoreImage(&gs_simage, (u_long128*)dst2_pp) < 0) {
         printf("vramsave Timeout error!!\n");
@@ -248,7 +257,7 @@ void VramSaveBMPDouble(u_char *fname, int wsize, int hsize, int id) {
 
 void VramTmpSave(u_char *save_pp, int wsize, int hsize, int id) {
     sceGsSetDefStoreImage(&gs_simage, (id * wsize * hsize) / 64, wsize / 64, 0, 0, 0, wsize, hsize);
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
 
     if (sceGsExecStoreImage(&gs_simage, (u_long128*)save_pp) < 0) {
         printf("vramsave Timeout error!!\n");

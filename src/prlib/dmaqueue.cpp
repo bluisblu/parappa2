@@ -1,74 +1,110 @@
 #include "dmaqueue.h"
 
+#include "prlib/dma.h"
+
 #include <eekernel.h>
 
 #include <malloc.h>
 
-#define PR_DECACHE(addr) ((u_int)(addr) & 0x0fffffff)
-
 PrDmaQueue::PrDmaQueue(u_int size) {
-    this->unk4 = size;
-    this->unk0 = (PrDmaList*)memalign(128, (size + 1) * 128);
+    mSize  = size;
+    mQueue = (PrDmaList*)memalign(128, (size + 1) * 128);
 
     Initialize();
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
 
-    this->unk8 = 0;
-    this->unkC = 0;
+    mStarted = false;
+    mPos = 0;
 
-    this->unk0 = (PrDmaList*)PR_UNCACHEDACCEL(this->unk0);
+    mQueue = (PrDmaList*)PR_UNCACHEDACCEL(mQueue);
 }
 
 PrDmaQueue::~PrDmaQueue() {
-    if (this->unk0 != NULL) {
-        free((void*)PR_DECACHE(this->unk0));
+    if (mQueue != NULL) {
+        free(PR_DECACHE(mQueue));
     }
 }
 
-// Different compiler matches without any of the volatile trickery
-// https://decomp.me/scratch/PcirV
 void PrDmaQueue::Initialize() {
-    u_int i;
-    PrDmaList *temp_v1;
-    volatile PrDmaList *var_v1;
+    for (int i = 0; i <= mSize; i++) {
+        PrDmaList* queue = &mQueue[i];
 
-    for (i = 0; i <= this->unk4; i++) {
-        temp_v1 = (PrDmaList*)&this->unk0[i];
-
-        var_v1 = temp_v1;
-        var_v1->unk30.next = (sceDmaTag*)&var_v1[1].unk10;
-
-        var_v1->unk0 = 0;
-        var_v1->unk4 = 0;
-        var_v1->unk8 = 0;
-        var_v1->unkC = 0;
-
-        var_v1->unk10.qwc = 1;
-        var_v1->unk10.mark = 0;
-        var_v1->unk10.id = 0x40;
-        var_v1->unk10.next = (sceDmaTag*)var_v1;
-        var_v1->unk10.p[0] = 0;
-        var_v1->unk10.p[1] = 0;
-
-        var_v1->unk20.qwc = 0;
-        var_v1->unk20.mark = 0;
-        var_v1->unk20.id = 0x50;
-        var_v1->unk20.p[0] = 0;
-        var_v1->unk20.p[1] = 0;
-
-        var_v1->unk30.qwc = 0;
-        var_v1->unk30.mark = 0;
-        var_v1->unk30.id = 0x20;
-        var_v1->unk30.p[0] = 0;
-        temp_v1->unk30.p[1] = 0;
+        queue->unk0 = 0;
+        queue->unk4 = 0;
+        queue->unk8 = 0;
+        queue->unkC = 0;
+        
+        queue->unk10.qwc = 1;
+        queue->unk10.mark = 0;
+        queue->unk10.id = 0x40; /* DMArefs */
+        queue->unk10.next = (sceDmaTag*)queue;
+        queue->unk10.p[0] = 0;
+        queue->unk10.p[1] = 0;
+        
+        queue->unk20.qwc = 0;
+        queue->unk20.mark = 0;
+        queue->unk20.id = 0x50; /* DMAcall */
+        queue->unk20.p[0] = 0;
+        queue->unk20.p[1] = 0;
+        
+        queue->unk30.qwc = 0;
+        queue->unk30.mark = 0;
+        queue->unk30.id = 0x20; /* DMAnext */
+        queue->unk30.next = &queue[1].unk10;
+        queue->unk30.p[0] = 0;
+        queue->unk30.p[1] = 0;
     }
 }
 
-// https://decomp.me/scratch/tVeBn
-INCLUDE_ASM("prlib/dmaqueue", Start__10PrDmaQueue);
+void PrDmaQueue::Start() {
+    mPos = false;
+    PrWaitDmaFinish(SCE_DMA_VIF1);
 
-// https://decomp.me/scratch/yrbTv
-INCLUDE_ASM("prlib/dmaqueue", Append__10PrDmaQueuePv);
+    *D_CTRL |= 0x40; /* Perform stall control on VIF1 ch. */
+    *D_STADR = (u_int)PR_DECACHE(mQueue);
 
-// https://decomp.me/scratch/feA56
-INCLUDE_ASM("prlib/dmaqueue", Wait__10PrDmaQueue);
+    sceDmaChan* chan = sceDmaGetChan(SCE_DMA_VIF1);
+    chan->chcr.TTE = 1;
+
+    sceDmaSend(chan, PR_DECACHE(&mQueue[0].unk10));
+    mStarted = true;
+}
+
+void PrDmaQueue::Append(void* tag) {
+    extern bool warned;
+
+    if (mPos == mSize) {
+        if (!warned) {
+        #if 0 /* (poly): Only present on McDonald's Demo build */
+            printf("PRLIB(WARN): DMA queue ovewrflow\n");
+            printf("PRLIB(WARN): you must initialize the queue with more size\n");
+        #endif
+            warned = true;
+        }
+
+        Wait();
+        Start();
+    }
+
+    mQueue[mPos].unk20.next = (sceDmaTag*)tag;
+    asm("sync.l");
+
+    mPos++;
+    PrDmaList* queue = &mQueue[mPos - 1];
+    *D_STADR = GetNextListAddr(queue);
+}
+
+void PrDmaQueue::Wait() {
+    mQueue[mPos].unk20.id = 0x70; /* DMAend */
+    mQueue[mPos].unk20.next = NULL;
+    asm("sync.l");
+
+    PrDmaList* queue = &mQueue[mPos - 1];
+    *D_STADR = GetNextListAddr(queue + 1);
+
+    PrWaitDmaFinish(SCE_DMA_VIF1);
+    *D_CTRL &= ~0xc0; /* Disable stall control. */
+
+    mQueue[mPos].unk20.id = 0x50;
+    mStarted = false;
+}

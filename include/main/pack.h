@@ -29,4 +29,4 @@ int PackDecode(u_char *fp_r, u_char *fp_w);
 int PackGetAdrs(u_int adrs, int num);
 void PackDbgList(u_int adrs);
 
-#endif
+#endif /* PACK_H */

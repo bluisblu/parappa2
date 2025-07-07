@@ -144,7 +144,7 @@ static void SetDrawEnv12(sceGsDrawEnv1 *pdenv) {
     denvTag.denv1 = *pdenv;
 
     sceGsSyncPath(0, 0);
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
 
     sceGsPutDrawEnv(&denvTag.giftag);
     sceGsSyncPath(0, 0);
@@ -154,7 +154,7 @@ static void SetDrawEnv12(sceGsDrawEnv1 *pdenv) {
     denvTag.denv1.xyoffset1addr = SCE_GS_XYOFFSET_2;
     denvTag.denv1.scissor1addr  = SCE_GS_SCISSOR_2;
     denvTag.denv1.test1addr     = SCE_GS_TEST_2;
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
 
     sceGsPutDrawEnv(&denvTag.giftag);
     sceGsSyncPath(0, 0);

@@ -7,4 +7,4 @@
 
 int PrGetBitSize(u_int number);
 
-#endif
+#endif /* PRLIB_UTILITY_H */

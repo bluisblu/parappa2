@@ -111,7 +111,7 @@ static void firstClrFrameBuffer(void) {
     );
 
     sceDmaSync(sceDmaGetChan(SCE_DMA_GIF), 0, INT_MAX);
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
 
     sceDmaSend(sceDmaGetChan(SCE_DMA_GIF), &vclr_dma);
     sceGsSyncPath(0, 0);
@@ -134,11 +134,16 @@ void initSystem(void) {
     sceGsSetDefDBuffDc(&DBufDc, SCE_GS_PSMCT32, SCREEN_WIDTH, SCREEN_HEIGHT / 2, SCE_GS_ZGEQUAL, SCE_GS_PSMZ32, SCE_GS_CLEAR);
     SetBackColor(0, 0, 0);
 
+    /*
+     * Initialize TIMER0 to use the
+     * external clock (H-BLNK) and start
+     * the timer.
+     */
     *T0_MODE = T_MODE_CLKS_M | T_MODE_CUE_M;
 
     outbuf_idx = 0;
 
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
     sceGsSyncPath(0, 0);
     sceGsSwapDBuffDc(&DBufDc, outbuf_idx);
 
@@ -216,9 +221,12 @@ void osFunc(void) {
         sceGsSetHalfOffset2(&DBufDc.draw02, 2048, 2048, oddeven_idx ^ 1);
     }
 
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
 
-    // wait for the GIF channel to be available
+    /*
+     * Wait for the GIF channel to become available
+     * if it isn't.
+     */
     while ( *D2_CHCR & D_CHCR_STR_M );
 
     if (sceGsSyncPath(0, 0)) {

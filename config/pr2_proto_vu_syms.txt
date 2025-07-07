@@ -1,0 +1,10 @@
+/* VU MICROCODE (.vutext) */
+vump_top                            = 0x0;
+vump_normal                         = 0x378;
+vump_bothface                       = 0x6d8;
+vump_contour                        = 0xa58;
+vump_refmap                         = 0xd88;
+vump_screen                         = 0x11e8;
+vump_antiline                       = 0x1388;
+vump_menderer_create_texture        = 0x15d8;
+vump_menderer_draw_mesh             = 0x1a90;

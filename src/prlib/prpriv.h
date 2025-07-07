@@ -27,4 +27,4 @@ void PrCleanupScene(PrSceneObject *scene);
 
 }
 
-#endif
+#endif /* PRLIB_PRPRIV_H */

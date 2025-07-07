@@ -44,12 +44,9 @@ void CmnGifFlush(void) {
         return;
     }
 
-    for (i = 0; i < PR_ARRAYSIZE(cmngif_pri) - 1 && cmngif_pri[i].pBase; i++) 
-    {
-        for (j = i + 1; j < PR_ARRAYSIZE(cmngif_pri) && cmngif_pri[j].pBase; j++) 
-        {
-            if (cmngif_pri[i].pri > cmngif_pri[j].pri)
-            {
+    for (i = 0; i < PR_ARRAYSIZE(cmngif_pri) - 1 && cmngif_pri[i].pBase; i++) {
+        for (j = i + 1; j < PR_ARRAYSIZE(cmngif_pri) && cmngif_pri[j].pBase; j++) {
+            if (cmngif_pri[i].pri > cmngif_pri[j].pri) {
                 CMNGIF_PRI temp = cmngif_pri[i];
                 cmngif_pri[i] = cmngif_pri[j];
                 cmngif_pri[j] = temp;
@@ -59,8 +56,7 @@ void CmnGifFlush(void) {
 
     PR_SCOPE
     int i;
-    for (i = 0; i < PR_ARRAYSIZE(cmngif_pri) && cmngif_pri[i].pBase; i++)
-    {
+    for (i = 0; i < PR_ARRAYSIZE(cmngif_pri) && cmngif_pri[i].pBase; i++) {
         sceGifPkCall(&cmnGifPacket, cmngif_pri[i].pBase, 0, 0, 0);
     }
     PR_SCOPEEND
@@ -70,7 +66,7 @@ void CmnGifFlush(void) {
 
     cmnDmaC = sceDmaGetChan(SCE_DMA_GIF);
 
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
     sceDmaSend(cmnDmaC, cmnGifPacket.pBase);
     sceGsSyncPath(0, 0);
 }
@@ -193,7 +189,7 @@ int CmnGifADPacketMakeTrans(sceGifPacket *gifP_pp) {
 
     cmnDmaC = sceDmaGetChan(SCE_DMA_GIF);
 
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
     sceDmaSend(cmnDmaC, gifP_pp->pBase);
     sceGsSyncPath(0,0);
     return 0;

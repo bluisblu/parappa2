@@ -164,6 +164,18 @@ INCLUDE_ASM("prlib/prlib", PrHideModel);
 
 PR_EXTERN
 NaVECTOR<float, 4>* PrGetModelPrimitivePosition(PrModelObject *model) {
+    /*
+     * FIXME(poly): These `tmp_X` symbols aren't real
+     * and are product of the static NaVECTOR instances.
+     *
+     * The solution would be to make these static
+     * (when the TU's .bss matches, of course), and
+     * the compiler should generate these temp. symbols.
+     *
+     * The symbols themselves are meant to call the
+     * constructor once, though in this case there's
+     * no actual call because it is inlined (empty constructor).
+     */
     extern NaVECTOR<float, 4> vector_0;
     static int tmp_0 = 0;
     
@@ -177,6 +189,18 @@ NaVECTOR<float, 4>* PrGetModelPrimitivePosition(PrModelObject *model) {
 
 PR_EXTERN
 NaVECTOR<float, 4>* PrGetModelScreenPosition(PrModelObject *model) {
+    /*
+     * FIXME(poly): These `tmp_X` symbols aren't real
+     * and are product of the static NaVECTOR instances.
+     *
+     * The solution would be to make these static
+     * (when the TU's .bss matches, of course), and
+     * the compiler should generate these temp. symbols.
+     *
+     * The symbols themselves are meant to call the
+     * constructor once, though in this case there's
+     * no actual call because it is inlined (empty constructor).
+     */
     extern NaVECTOR<float, 4> vector_1;
     static int tmp_1 = 0;
     

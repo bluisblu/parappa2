@@ -148,7 +148,7 @@ void MtcExec(void (*prg_pp)(void* x), long level) {
 }
 
 void MtcWait(long wt) {
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
     mtcStackErrorCheck(mtcCurrentTask);
 
     mtcTaskConB[mtcCurrentTask].status = MTC_COND_WAIT;

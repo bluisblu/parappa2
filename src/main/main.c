@@ -370,7 +370,7 @@ int selPlayDisp(int sel_stage, int sel_disp, int firstf) {
     printf(D_00393A18);
 
     asm("sync.l");
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
 
     stdat_dat_pp = &stdat_rec[sel_stage].stdat_dat_pp[sel_disp];
 
@@ -519,7 +519,7 @@ int selPlayDispTitleDisp(int sel_stage, int sel_disp, int ovl_load) {
     }
 
     asm("sync.l");
-    FlushCache(0);
+    FlushCache(WRITEBACK_DCACHE);
 
     stdat_dat_pp = &stdat_rec[sel_stage].stdat_dat_pp[sel_disp];
 
@@ -869,6 +869,7 @@ void mainStart(void *xx) {
 
     cmnfTim2Trans();
     wipeSndFileTrans();
+
     CdctrlReadWait();
     printf("int read end\n");
 
@@ -906,19 +907,44 @@ void mainStart(void *xx) {
 
             retTitle = MenuCtrl(&menu_str);
 
-            if (pad[0].shot & 0x4 && pad[0].shot & 0x1) {
+            /*
+             * Cheat code: L1 + R1
+             *
+             * Skip cutscenes + Boxy Boy practice.
+             */
+            if (pad[0].shot & SCE_PADL1 &&
+                pad[0].shot & SCE_PADL2) {
                 urawaza_skip_bottun = 1;
             } else {
                 urawaza_skip_bottun = 0;
             }
 
-            if (pad[0].shot & 0x2 && pad[0].shot & 0x8 &&
+            /*
+             * Cheat code: L2 + R2
+             *
+             * Enable 'shuriken' mode.
+             */
+            if (pad[0].shot & SCE_PADR2 &&
+                pad[0].shot & SCE_PADR1 &&
                 game_status.play_modeG == PLAY_MODE_SINGLE) {
                 game_status.play_typeG = PLAY_TYPE_ONE;
             } else {
                 game_status.play_typeG = PLAY_TYPE_NORMAL;
             }
 
+            /*
+             * Cheat code: R3 + Right analog stick
+             *
+             * Change stage difficulty, can only be
+             * used given the following conditions:
+             *    - Singleplayer mode.
+             *    - 'Shuriken' mode is disabled.
+             *    - Max round/circuit (Yellow hat).
+             *    - Current stage is not a demo.
+             *
+             *    (TODO): Document:
+             *      - game_status.play_table_modeG != PLAY_TABLE_EASY
+             */
             if (game_status.play_modeG == PLAY_MODE_SINGLE &&
                 game_status.play_typeG == PLAY_TYPE_NORMAL &&
                 game_status.roundG >= TRND_R4 &&
