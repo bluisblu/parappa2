@@ -19,7 +19,6 @@ For any questions, we have a home at the [PS1/PS2 Decompilation Discord server](
 | `main` | ![progress](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/polybiusproxy/parappa2/main/progress/main_progress.json) | Gameplay code (score logic, loading screen, etc.)
 | `menu` | ![progress](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/polybiusproxy/parappa2/main/progress/menu_progress.json) | Menu code (UI flow, Memory Card saving, etc.)
 | `prlib` | ![progress](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/polybiusproxy/parappa2/main/progress/prlib_progress.json) | Game engine (rendering, models/animations, etc.)
-| `nalib` | ![progress](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/polybiusproxy/parappa2/main/progress/nalib_progress.json) | Game engine utilities (vectors, matrices, packets)
 | `src` | ![progress](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/polybiusproxy/parappa2/main/progress/total_progress.json) | Total percentage
 
 #### IOP modules
