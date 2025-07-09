@@ -25,9 +25,10 @@ void PrRenderStuff::Initialize(sceGsZbuf zbuf) {
      * avoid HW bug where these are triggered
      * with valid packets, causing stalls.
      *
-     * Though for VIF0 this bit is guaranteed
-     * to be set from the sceDevVif0Reset() call
-     * on InitSystem() (os/system.c).
+     * Though these are already guaranteed
+     * to be set from the sceDevVif0Reset()
+     * and sceGsResetPath() calls on
+     * InitSystem() (os/system.c).
      */
     *VIF0_ERR |= (1<<1);
     *VIF1_ERR |= (1<<1);

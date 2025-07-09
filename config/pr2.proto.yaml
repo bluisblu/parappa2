@@ -330,7 +330,7 @@ segments:
         #- [0x29a504, sdata] # main/sprite
         #- [0x29a514, sdata] # main/subt
         #- [0x29a518, sdata] # main/drawctrl
-        
+
         - [0x29a5d0, sdata, main/main]
         - [0x29a6e0, .sdata, main/p3str]
 
@@ -341,8 +341,9 @@ segments:
         - [0x29a890, sdata, menu/menufont]
         - [0x29a8a0, sdata, menu/pksprite]
 
-        - [0x29a8b8, sdata]
-        #- [0x29a8b8, sdata, prlib/gifreg]
+        #- [0x29a8b8, sdata]
+        - [0x29a8b8, .sdata, prlib/gifreg]
+        - [0x29a8bc, sdata]
         #- [0x29a8bc, sdata, prlib/model]
         #- [0x29a8c4, sdata, prlib/database]
         #- [0x29a8c8, sdata, prlib/renderstuff]
@@ -423,7 +424,7 @@ segments:
         - { start: 0x29aa1c, type: .bss,  vram: 0x01c828c0, name: iop_mdl/wp2cd_rpc    }
         - { start: 0x29aa1c, type: .bss,  vram: 0x01c82a00, name: iop_mdl/tapctrl_rpc  }
 
-        - { start: 0x29aa1c, type: bss,   vram: 0x01c82a70, name: prlib/gifreg         }
+        - { start: 0x29aa1c, type: .bss,  vram: 0x01c82a70, name: prlib/gifreg         }
         - { start: 0x29aa1c, type: bss,   vram: 0x01c83190, name: prlib/prlib          }
         - { start: 0x29aa1c, type: bss,   vram: 0x01c831b0, name: prlib/renderee       }
         - { start: 0x29aa1c, type: bss,   vram: 0x01c831c0, name: prlib/microprogram   }

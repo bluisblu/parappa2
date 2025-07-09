@@ -25,6 +25,11 @@ SECTIONS_TO_REALIGN_PER_TOOL: dict[str, dict[str, int]] = {
 }
 
 SPECIFIC_ALIGNMENTS: dict[str, dict[str, int]] = {
+    # .sdata
+    "29A8BC.sdata.s.o": { # prlib/model.cpp
+        ".sdata": 0x4,
+    },
+
     # .bss
     "pack.bss.s.o": {
         ".bss": 0x40,

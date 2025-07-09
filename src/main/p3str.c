@@ -27,8 +27,9 @@ void adrd_common_clr(void) {
     int i;
 
     for (i = 0; i < adrd_common_cnt; i++) {
-        if (adrd_common[i].ftype == 0)
+        if (adrd_common[i].ftype == AF_SPM) {
             adrd_common[i].handle = NULL;
+        }
     }
 }
 
@@ -216,7 +217,7 @@ int p3StrQuitSdEach(P3SRT_OD *p3o_pp, P3STR_SD *p3sd_pp) {
             continue;
         }
 
-        if (adrd_pp[i].ftype == 0 || adrd_pp[i].common < 0) {
+        if (adrd_pp[i].ftype == AF_SPM || adrd_pp[i].common < 0) {
             switch (adrd_pp[i].ftype) {
             case AF_SPM:
                 if (p3sd_pp->type == OD_SCENE) {

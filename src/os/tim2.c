@@ -188,7 +188,7 @@ int Tim2SetLoadImageC(TIM2INFO *info_pp, int col_pos, sceGsLoadImage *img_pp, in
 
     col_type = info_pp->picturH->ClutType & 0x1f;
 
-    if (col_type) {
+    if (col_type != 0) {
         dpsm = tim2ColorTypeTbl[col_type];
         w    = 8;
         h    = 2;

@@ -1402,12 +1402,25 @@ TsCELBackDraw                       = 0x00137790; // type:func
 _TsCELBackObjDraw                   = 0x00137930; // type:func
 TsHosiPut                           = 0x00137df0; // type:func
 
+MNS_StageMap                        = 0x0018cc38; // size:0x1154
+
 tblTex                              = 0x003997bc;
 D_00399800                          = 0x00399800; // type:asciz size:0x8
 HOSIObj                             = 0x00399824;
+UserWork                            = 0x00399b34;
+pCStageRank                         = 0x00399b38;
+UserLst                             = 0x00399b3c;
+UserDispWork                        = 0x00399b40;
 
 menuPadState                        = 0x01c77ac0; // size:0x20
 TsBGMState                          = 0x01c77c10; // size:0xa0
+MNS_StageMap2                       = 0x01c77cb0; // size:0x1154
+MNS_CityHall                        = 0x01c78e08; // size:0x1154
+MNS_OptCounter                      = 0x01c79f60; // size:0x1154
+MNS_RepCounter                      = 0x01c7b0b8; // size:0x1154
+MNS_StgCounter                      = 0x01c7c210; // size:0x22a8
+MNS_JimakuBak                       = 0x01c7e4b8; // size:0x1154
+CurFileInfo                         = 0x01c7f628; // size:0x18
 
 // menu/p3mc.c
 P3MC_GetIconSize                    = 0x00137f70; // type:func
@@ -1877,6 +1890,8 @@ PrWaitMfifo__Fv                                                                 
 PrSendMfifo__FPC10_sceDmaTag                                                        = 0x001484d0; // type:func
 PrMfifoUnsentDataSize__Fv                                                           = 0x00148568; // type:func
 
+mfifoBase                                                                           = 0x01c90000; // size:0x10000
+
 // prlib/spadata.cpp
 SearchSegment__C12SpaTrackBasef                                                     = 0x00148590; // type:func
 GetValue__Ct8SpaTrack1Zif                                                           = 0x001486d0; // type:func
@@ -2205,6 +2220,7 @@ sceMcSync                           = 0x00164518; // type:func
 sceMcGetInfo                        = 0x00164650; // type:func
 sceMcGetDir                         = 0x001647d8; // type:func
 sceMcChdir                          = 0x001649b8; // type:func
+sceMcFormat                         = 0x00164b08; // type:func
 sceMcDelete                         = 0x00164bd0; // type:func
 
 // ee/gcc/src/newlib/libm/math/sf_sin.c

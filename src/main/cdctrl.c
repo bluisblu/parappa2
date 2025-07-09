@@ -279,8 +279,7 @@ static int cdctrlReadSub(FILE_STR *fstr_pp, int ofs, int size, int buf) {
 
 #define PACK(x) ((PACKINT_FILE_STR*)x)
 
-void intReadSub(void)
-{
+void intReadSub(void) {
     int     read_pos;
     u_char *read_tmp_pp;
     u_char *head_read_pp;
@@ -334,8 +333,8 @@ void intReadSub(void)
             /* ...and decode it */
             FlushCache(WRITEBACK_DCACHE);
             PackIntDecodeWait(read_tmp_pp, (u_char*)UsrMemAllocNext(), 230);
-
             FlushCache(WRITEBACK_DCACHE);
+
             if (cdctrl_str.tmp_area == NULL) {
                 usrFree(read_tmp_pp);
             }
@@ -391,7 +390,7 @@ void intReadSub(void)
             PR_SCOPE
             int i;
 
-            if (GetHatRound() == PACK(head_read_pp)->ftype - 4) {
+            if (GetHatRound() == (PACK(head_read_pp)->ftype - 4)) {
                 printf("int file tim2 round:%d file in\n", PACK(head_read_pp)->ftype - 3);
 
                 for (i = 0; i < PACK(head_read_pp)->fnum; i++) {

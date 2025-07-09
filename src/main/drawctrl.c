@@ -2,6 +2,7 @@
 
 #include "dbug/vramsave.h"
 
+#include "os/cmngifpk.h"
 #include "os/mtc.h"
 #include "os/syssub.h"
 #include "os/system.h"

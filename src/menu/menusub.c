@@ -2,16 +2,26 @@
 
 #include "os/syssub.h"
 
+#include <malloc.h>
 #include <stdlib.h>
 #include <string.h>
 
-/* .sdata */
-extern TSTEX_INF *tblTex;
-extern HOSI_OBJ *HOSIObj;
-
-/* .bss */
-extern TSREPPAD menuPadState[2][4];
-extern BGMSTATE TsBGMState;
+/* sdata 3997bc */ extern TSTEX_INF *tblTex; /* static */
+/* sdata 399824 */ extern HOSI_OBJ *HOSIObj; /* static */
+/* bss 1c77ac0 */ extern TSREPPAD menuPadState[2][4]; /* static */
+/* bss 1c77c10 */ extern BGMSTATE TsBGMState; /* static */
+/* data 18cc38 */ extern MN_SCENE MNS_StageMap;
+/* bss 1c77cb0 */ extern MN_SCENE MNS_StageMap2; /* static */
+/* bss 1c78e08 */ extern MN_SCENE MNS_CityHall; /* static */
+/* bss 1c79f60 */ extern MN_SCENE MNS_OptCounter; /* static */
+/* bss 1c7b0b8 */ extern MN_SCENE MNS_RepCounter; /* static */
+/* bss 1c7c210 */ extern MN_SCENE MNS_StgCounter[2]; /* static */
+/* bss 1c7e4b8 */ extern MN_SCENE MNS_JimakuBak; /* static */
+/* sbss 399b34 */ extern USER_DATA *UserWork; /* static */
+/* sbss 399b38 */ extern P3MC_STAGERANK *pCStageRank; /* static */
+/* sbss 399b3c */ extern P3MC_USRLST *UserLst; /* static */
+/* sbss 399b40 */ extern MN_USERLST_WORK *UserDispWork; /* static */
+/* bss 1c7f628 */ extern CURFILEINFO CurFileInfo; /* static */
 
 static int TsGetMenuPadIsRepeat(int no, int npad) {
     return (menuPadState[no][npad].state < 2) ^ 1;
@@ -109,7 +119,37 @@ INCLUDE_ASM("menu/menusub", TsClearSet);
 
 INCLUDE_ASM("menu/menusub", TsCheckEnding);
 
-INCLUDE_ASM("menu/menusub", TsMENU_InitSystem);
+void TsMENU_InitSystem(void) {
+    int i;
+
+    P3MC_InitReady();
+    P3MC_CheckChangeSet();
+
+    memset(&MNS_JimakuBak, 0, sizeof(MNS_JimakuBak));
+    memset(&MNS_RepCounter, 0, sizeof(MNS_RepCounter));
+    memset(&MNS_OptCounter, 0, sizeof(MNS_OptCounter));
+    memset(&MNS_CityHall, 0, sizeof(MNS_CityHall));
+    memset(&MNS_StageMap, 0, sizeof(MNS_StageMap));
+    memset(&MNS_StageMap2, 0, sizeof(MNS_StageMap2));
+
+    for (i = 0; i < 2; i++) {
+        memset(&MNS_StgCounter[i], 0, sizeof(MNS_StgCounter[i]));
+    }
+
+    tblTex = NULL;
+    UserLst = NULL;
+    UserDispWork = NULL;
+
+    UserWork = (USER_DATA*)memalign(16, sizeof(USER_DATA));
+    memset(UserWork, 0, sizeof(USER_DATA));
+
+    pCStageRank = (P3MC_STAGERANK*)memalign(16, sizeof(P3MC_STAGERANK[8]));
+    memset(pCStageRank, 0, sizeof(P3MC_STAGERANK[8]));
+
+    memset(&CurFileInfo, 0, sizeof(CURFILEINFO));
+    CurFileInfo.logFileNo = -1;
+    CurFileInfo.repFileNo = -1;
+}
 
 INCLUDE_ASM("menu/menusub", TsMENU_EndSystem);
 

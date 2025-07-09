@@ -6,6 +6,9 @@
 #include <eetypes.h>
 #include <libmc.h>
 
+/* Memory card function types */
+#define MEMC_FUNC_GETINFO (11)
+
 typedef struct { // 0x340
     /* 0x000 */ u_int flag;
     /* 0x004 */ u_int stat;

@@ -70,7 +70,7 @@ typedef enum {
 typedef struct { // 0x10
     /* 0x0 */ u_int adrs;
     /* 0x4 */ u_int handle;
-    /* 0x8 */ u_int ftype;
+    /* 0x8 */ u_int ftype; /* Use with ADRD_FTYPE */
     /* 0xc */ int common;
 } ADRD;
 

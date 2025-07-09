@@ -118,12 +118,8 @@ INCLUDE_ASM("menu/p3mc", _P3MC_mainfile_chk);
 
 INCLUDE_ASM("menu/p3mc", _P3MC_file_chk);
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("menu/p3mc", P3MC_InitReady);
-#else
-int P3MC_InitReady(void)
-{
-    /* v1 3 */ int re;
+int P3MC_InitReady(void) {
+    int re;
 
     portCheckFlg = 0;
     FreeSizeFlg = 0;
@@ -143,22 +139,13 @@ int P3MC_InitReady(void)
     memc_port_info(0, &mcmenu_info);
 
     re = memc_manager(0);
-
-    if (re == 0x10 || re == 0x6)
-    {
+    if (re == 0x10 || re == 0x6 || re == 0x30) {
         P3MC_CheckChangeClear();
         return -1;
     }
 
-    if (re == 0x30)
-    {
-        P3MC_CheckChangeClear();
-        return -1;
-    }
-
-    return re;
+    return 0;
 }
-#endif
 
 INCLUDE_ASM("menu/p3mc", P3MC_GetSaveSize);
 

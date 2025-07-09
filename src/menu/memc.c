@@ -212,7 +212,7 @@ int memc_port_info(int port, MEMC_INFO *info) {
 
     re = sceMcGetInfo(pmw->port, pmw->slot, &pmw->type, &pmw->free, &pmw->format);
     if (re == sceMcResSucceed) {
-        pmw->func = 11;
+        pmw->func = MEMC_FUNC_GETINFO;
     }
     
     return re;
@@ -528,7 +528,7 @@ static int memc_mansub_GetInfo(int result) {
             if (result < 0) {
                 pmw->func = 0;
 
-                if (result != -2) {
+                if (result != sceMcResNoFormat) {
                     re = result;
                 } else {
                     re = -2000;
@@ -653,31 +653,68 @@ INCLUDE_ASM("menu/memc", memc_manager_save);
 
 INCLUDE_ASM("menu/memc", memc_manager_overwrite);
 
-#if 1
-INCLUDE_ASM("menu/memc", memc_manager_chk);
-/* static */ int memc_manager_chk(int mode);
-#else
-static int memc_manager_chk(int mode)
-{
-    /* s1 17 */ int re;
-    /* -0x40(sp) */ int result;
-    /* s0 16 */ MEMC_STAT *pmw;
+static int memc_manager_chk(int mode) {
+    int        re;
+    int        result;
+    MEMC_STAT *pmw;
 
     pmw = &memc_stat;
 
     re = sceMcSync(mode, 0, &result);
+    if (re == sceMcExecFinish) {
+        switch (pmw->func) {
+        case 3:
+            return memc_mansub_load(result);
 
-    if (re == sceMcExecFinish)
-    {
-        switch (memc_stat.func)
-        {
+        case 4:
+            return memc_manager_save(result);
+
         case 1:
-            if (result == -2)
-            {
+            if (result == -2) {
                 result = -2000;
             }
-
             return memc_mansub_ErrChk(result);
+
+        case 7:
+            switch (pmw->cmd) {
+            case 0xe:
+                if (result >= 0) {
+                    if (pmw->type != 2) {
+                        pmw->func = 0;
+                        return 2;
+                    }
+
+                    re = sceMcFormat(pmw->port, pmw->slot);
+                    if (re == 0) {
+                        pmw->cmd = 0x10;
+                        break;
+                    }
+
+                    pmw->func = 0;
+                    pmw->cmd = 0;
+                    return 1;
+                }
+
+                return memc_mansub_ErrChk(result);
+
+            case 0x10:
+                if (result >= 0) {
+                    pmw->func = 0;
+                    return 0;
+                }
+
+                pmw->retry++;
+                if (pmw->retry >= 30) {
+                    pmw->func = 0;
+                    return 1;
+                }
+
+                sceMcFormat(pmw->port, pmw->slot);
+                break;
+            }
+
+            break;
+
         case 2:
         case 6:
         case 8:
@@ -685,21 +722,31 @@ static int memc_manager_chk(int mode)
         case 10:
         case 12:
             return memc_mansub_ErrChk(result);
-        case 3:
-            return memc_mansub_load(result);
-        case 4:
-            return memc_manager_save(result);
-        case 7:
-            break;
+
+        case MEMC_FUNC_GETINFO:
+            return memc_mansub_GetInfo(result);
+
+        case 14:
+            return memc_manager_overwrite(result);
+
+        case 0:
+        case 5:
         default:
             pmw->func = 0;
             break;
+
+        case 13:
+            return 0x10;
         }
     }
 
-    return re;
+    if (re == sceMcExecIdle) {
+        pmw->func = 0;
+        return 0;
+    }
+
+    return 0x10;
 }
-#endif
 
 int memc_manager(int mode) {
     int re;
@@ -709,7 +756,7 @@ int memc_manager(int mode) {
     } else {
         do {
             re = memc_manager_chk(mode);
-        } while (re == 16);
+        } while (re == 0x10);
     }
 
     return re;

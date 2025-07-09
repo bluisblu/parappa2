@@ -5,6 +5,7 @@
 
 #include "menu/menu.h"
 #include "menu/menu_mdl.h"
+#include "menu/p3mc.h"
 #include "menu/pksprite.h"
 
 #include <eetypes.h>
@@ -70,6 +71,17 @@ typedef struct { // 0xa0
     /* 0x18 */ u_short ctim;
     /* 0x1c */ BGMONE wbgm[11];
 } BGMSTATE;
+
+typedef struct { // 0xc25a4
+    /* 0x00000 */ USER_DATA pUserDisp[81];
+} MN_USERLST_WORK;
+
+typedef struct { // 0x18
+    /* 0x00 */ int logFileNo;
+    /* 0x04 */ u_int logDate[2];
+    /* 0x0c */ int repFileNo;
+    /* 0x10 */ u_int repDate[2];
+} CURFILEINFO;
 
 typedef struct { // 0x8
     /* 0x0 */ u_char date_day;
