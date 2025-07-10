@@ -13,6 +13,8 @@
 extern /* static */ TIM2SETINFO tim2setinfo;
 extern sceGsStoreImage gs_simage;
 
+static u_int BekiDat(u_int size);
+
 static u_int BekiDat(u_int size) {
     u_int mot = 2;
     u_int i;

@@ -173,7 +173,7 @@ drawEnvZbuff                        = 0x003dac50; // size:0x80
 drawEnvEnd                          = 0x003dacd0; // size:0x80
 
 // os/cmngifpk.c
-CmnGifInit	                        = 0x00103850; // type:func
+CmnGifInit                          = 0x00103850; // type:func
 CmnGifClear                         = 0x00103890; // type:func
 CmnGifFlush                         = 0x001038d8; // type:func
 CmnGifSetData                       = 0x00103ab0; // type:func
@@ -1402,15 +1402,30 @@ TsCELBackDraw                       = 0x00137790; // type:func
 _TsCELBackObjDraw                   = 0x00137930; // type:func
 TsHosiPut                           = 0x00137df0; // type:func
 
+TexTable                            = 0x0018bb10; // size:0x1a0
 MNS_StageMap                        = 0x0018cc38; // size:0x1154
 
 tblTex                              = 0x003997bc;
+UserList_Sw                         = 0x003997c0;
+OptionList_Sw                       = 0x003997c4;
+PopMenu_Sw                          = 0x003997c8;
+SaveMenu_Sw                         = 0x003997cc;
+JukeMenu_Sw                         = 0x003997d0;
 D_00399800                          = 0x00399800; // type:asciz size:0x8
 HOSIObj                             = 0x00399824;
+state                               = 0x00399ac8;
+mesNo                               = 0x00399acc;
+_bMapCaptureReq                     = 0x00399b1c;
+pP3GameState                        = 0x00399b18;
+_MNwaitTime                         = 0x00399b20;
 UserWork                            = 0x00399b34;
 pCStageRank                         = 0x00399b38;
 UserLst                             = 0x00399b3c;
 UserDispWork                        = 0x00399b40;
+subStatus                           = 0x00399b4c;
+ret                                 = 0x00399b50;
+errorNo                             = 0x00399b54;
+waitTime                            = 0x00399b58;
 
 menuPadState                        = 0x01c77ac0; // size:0x20
 TsBGMState                          = 0x01c77c10; // size:0xa0
@@ -1421,6 +1436,8 @@ MNS_RepCounter                      = 0x01c7b0b8; // size:0x1154
 MNS_StgCounter                      = 0x01c7c210; // size:0x22a8
 MNS_JimakuBak                       = 0x01c7e4b8; // size:0x1154
 CurFileInfo                         = 0x01c7f628; // size:0x18
+MnPkt                               = 0x01c7f640; // size:0xa0
+MnLPkt                              = 0x01c7f6e0; // size:0xa0
 
 // menu/p3mc.c
 P3MC_GetIconSize                    = 0x00137f70; // type:func

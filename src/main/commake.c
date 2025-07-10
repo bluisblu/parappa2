@@ -4,20 +4,27 @@
 
 #include "main/scrctrl.h"
 
-void comMakingNo15(CM_STR_CTRL *cmstr_pp);
+static void setMakinDataMoto(TAPDAT *tapdat_pp, int size, CM_STR *cm_str_pp);
+static int  getMakingDataKeyKind(CM_STR *cm_str_pp);
+static void getMakingDataKeyCnt(CM_STR *cm_str_pp, int *dat_pp);
+static void setMakingDataCopy(CM_STR *saki_pp, CM_STR *moto_pp);
+static void setMakingDataCopyCnt(CM_STR *saki_pp, CM_STR *moto_pp, int cnt);
+static int  setMakingDataCOMMAKE_STR(COMMAKE_STR *com_pp, CM_STR *moto_pp);
+static int  getMakinKeyKind2KeyKindNum(int keyCode);
+static int  comMakeSSmaxCntGet(int *dat_pp);
+static int  comMakeSSminCntGet(int *dat_pp);
+static void comSelection(LEVEL_VS_ENUM lvl, CM_STR_CTRL *cmstr_pp);
 
 static void setMakinDataMoto(TAPDAT *tapdat_pp, int size, CM_STR *cm_str_pp) {
     int i;
     int time;
 
     for (i = 0; i < size; i++, tapdat_pp++) {
-        if (tapdat_pp->KeyIndex == 0 || tapdat_pp->time < 0) {
-            continue;
-        }
-
-        time = tapdat_pp->time / 24;
-        if (time < 32) {
-            cm_str_pp[time].keyId = tapdat_pp->KeyIndex;
+        if (tapdat_pp->KeyIndex != 0 && tapdat_pp->time >= 0) {
+            time = tapdat_pp->time / 24;
+            if (time < 32) {
+                cm_str_pp[time].keyId = tapdat_pp->KeyIndex;
+            }
         }
     }
 }
@@ -131,13 +138,11 @@ static int comMakeSSminCntGet(int *dat_pp) {
     ret    = 0;
 
     for (i = 1; i < 7; i++) {
-        if (dat_pp[i] == 0) {
-            continue;
-        }
-        
-        if (minCnt >= dat_pp[i]) {
-            minCnt = dat_pp[i];
-            ret = i;
+        if (dat_pp[i] != 0) {
+            if (minCnt >= dat_pp[i]) {
+                minCnt = dat_pp[i];
+                ret = i;
+            }
         }
     }
 
@@ -173,16 +178,14 @@ void comMakeSubChangeKey(CM_STR *cms_pp, int cnt, int motoKey, int sakiKey, int 
     yari_cnt = 0;
 
     for (i = 0; i < cnt; i++, cms_pp++) {
-        if (cms_pp->keyId == 0) {
-            continue;
-        }
+        if (cms_pp->keyId != 0) {
+            if (cms_pp->keyId == motoKey) {
+                cms_pp->keyId = sakiKey;
+                yari_cnt++;
 
-        if (cms_pp->keyId == motoKey) {
-            cms_pp->keyId = sakiKey;
-            yari_cnt++;
-
-            if (missCnt <= yari_cnt) {
-                break;
+                if (missCnt <= yari_cnt) {
+                    break;
+                }
             }
         }
     }
@@ -227,10 +230,7 @@ void comMakeSubDoubleKey(CM_STR *cms_pp, int cnt) {
     for (i = 0; i < cnt; i++, cms_pp++) {
         if (currentKey == 0) {
             currentKey = cms_pp->keyId;
-            continue;
-        }
-
-        if (cms_pp->keyId == 0) {
+        } else if (cms_pp->keyId == 0) {
             cms_pp->keyId = currentKey;
             currentKey = 0;
         } else {

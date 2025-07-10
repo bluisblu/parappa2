@@ -23,6 +23,8 @@ extern u_char MSGCOL[3];
 extern u_short MSGSIZE[2];
 extern u_int MSGZPOP;
 
+static void msgOutYY(u_char msg, u_short *uv_pp);
+
 void DbgMsgInit(void) {
     GetTim2Info(&msg8x8data, &tinfo, 1);
     Tim2Load(&tinfo, 0x3fef, 0x3fff);

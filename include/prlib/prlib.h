@@ -9,6 +9,7 @@ typedef void* PR_MODELHANDLE;
 typedef void* PR_ANIMATIONHANDLE;
 typedef void* PR_CAMERAHANDLE;
 typedef void* PR_SCENEHANDLE;
+typedef float PR_FRAME;
 
 /* model.cpp */
 void PrSetPostureWorkArea(u_int areaTop, int areaSize);

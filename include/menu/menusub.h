@@ -25,6 +25,11 @@ typedef struct { // 0x4
     /* 0x2 */ u_short time;
 } TSREPPAD;
 
+typedef struct { // 0x4
+    /* 0x0 */ short x;
+    /* 0x2 */ short y;
+} PTPOS;
+
 typedef struct { // 0xc
     /* 0x0 */ int texNo;
     /* 0x4 */ short x;
@@ -32,6 +37,11 @@ typedef struct { // 0xc
     /* 0x8 */ short w;
     /* 0xa */ short h;
 } PATPOS;
+
+typedef struct { // 0x4
+    /* 0x0 */ u_short fno;
+    /* 0x2 */ u_short flg;
+} TSTEX_TBL;
 
 typedef struct { // 0x18
     /* 0x00 */ u_long tex0;
@@ -154,6 +164,112 @@ typedef struct { // 0x118
     /* 0x110 */ int nRankMax;
     /* 0x114 */ int rsline;
 } POPUP_MENU;
+
+typedef struct { // 0x44
+    /* 0x00 */ short patNo;
+    /* 0x02 */ short bMsk;
+    /* 0x04 */ PTPOS *patPos;
+    /* 0x08 */ int state;
+    /* 0x0c */ int time;
+    /* 0x10 */ int anime;
+    /* 0x14 */ int atime;
+    /* 0x18 */ int innm;
+    /* 0x1c */ int innm2;
+    /* 0x20 */ int dir;
+    /* 0x24 */ int dir2;
+    /* 0x28 */ float ox;
+    /* 0x2c */ float oy;
+    /* 0x30 */ float rot;
+    /* 0x34 */ float rox;
+    /* 0x38 */ float roy;
+    /* 0x3c */ float rrot;
+    /* 0x40 */ float vrate;
+} JUKECDOBJ;
+
+typedef struct { // 0xc
+    /* 0x0 */ int mapNo;
+    /* 0x4 */ short anmNo;
+    /* 0x6 */ short anmLtim;
+    /* 0x8 */ int exflg;
+} MNMAP_DIR;
+
+typedef struct { // 0x40
+    /* 0x00 */ int cmpmes;
+    /* 0x04 */ int posanm0;
+    /* 0x08 */ int posanm1;
+    /* 0x0c */ int movanm1;
+    /* 0x10 */ MNMAP_DIR mapdir[4];
+} MNMAPPOS;
+
+typedef struct { // 0x34
+    /* 0x00 */ int state;
+    /* 0x04 */ int curPos;
+    /* 0x08 */ int lmtPos;
+    /* 0x0c */ int anmLtim;
+    /* 0x10 */ int bMove;
+    /* 0x14 */ int anmBit;
+    /* 0x18 */ int anmtrg;
+    /* 0x1c */ int sndtrg;
+    /* 0x20 */ int anmStop;
+    /* 0x24 */ int mvFlag;
+    /* 0x28 */ MNMAPPOS *mnmap;
+    /* 0x2c */ MN_SCENE *pscene;
+    /* 0x30 */ MNANM_TBL *panime;
+} MAPPOS;
+
+typedef struct { // 0x8
+    /* 0x0 */ u_short state;
+    /* 0x2 */ short flg;
+    /* 0x4 */ u_short tim;
+    /* 0x6 */ u_short ton;
+} CELLOBJ;
+
+typedef struct { // 0xc
+    /* 0x0 */ int nType;
+    /* 0x4 */ int typeNo[2];
+} USERLISTTYPE_TABLE;
+
+typedef struct { // 0x44
+    /* 0x00 */ int state;
+    /* 0x04 */ int isOn;
+    /* 0x08 */ short dispType;
+    /* 0x0a */ short isCan;
+    /* 0x0c */ int curnpos;
+    /* 0x10 */ int curchrmode;
+    /* 0x14 */ ANIME_WK awork;
+    /* 0x28 */ int nameMsk;
+    /* 0x2c */ int onTime;
+    /* 0x30 */ char *desname;
+    /* 0x34 */ u_short curnchr[8];
+} NAMEINW;
+
+typedef struct { // 0x118
+    /* 0x000 */ int state;
+    /* 0x004 */ int exitflg;
+    /* 0x008 */ USERLISTTYPE_TABLE *ptypttbl;
+    /* 0x00c */ MN_SCENE *scene;
+    /* 0x010 */ int nTag;
+    /* 0x014 */ int dataMode;
+    /* 0x018 */ int dispColor;
+    /* 0x01c */ int isSave;
+    /* 0x020 */ int *cmpMesTbl;
+    /* 0x024 */ int gameMode;
+    /* 0x028 */ int isNameIn;
+    /* 0x02c */ int mcerrNo;
+    /* 0x030 */ int mcRetTag;
+    /* 0x034 */ int curuser;
+    /* 0x038 */ int curPageTop;
+    /* 0x03c */ int wtim;
+    /* 0x040 */ int userMax;
+    /* 0x044 */ int curFileNo;
+    /* 0x048 */ u_int curFileDate[2];
+    /* 0x050 */ NAMEINW nameinw[2];
+    /* 0x0d8 */ CELLOBJ cellcs[6];
+    /* 0x108 */ float sline;
+    /* 0x10c */ USER_DATA *wuser;
+    /* 0x110 */ P3MC_USRLST *pusrlst;
+    /* 0x114 */ MN_USERLST_WORK *pusrdspWk;
+} USERLIST_MENU;
 
 void TsBGMChangePos(int no);
 

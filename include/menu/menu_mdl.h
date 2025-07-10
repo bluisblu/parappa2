@@ -104,4 +104,31 @@ int MNScene_isAnimeBank(MN_SCENE *pshdl, int ltim, u_int bnk);
 int MNScene_isSeniAnime(MN_SCENE *pshdl);
 int MNScene_ModelDispSw(MN_SCENE *pshdl, int nmdl, int bsw);
 
+/* sdata 399700 */ extern MN_SCENETBL Scene_StageMap;
+// /* sdata 399708 */ MN_SCENETBL Scene_StageMapA;
+// /* sdata 399710 */ MN_SCENETBL Scene_StageMapY;
+// /* data 189628 */ MNANM_TBL StageMapAnime[0];
+// /* data 1898e8 */ MNANM_TBL StageMapAnimeBB[0];
+// /* data 189ee8 */ MNANM_TBL *StageMapCWptr[0];
+// /* data 189f08 */ MNANM_TBL StageMapAnimeSEA[0];
+// /* data 189f48 */ MNANM_TBL StageMapAnimeBK[0];
+// /* data 189fa8 */ MNANM_TBL StageMapAnimePA[0];
+// /* data 18a408 */ MNANM_TBL StageMapBGMCamera[0];
+// /* data 18a548 */ MN_MDLTBL Mdl_CityHall[0];
+// /* data 18a678 */ int Cam_CityHall[0];
+/* sdata 399718 */ extern MN_SCENETBL Scene_CityHall;
+// /* data 18a690 */ MNANM_TBL CityHallAnime[0];
+// /* data 18aa30 */ int Cam_Notdef[0];
+// /* data 18aa38 */ MN_MDLTBL Mdl_OptCounter[0];
+/* sdata 399720 */ extern MN_SCENETBL Scene_OptCounter;
+// /* data 18aab0 */ MN_MDLTBL Mdl_RepCounter[0];
+/* sdata 399728 */ extern MN_SCENETBL Scene_RepCounter;
+// /* data 18ac58 */ MN_MDLTBL Mdl_StgCounterLoad[0];
+/* sdata 399730 */ extern MN_SCENETBL Scene_StgCounterLoad;
+// /* data 18ae00 */ MN_MDLTBL Mdl_StgCounterSave[0];
+/* sdata 399738 */ extern MN_SCENETBL Scene_StgCounterSave;
+// /* data 18afa8 */ MNANM_TBL CounterAnime[0];
+// /* data 18b068 */ MN_MDLTBL Mdl_JimakuBak[0];
+/* sdata 399740 */ extern MN_SCENETBL Scene_JimakuBak;
+
 #endif /* MENU_MDL_H */

@@ -310,11 +310,6 @@ typedef struct { // 0x66c
     /* 0x668 */ int otehon_all;
 } EXAM_CHECK;
 
-typedef struct { // 0x8
-    /* 0x0 */ int time;
-    /* 0x4 */ short KeyIndex;
-} COMMAKE_STR;
-
 typedef struct { // 0x18
     /* 0x00 */ int bank[2];
     /* 0x08 */ SNDREC *sndrec_pp[2];

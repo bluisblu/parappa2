@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 32.85209,
+    "fuzzy_match_percent": 33.253742,
     "total_code": "342584",
-    "matched_code": "110456",
-    "matched_code_percent": 32.24202,
+    "matched_code": "111832",
+    "matched_code_percent": 32.643673,
     "total_data": "222704",
     "matched_data": "122840",
     "matched_data_percent": 55.158417,
     "total_functions": 1432,
-    "matched_functions": 751,
-    "matched_functions_percent": 52.444138,
+    "matched_functions": 756,
+    "matched_functions_percent": 52.793293,
     "total_units": 70
   },
   "units": [
@@ -6517,14 +6517,14 @@
     {
       "name": "menu/menusub",
       "measures": {
-        "fuzzy_match_percent": 1.511609,
+        "fuzzy_match_percent": 3.2407155,
         "total_code": "73564",
-        "matched_code": "1112",
-        "matched_code_percent": 1.511609,
+        "matched_code": "2384",
+        "matched_code_percent": 3.2407157,
         "total_data": "624",
         "total_functions": 165,
-        "matched_functions": 11,
-        "matched_functions_percent": 6.666667,
+        "matched_functions": 15,
+        "matched_functions_percent": 9.090909,
         "total_units": 1
       },
       "sections": [
@@ -6547,7 +6547,7 @@
         {
           "name": ".text",
           "size": "73904",
-          "fuzzy_match_percent": 1.511609,
+          "fuzzy_match_percent": 3.2407155,
           "metadata": {}
         }
       ],
@@ -6806,12 +6806,14 @@
         {
           "name": "TsMenu_RankingClear",
           "size": "72",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "7576"
         },
         {
           "name": "TsMenu_Init",
           "size": "824",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "7648"
         },
@@ -6910,6 +6912,7 @@
         {
           "name": "TsMemCardCheck_Flow",
           "size": "356",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "13984"
         },
@@ -7000,6 +7003,7 @@
         {
           "name": "McInitFlow",
           "size": "20",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "27320"
         },
@@ -7563,14 +7567,14 @@
     {
       "name": "menu/p3mc",
       "measures": {
-        "fuzzy_match_percent": 11.9494705,
+        "fuzzy_match_percent": 12.837146,
         "total_code": "11716",
-        "matched_code": "1400",
-        "matched_code_percent": 11.9494705,
+        "matched_code": "1504",
+        "matched_code_percent": 12.837146,
         "total_data": "1232",
         "total_functions": 45,
-        "matched_functions": 16,
-        "matched_functions_percent": 35.555557,
+        "matched_functions": 17,
+        "matched_functions_percent": 37.77778,
         "total_units": 1
       },
       "sections": [
@@ -7593,7 +7597,7 @@
         {
           "name": ".text",
           "size": "11792",
-          "fuzzy_match_percent": 11.9494705,
+          "fuzzy_match_percent": 12.837146,
           "metadata": {}
         }
       ],
@@ -7676,6 +7680,7 @@
         {
           "name": "P3MC_SetCheckSaveSize",
           "size": "104",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "2744"
         },
@@ -12688,16 +12693,16 @@
     {
       "id": "menu",
       "measures": {
-        "fuzzy_match_percent": 18.304426,
+        "fuzzy_match_percent": 19.502491,
         "total_code": "114852",
-        "matched_code": "19776",
-        "matched_code_percent": 17.218681,
+        "matched_code": "21152",
+        "matched_code_percent": 18.416744,
         "total_data": "11048",
         "matched_data": "9028",
         "matched_data_percent": 81.71615,
         "total_functions": 374,
-        "matched_functions": 157,
-        "matched_functions_percent": 41.97861,
+        "matched_functions": 162,
+        "matched_functions_percent": 43.31551,
         "total_units": 9
       }
     },

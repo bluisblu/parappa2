@@ -37,6 +37,7 @@ extern u_char McReplayFileFlg[80];
 
 static int   P3MC_GetIconSize(int mode);
 /* static */ char* _P3MC_GetFilePath(int mode, int fileNo);
+/* static */ int _P3MC_GetSaveDataSize(int dsize);
 static void  _P3MC_dataCheckFunc(P3MC_WORK *pw, P3MCDataCheckFunc funcp);
 static int   _P3MC_CheckUserData(P3MC_WORK *pw);
 static int   _P3MC_CheckUserDataHead(P3MC_WORK *pw);
@@ -149,7 +150,19 @@ int P3MC_InitReady(void) {
 
 INCLUDE_ASM("menu/p3mc", P3MC_GetSaveSize);
 
-INCLUDE_ASM("menu/p3mc", P3MC_SetCheckSaveSize);
+void P3MC_SetCheckSaveSize(int mode, int fsize, int csize) {
+    int asize = _P3MC_GetSaveDataSize(csize);
+
+    switch (mode) {
+    case 1:
+        NeedSize[0] = fsize;
+        UChkSize[0] = asize;
+        break;
+    case 2:
+        NeedSize[1] = fsize;
+        UChkSize[1] = asize;
+    }
+}
 
 INCLUDE_ASM("menu/p3mc", _P3MC_freesize_chk);
 

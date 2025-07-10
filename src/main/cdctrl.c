@@ -34,6 +34,12 @@ extern unsigned char RBuff[N + F - 1]; /* Ring buffer for INT decompression */
 #define lzss_read()   *(fp_r)++;
 #define lzss_write(x) *(fp_w)++ = (x);
 
+#define PACK(x) ((PACKINT_FILE_STR*)x)
+
+static int cdctrlReadSub(FILE_STR *fstr_pp, int ofs, int size, int buf);
+static void cdctrlReadDataOne(void *x);
+static void cdctrlSndFadeOut(void *x);
+
 u_int PackIntGetDecodeSize(u_char *fp_r) {
     return *(u_int*)fp_r;
 }
@@ -276,8 +282,6 @@ static int cdctrlReadSub(FILE_STR *fstr_pp, int ofs, int size, int buf) {
 
     return 0;
 }
-
-#define PACK(x) ((PACKINT_FILE_STR*)x)
 
 void intReadSub(void) {
     int     read_pos;
