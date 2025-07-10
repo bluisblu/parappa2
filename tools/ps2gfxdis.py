@@ -92,15 +92,15 @@ def disassemble_null(data, name):
     return f"Unimplemented register {name}"
 
 def disassemble_prim(data, name):
-    PRIM = (data >> 0 ) & 0b111
-    IIP  = (data >> 3 ) & 0b1
-    TME  = (data >> 4 ) & 0b1
-    FGE  = (data >> 5 ) & 0b1
-    ABE  = (data >> 6 ) & 0b1
-    AA1  = (data >> 7 ) & 0b1
-    FST  = (data >> 8 ) & 0b1
-    CTXT = (data >> 9 ) & 0b1
-    FIX  = (data >> 10) & 0b1
+    PRIM = (data >> 0 ) & 0x7
+    IIP  = (data >> 3 ) & 0x1
+    TME  = (data >> 4 ) & 0x1
+    FGE  = (data >> 5 ) & 0x1
+    ABE  = (data >> 6 ) & 0x1
+    AA1  = (data >> 7 ) & 0x1
+    FST  = (data >> 8 ) & 0x1
+    CTXT = (data >> 9 ) & 0x1
+    FIX  = (data >> 10) & 0x1
 
     return format_macro(name, PRIM, IIP, TME, FGE, ABE, AA1, FST, CTXT, FIX)
 
@@ -111,14 +111,13 @@ def disassemble_rgbaq(data, name):
     A = (data >> 24) & 255
     Q = (data >> 32) & 0xffffffff
 
-    # TODO: Add option to display Q as a float
-    # q_bits = (data >> 32) & 0xFFFFFFFF
-    # Q = struct.unpack('f', struct.pack('I', q_bits))[0]
-
     if Q == 0:
         Q_str = '0'
     else:
-        Q_str = f"0x{Q:08x}'"
+        Q_str = f"0x{Q:08x}"
+    
+    # TODO: Add option to display Q as a float
+    # Q_str = struct.unpack('f', struct.pack('I', Q))[0]
 
     return format_macro(name, R, G, B, A, Q_str)
 
@@ -151,12 +150,12 @@ def disassemble_tex0(data, name):
                         CBP, CPSM, CSM, CSA, CLD)
 
 def disassemble_tex1(data, name):
-    LCM  = (data >> 0 ) & 0b1
-    MXL  = (data >> 2 ) & 0b111
-    MMAG = (data >> 5 ) & 0b1
-    MMIN = (data >> 6 ) & 0b111
-    MTBA = (data >> 9 ) & 0b1
-    L    = (data >> 19) & 0b11
+    LCM  = (data >> 0 ) & 0x1
+    MXL  = (data >> 2 ) & 0x7
+    MMAG = (data >> 5 ) & 0x1
+    MMIN = (data >> 6 ) & 0x7
+    MTBA = (data >> 9 ) & 0x1
+    L    = (data >> 19) & 0x3
     K    = (data >> 32) & 0xfff
 
     return format_macro(name, LCM, MXL, MMAG, MMIN, MTBA, L, K)
@@ -188,16 +187,28 @@ def disassemble_alpha(data, name):
     return format_macro(name, A, B, C, D, FIX)
 
 def disassemble_test(data, name):
-    ATE   = (data >> 0 ) & 0b1
-    ATST  = (data >> 1 ) & 0b111
+    ATE   = (data >> 0 ) & 0x1
+    ATST  = (data >> 1 ) & 0x111
     AREF  = (data >> 4 ) & 0xff
-    AFAIL = (data >> 12) & 0b11
-    DATE  = (data >> 14) & 0b1
-    DATM  = (data >> 15) & 0b1
-    ZTE   = (data >> 16) & 0b1
-    ZTST  = (data >> 17) & 0b11
+    AFAIL = (data >> 12) & 0x11
+    DATE  = (data >> 14) & 0x1
+    DATM  = (data >> 15) & 0x1
+    ZTE   = (data >> 16) & 0x1
+    ZTST  = (data >> 17) & 0x11
 
     return format_macro(name, ATE, ATST, AREF, AFAIL, DATE, DATM, ZTE, ZTST)
+
+def disassemble_fba(data, name):
+    FBA = (data >> 0) & 0x1
+
+    return format_macro(name, FBA)
+
+def disassemble_zbuf(data, name):
+    ZBP  = (data >> 0 ) & 0x1ff
+    PSM  = (data >> 24) & 0xf
+    ZMSK = (data >> 32) & 1
+
+    return format_macro(name, ZBP, PSM, ZMSK)
     
 DISASSEMBLY_FUNCTIONS = {
     # Vertex info
@@ -245,14 +256,14 @@ DISASSEMBLY_FUNCTIONS = {
     'TEST_1':     lambda data: disassemble_test(data, 'TEST_1'),
     'TEST_2':     lambda data: disassemble_test(data, 'TEST_2'),
     'PABE':       lambda data: disassemble_null(data, 'PABE'),
-    'FBA_1':      lambda data: disassemble_null(data, 'FBA_1'),
-    'FBA_2':      lambda data: disassemble_null(data, 'FBA_2'),
+    'FBA_1':      lambda data: disassemble_fba(data, 'FBA_1'),
+    'FBA_2':      lambda data: disassemble_fba(data, 'FBA_2'),
 
     # Buffer
     'FRAME_1':    lambda data: disassemble_null(data, 'FRAME_1'),
     'FRAME_2':    lambda data: disassemble_null(data, 'FRAME_2'),
-    'ZBUF_1':     lambda data: disassemble_null(data, 'ZBUF_1'),
-    'ZBUF_2':     lambda data: disassemble_null(data, 'ZBUF_2'),
+    'ZBUF_1':     lambda data: disassemble_zbuf(data, 'ZBUF_1'),
+    'ZBUF_2':     lambda data: disassemble_zbuf(data, 'ZBUF_2'),
 
     # Inter-buffer transfer
     'BITBLTBUF':  lambda data: disassemble_null(data, 'BITBLTBUF'),
