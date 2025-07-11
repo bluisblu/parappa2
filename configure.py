@@ -449,8 +449,8 @@ def build_objdiff_objects():
         subprocess.run(command, shell=True)
 
 # clangd is stupid and cries about everything
-def fix_compile_commands(path_compile_commands="compile_commands.json", temp_dir="build/tmp"):
-    with open(path_compile_commands, "r") as f:
+def fix_compile_commands():
+    with open("compile_commands.json", "r") as f:
         data = json.load(f)
     
     fix_eucjp_entry = False
@@ -489,7 +489,7 @@ def fix_compile_commands(path_compile_commands="compile_commands.json", temp_dir
         if file_path.suffix == ".s":
             data.remove(entry)
 
-    with open(path_compile_commands, "w") as f:
+    with open("compile_commands.json", "w") as f:
         json.dump(data, f, indent=2)
 
 if __name__ == "__main__":
