@@ -1,6 +1,7 @@
 #include "menu/pksprite.h"
 
 #include <malloc.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -84,81 +85,49 @@ void TsEndUPacket(TsUSERPKT *pk) {
 }
 
 /* EUC-JP string: "★パケットSizeOver!!(User)(%x/%x)\n" */
-#if 1
-INCLUDE_ASM("menu/pksprite", TsDrawUPacket);
-#else
-void TsDrawUPacket(/* s1 17 */ TsUSERPKT *up)
-{
-    /*
-        up:P397
-        pk:r398=*375
-        qwc:r22
-        PktChan:r399=*252
-        -------
-        tp:r255
-        top:r22
-        ------
-        qwc:r1
-        addr:r29
-        ------
-        addr:r29
-    */
+void TsDrawUPacket(TsUSERPKT *up) {
+    TSPAKET *pk;
+    u_int qwc;
+    sceDmaChan *PktChan;
+    sceDmaTag *tp;
+    u_int top;
 
-    /* s2 */ TSPAKET *pk = &up->pkt[up->idx];
-    /* s0 */ u_int    qwc = (up->ptop & ~0x20000000) - pk->PaketTop;
-    /* s0 */ sceDmaChan *PktChan;
-    /* a3 7 */ sceDmaTag *tp;
-    /* a1 5 */ u_int top;
-    /* s0 16 */ //int qwc;
-    /* a1 5 */ //void *addr;
-    /* a1 5 */ //void *addr;
+    pk  = &up->pkt[up->idx];
+    qwc = ((up->ptop & ~0x20000000) - pk->PaketTop) / 16;
 
-    if (qwc != 0)
-    {
-        if (qwc > up->size)
-        {
-            printf("★パケットSizeOver!!(User)(%x/%x)\n", qwc);
-        }
-        //else
-        {
-            top = pk->PaketTop;
-            tp  = &pk->tag[0];
-
-            if (qwc < 0xfff0)
-            {
-                void* addr = sceDmaAddRef(&tp, qwc, &top);
-            }
-            else
-            {
-                // int qwc;
-                void *addr;
-
-                while (qwc >= 0xfff0)
-                {
-                    addr = sceDmaAddRef(&tp, 0xfff0, &top);
-                    qwc -= 0xfff0;
-
-                    top += 0xfff0;
-                }
-
-                addr = sceDmaAddRef(&tp, qwc, &top);
-            }
-
-            sceDmaAddEnd(&tp, 0, NULL);
-
-            up->idx  = 1 - up->idx;
-            up->btop = up->pkt[1 - up->idx].PaketTop | 0x20000000;
-            up->ptop = up->pkt[1 - up->idx].PaketTop | 0x20000000;
-
-            PktChan = sceDmaGetChan(SCE_DMA_GIF);
-            FlushCache(WRITEBACK_DCACHE);
-
-            sceDmaSync(PktChan, 0, 0);
-            sceDmaSend(PktChan, pk);
-        }
+    if (qwc == 0) {
+        return;
     }
+
+    if (qwc > up->size) {
+        printf("★パケットSizeOver!!(User)(%x/%x)\n", qwc, up->size);
+    }
+    
+    tp  = &pk->tag[0];
+    top = pk->PaketTop;
+
+    while (1) {
+        if (qwc < 0xfff0) {
+            sceDmaAddRef(&tp, qwc, (void*)top);
+            break;
+        }
+
+        sceDmaAddRef(&tp, 0xfff0, (void*)top);
+        qwc -= 0xfff0;
+        top += (0xfff0 * 16);
+    }
+
+    sceDmaAddEnd(&tp, 0, NULL);
+
+    up->idx  = 1 - up->idx;
+    up->btop = up->ptop = up->pkt[up->idx].PaketTop | 0x20000000;
+
+    PktChan = sceDmaGetChan(SCE_DMA_GIF);
+    FlushCache(0);
+
+    sceDmaSync(PktChan, 0, 0);
+    sceDmaSend(PktChan, pk);
 }
-#endif
 
 void PkTEX0_Add(SPR_PKT pkt, u_long texreg) {
     qword *pk = (qword*)*pkt;

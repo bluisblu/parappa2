@@ -33,8 +33,8 @@ PRE_ELF_PATH = f"build/{BASENAME}.elf"
 COMMON_INCLUDES = "-Iinclude -Isrc -Iinclude/sdk -Iinclude/sdk/ee -Iinclude/gcc -Iinclude/gcc/gcc-lib"
 COMPILER_DIR = f"{TOOLS_DIR}/cc/ee-gcc2.96/bin"
 
-COMPILER_FLAGS = "-O2 -G8 -gstabs"
-COMPILER_FLAGS_CPP = "-O2 -G8 -gstabs -x c++ -fno-exceptions -fno-strict-aliasing"
+COMPILER_FLAGS = "-O2 -G8 -g"
+COMPILER_FLAGS_CPP = "-O2 -G8 -g -x c++ -fno-exceptions -fno-strict-aliasing"
 
 COMPILE_CMD = f"{COMPILER_DIR}/ee-gcc -c {COMMON_INCLUDES} {COMPILER_FLAGS}"
 COMPILE_CMD_CPP = f"{COMPILER_DIR}/ee-gcc -c {COMMON_INCLUDES} {COMPILER_FLAGS_CPP}"
@@ -142,6 +142,12 @@ compiler_type = "gcc"
 """
         )
 
+# Files that have EUC-JP strings
+# and have to be converted.
+EUCJP_FILES = {
+    Path("src/menu/pksprite.c"),
+}
+
 def build_stuff(linker_entries: List[LinkerEntry]):
     built_objects: Set[Path] = set()
 
@@ -173,6 +179,12 @@ def build_stuff(linker_entries: List[LinkerEntry]):
     # Rules
     cross = "mips-linux-gnu-"
     ld_args = "-EL -T config/pr2_proto_vu_syms.txt -T config/undefined_syms_auto.txt -T config/undefined_funcs_auto.txt -T config/undefined_syms.txt -Map $mapfile -T $in -o $out"
+
+    ninja.rule(
+        "conv_eucjp",
+        description="conv_eucjp $in",
+        command="iconv -f=UTF-8 -t=EUC-JP $in > $out",
+    )
 
     ninja.rule(
         "as",
@@ -226,7 +238,19 @@ def build_stuff(linker_entries: List[LinkerEntry]):
         elif isinstance(seg, splat.segtypes.common.cpp.CommonSegCpp):
             build(entry.object_path, entry.src_paths, "cpp")
         elif isinstance(seg, splat.segtypes.common.c.CommonSegC):
-            build(entry.object_path, entry.src_paths, "cc")
+            src = entry.src_paths[0]
+            if src in EUCJP_FILES:
+                tmp_eucjp = Path("build/tmp") / src.name.replace(".c", "_eucjp.c")
+                os.makedirs(tmp_eucjp.parent, exist_ok=True)
+
+                ninja.build(
+                    outputs=str(tmp_eucjp),
+                    rule="conv_eucjp",
+                    inputs=str(src),
+                )
+                build(entry.object_path, [tmp_eucjp], "cc")
+            else:
+                build(entry.object_path, entry.src_paths, "cc")
         elif isinstance(seg, splat.segtypes.common.databin.CommonSegDatabin) or isinstance(seg, splat.segtypes.common.rodatabin.CommonSegRodatabin):
             build(entry.object_path, entry.src_paths, "as")
         else:
@@ -424,6 +448,50 @@ def build_objdiff_objects():
 
         subprocess.run(command, shell=True)
 
+# clangd is stupid and cries about everything
+def fix_compile_commands(path_compile_commands="compile_commands.json", temp_dir="build/tmp"):
+    with open(path_compile_commands, "r") as f:
+        data = json.load(f)
+    
+    fix_eucjp_entry = False
+    eucjp_og_file = Path("")
+
+    for entry in data[:]:
+        file_path = Path(entry["file"])
+
+        # The original files we convert to EUC-JP won't be seen by clangd
+        # or any tools that rely on `compile_commands.json` so let's replace those.
+        if file_path in EUCJP_FILES:
+            print(f"Found EUC-JP convert entry: file:{file_path}")
+
+            # We want to remove the entry that does the EUC-JP convert
+            # and fix the next one to refer to the original file rather
+            # than the converted one.
+            fix_eucjp_entry = True
+            eucjp_og_file = file_path
+            data.remove(entry)
+            continue
+        # We assume that the entry that uses the converted file
+        # is right next to the one converting the file itself.
+        elif fix_eucjp_entry == True:
+            print(f"Found EUC-JP compile entry: file:{file_path}, og_file:{eucjp_og_file}")
+            converted_tmp = Path("build/tmp") / (eucjp_og_file.stem + "_eucjp.c")
+
+            entry["file"] = str(eucjp_og_file)
+            entry["command"] = entry["command"].replace(str(converted_tmp), str(eucjp_og_file))
+
+            fix_eucjp_entry = False
+        
+        # Remove stuff that clangd complains about.
+        if file_path.suffix == ".c" or file_path.suffix == ".cpp":
+            entry["command"] = entry["command"].replace(" -G8", "")
+            entry["command"] = entry["command"].split(" && mips-linux-gnu-strip")[0].strip()
+        if file_path.suffix == ".s":
+            data.remove(entry)
+
+    with open(path_compile_commands, "w") as f:
+        json.dump(data, f, indent=2)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Configure the project")
     parser.add_argument(
@@ -488,6 +556,7 @@ if __name__ == "__main__":
             print("warning: Not a clean build. Skipping EUC-JP conversion.")
 
     exec_shell(["ninja", "-t", "compdb"], open("compile_commands.json", "w"))
+    fix_compile_commands()
 
     if args.objdiff:
         generate_objdiff_configuration(split.config)

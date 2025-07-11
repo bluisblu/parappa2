@@ -4,7 +4,7 @@
 #include "common.h"
 
 #include <eetypes.h>
-
+#include <eestruct.h>
 #include <libdma.h>
 #include <libgraph.h>
 #include <libvu0.h>
