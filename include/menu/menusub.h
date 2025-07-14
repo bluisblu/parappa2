@@ -58,6 +58,29 @@ typedef struct { // 0xc
     /* 0x8 */ int lpTime;
 } MAPBGM;
 
+typedef struct { // 0x8
+    /* 0x0 */ u_short chanNo;
+    /* 0x2 */ u_short vsetNo;
+    /* 0x4 */ u_short ontim;
+    /* 0x6 */ u_short offtim;
+} TSVOICE_TBL;
+
+typedef struct { // 0x14
+    /* 0x00 */ TSVOICE_TBL *pTap;
+    /* 0x04 */ u_short isOn;
+    /* 0x06 */ u_short tim;
+    /* 0x08 */ u_short bMsk;
+    /* 0x0a */ u_short isSeq;
+    /* 0x0c */ u_short sqIdx;
+    /* 0x0e */ u_short pad;
+    /* 0x10 */ u_short *pSeq;
+} TSSND_CHAN;
+
+typedef struct { // 0x8
+    /* 0x0 */ int mesNo;
+    /* 0x4 */ int dataNo;
+} MCDATA_TBL;
+
 typedef struct { // 0xc
     /* 0x0 */ u_short vol;
     /* 0x2 */ short bPause;
@@ -270,6 +293,44 @@ typedef struct { // 0x118
     /* 0x110 */ P3MC_USRLST *pusrlst;
     /* 0x114 */ MN_USERLST_WORK *pusrdspWk;
 } USERLIST_MENU;
+
+typedef struct { // 0x14
+    /* 0x00 */ int state;
+    /* 0x04 */ int ton;
+    /* 0x08 */ int prio;
+    /* 0x0c */ int ttim;
+    /* 0x10 */ int ttim0;
+} SCFADE;
+
+typedef struct { // 0x34
+    /* 0x00 */ int px;
+    /* 0x04 */ int py;
+    /* 0x08 */ int mesflg;
+    /* 0x0c */ int line;
+    /* 0x10 */ int backSw;
+    /* 0x14 */ int color;
+    /* 0x18 */ int faceNo;
+    /* 0x1c */ int Dline;
+    /* 0x20 */ int D0line;
+    /* 0x24 */ int selflg;
+    /* 0x28 */ int seltim;
+    /* 0x2c */ int btton;
+    /* 0x30 */ int btflg;
+} MCMES_WORK;
+
+typedef struct { // 0x18
+    /* 0x00 */ int px;
+    /* 0x04 */ int py;
+    /* 0x08 */ int mesflg;
+    /* 0x0c */ int backSw;
+    /* 0x10 */ int ww;
+    /* 0x14 */ int wh;
+} CMPMES_WORK;
+
+typedef struct { // 0x8
+    /* 0x0 */ int chanNo;
+    /* 0x4 */ u_short *pSeqTop;
+} TSVSNDSEQ;
 
 void TsBGMChangePos(int no);
 

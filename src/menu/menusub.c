@@ -1,8 +1,12 @@
 #include "menu/menusub.h"
 
 #include "main/cdctrl.h"
+#include "main/etc.h"
+
+#include "menu/menudata.h"
 #include "menu/menufont.h"
 #include "menu/p3mc.h"
+
 #include "os/syssub.h"
 #include "os/tim2.h"
 
@@ -40,11 +44,11 @@
 // /* sdata 39975c */ static u_char *UserName_RankingNoSave;
 // /* data 18b830 */ static char *_MONTH_STR[0];
 // /* data 18b880 */ static MAPBGM MapBgmTbl[0];
-// /* data 18b908 */ static TSVOICE_TBL TsVoiceTbl[0];
+/* data 18b908 */ extern TSVOICE_TBL TsVoiceTbl[]; /* static */
 // /* data 18bac8 */ static u_short FussenWAIT0[0];
 // /* data 18bad8 */ static u_short FussenWAIT1[0];
 // /* data 18bae8 */ static u_short LoadConfLst[0];
-// /* data 18baf8 */ static TSVSNDSEQ VSNDSEQ_Tbl[0];
+/* data 18baf8 */ extern TSVSNDSEQ VSNDSEQ_Tbl[]; /* static */
 /* data 18bb10 */ extern TSTEX_TBL TexTable[]; /* static */
 // /* data 18bcb0 */ static PATPOS PAT_ALERT_WIN_ABOVE;
 // /* data 18bcc0 */ static PATPOS PAT_ALERT_WIN_CENTER;
@@ -109,8 +113,8 @@
 // /* data 18c748 */ HOSI_TYPE hTypeTable[0];
 /* sdata 3997bc */ extern TSTEX_INF *tblTex; /* static */
 // /* data 18c8e0 */ static u_int RPPadBit[0];
-// /* data 18c8f0 */ static MCDATA_TBL McVoiceTbl[0];
-// /* data 18c9a8 */ static MCDATA_TBL McFaceTbl[0];
+/* data 18c8f0 */ extern MCDATA_TBL McVoiceTbl[23]; /* static */
+/* data 18c9a8 */ extern MCDATA_TBL McFaceTbl[23]; /* static */
 /* sdata 3997c0 */ extern int UserList_Sw; /* static */
 /* sdata 3997c4 */ extern int OptionList_Sw; /* static */
 /* sdata 3997c8 */ extern int PopMenu_Sw; /* static */
@@ -132,7 +136,7 @@
 // /* sdata 399820 */ static int _TexFunc;
 /* sdata 399824 */ extern HOSI_OBJ *HOSIObj; /* static */
 /* bss 1c77ac0 */ extern TSREPPAD menuPadState[2][4]; /* static */
-// /* bss 1c77ae0 */ static TSSND_CHAN TsSndChan[15];
+/* bss 1c77ae0 */ extern TSSND_CHAN TsSndChan[15]; /* static */
 /* bss 1c77c10 */ extern BGMSTATE TsBGMState; /* static */
 /* sbss 399b18 */ extern P3GAMESTATE *pP3GameState; /* static */
 /* sbss 399b1c */ extern int _bMapCaptureReq; /* static */
@@ -165,23 +169,23 @@
 /* sbss 399b54 */ extern int errorNo; /* static */
 /* sbss 399b58 */ extern int waitTime; /* static */
 // /* sbss 399b5c */ static MCRWDATA_HDL *pGameData;
-// /* bss 1c7f790 */ static MCMES_WORK MCMesWork;
-// /* bss 1c7f7c8 */ static CMPMES_WORK CmpMesWork;
+/* bss 1c7f790 */ extern MCMES_WORK MCMesWork; /* static */
+/* bss 1c7f7c8 */ extern CMPMES_WORK CmpMesWork; /* static */
 // /* bss 1c7f7e0 */ static RANKLIST RankLst[20];
 // /* bss 1c7f970 */ static POPUP_MENU PopupMenu;
 // /* bss 1c7fa88 */ static SAVE_MENU SaveMenu;
 // /* bss 1c7fb48 */ static JUKE_MENU JukeMenu;
 // /* bss 1c80f60 */ static OPTION_MENU OptionMenu;
 // /* bss 1c80fb0 */ static USERLIST_MENU UserListMenu;
-// /* bss 1c810c8 */ static SCFADE ScFade;
+/* bss 1c810c8 */ extern SCFADE ScFade; /* static */
 
 static int TsGetMenuPadIsRepeat(int no, int npad);
-/* static */ void  TSSNDPLAY(int n);
+static void TSSNDPLAY(int n);
 /* static */ void  TSSNDSTOP(int chan);
 /* static */ void  TSSNDMASK_CHAN(int chan, int mskflag);
 /* static */ void  TSSND_SKIPSTOP(int n);
 /* static */ void  TSSND_SKIPPLAY(int n);
-/* static */ int   TSSND_CHANISSTOP(int chan);
+static int TSSND_CHANISSTOP(int chan);
 /* static */ void  tsBGMONEPlay(int no);
 /* static */ void  tsBGMONEStop(int no);
 /* static */ void  tsBGMONEVol(int no, int vol);
@@ -197,7 +201,7 @@ static int TsGetMenuPadIsRepeat(int no, int npad);
 /* static */ void  TsBGMPoll(void);
 /* static */ void* TsCmnPkOpen(sceGifPacket *pgifpk);
 /* static */ void  TsCmnPkClose(sceGifPacket *pgifpk, void *pk, int pri);
-/* static */ void  TsClearMenuPad(int no);
+static void TsClearMenuPad(int no);
 /* static */ void  TsGetMenuPad(int no, u_int *getpad);
 /* static */ void  TsSndFlow(int flg);
 /* static */ int   TSNumMov(int cn, int dn, int scale);
@@ -235,7 +239,7 @@ static void McInitFlow(void);
 /* static */ int   McUserCheckFlow(int type, int mode, int *bError);
 /* static */ int   McUserSaveFlow(USER_DATA *puser);
 /* static */ int   McUserLoadFlow(int fileNo, int mode, int bBroken);
-/* static */ void  TsMCAMes_Init(void);
+static void TsMCAMes_Init(void);
 /* static */ int   TsMCAMes_GetSelect(void);
 /* static */ int   TsMCAMes_IsON(void);
 /* static */ void  TsMCAMes_Flow(u_int tpad);
@@ -287,7 +291,7 @@ static void McInitFlow(void);
 /* static */ void  TsNAMEINBox_GetName(NAMEINW *pfw, u_char *name);
 /* static */ int   TsNAMEINBox_Flow(int flg, NAMEINW *pfw, u_int tpad);
 /* static */ void  TsNAMEINBox_Draw(SPR_PKT pk, SPR_PRM *spr, int px, int py, int isLog, NAMEINW *pfw, int side);
-/* static */ void  TsSCFADE_Flow(int flg, int prm);
+static void TsSCFADE_Flow(int flg, int prm);
 /* static */ void  TsSCFADE_Draw(SPR_PKT pk, SPR_PRM *spr, int prio);
 /* static */ void  TsPatTexFnc(int flg);
 /* static */ void  _TsPatSetPrm(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy);
@@ -302,10 +306,41 @@ static void TsPatPutUneri(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy
 /* static */ void  TsHosiPut(SPR_PKT pk, SPR_PRM *spr, TSTEX_INF *ptex, float px, float py, float zrate, float rot);
 
 static int TsGetMenuPadIsRepeat(int no, int npad) {
-    return (menuPadState[no][npad].state < 2) ^ 1;
+    return (menuPadState[no][npad].state >= 2);
 }
 
-INCLUDE_ASM("menu/menusub", TSSNDPLAY);
+static void TSSNDPLAY(int n) {
+    TSVOICE_TBL *ptap;
+    TSSND_CHAN  *pchan;
+    int          bMsk;
+    TSVSNDSEQ   *pSeq;
+
+    if (n >= 0) {
+        if (n & 0x8000) {
+            pSeq  = &VSNDSEQ_Tbl[n & ~0x8000];
+            pchan = &TsSndChan[pSeq->chanNo];
+
+            bMsk = pchan->bMsk;
+
+            memset(pchan, 0, sizeof(*pchan));
+
+            pchan->isSeq = TRUE;
+
+            pchan->pSeq = pSeq->pSeqTop;
+            pchan->bMsk = bMsk;
+        } else if (n < 0x38) {
+            ptap  = &TsVoiceTbl[n];
+            pchan = &TsSndChan[ptap->chanNo];
+
+            bMsk = pchan->bMsk;
+
+            memset(pchan, 0, sizeof(*pchan));
+
+            pchan->pTap = ptap;
+            pchan->bMsk = bMsk;
+        }
+    }
+}
 
 INCLUDE_ASM("menu/menusub", TSSNDSTOP);
 
@@ -315,7 +350,16 @@ INCLUDE_ASM("menu/menusub", TSSND_SKIPSTOP);
 
 INCLUDE_ASM("menu/menusub", TSSND_SKIPPLAY);
 
-INCLUDE_ASM("menu/menusub", TSSND_CHANISSTOP);
+static int TSSND_CHANISSTOP(int chan) {
+    TSSND_CHAN *pchan = &TsSndChan[chan];
+    int         ret   = FALSE;
+
+    if (pchan->pTap == NULL) {
+        ret = (pchan->pSeq == NULL);
+    }
+
+    return ret;
+}
 
 INCLUDE_ASM("menu/menusub", tsBGMONEPlay);
 
@@ -357,7 +401,13 @@ INCLUDE_ASM("menu/menusub", TsGetTm2Tex);
 
 INCLUDE_ASM("menu/menusub", TsGetTm2HedTex);
 
-INCLUDE_ASM("menu/menusub", TsClearMenuPad);
+static void TsClearMenuPad(int no) {
+    if (no >= 2) {
+        return;
+    }
+
+    memset(&menuPadState[no][0], 0, sizeof(TSREPPAD) * 4);
+}
 
 INCLUDE_ASM("menu/menusub", TsGetMenuPad);
 
@@ -424,7 +474,7 @@ void TsMENU_InitSystem(void) {
     pCStageRank = (P3MC_STAGERANK*)memalign(16, sizeof(P3MC_STAGERANK[8]));
     memset(pCStageRank, 0, sizeof(P3MC_STAGERANK[8]));
 
-    memset(&CurFileInfo, 0, sizeof(CURFILEINFO));
+    memset(&CurFileInfo, 0, sizeof(CurFileInfo));
     CurFileInfo.logFileNo = -1;
     CurFileInfo.repFileNo = -1;
 }
@@ -668,7 +718,109 @@ static void McInitFlow(void) {
     waitTime  = 0;
 }
 
+#ifndef NON_MATCHING /* .rodata JPT */
 INCLUDE_ASM("menu/menusub", McStartCheckFlow);
+#else
+static int McStartCheckFlow(/* a0 4 */ int flg) {
+    /* v1 3 */ int ret;
+
+    if (flg == 1) {
+        McInitFlow();
+        P3MC_OpeningCheckStart();
+        return 0;
+    }
+
+    if (flg == 2) {
+        P3MC_OpeningCheckEnd();
+        return 0;
+    }
+
+    switch (subStatus) {
+    case 0:
+        subStatus = 1;
+        break;
+    case 1:
+        ret = P3MC_OpeningCheck();
+        if (ret >= 0) {
+            if (ret & 1) {
+                ret = 0;
+            } else {
+                ret = 1;
+            }
+        }
+
+        switch (ret) {
+        case -2:
+            subStatus = 0x100;
+            break;
+        case 0:
+            subStatus = 0x100;
+            break;
+        case 1:
+            subStatus = 0x10;
+            break;
+        case -3:
+            subStatus = 0x20;
+            break;
+        }
+    
+        break;
+    case 0x10:
+        ret = P3MC_OpeningCheck();
+        if (ret >= 0) {
+            ret = (ret & 0x1) ^ 0x1;
+        }
+
+        switch (ret) {
+        case -3:
+            subStatus = 0x20;
+            break;
+        case -2:
+        case 0:
+            subStatus = 0x100;
+            break;
+        case -1:
+        case 1:
+        default:
+            break;
+        }
+
+        break;
+    case 0x20:
+        ret = P3MC_OpeningCheck();
+        if (ret >= 0) {
+            ret = (ret & 0x1) ^ 0x1;
+        }
+
+        switch (ret) {
+        case -2:
+        case 0:
+            subStatus = 0x100;
+            break;
+        case 1:
+            subStatus = 0x10;
+            break;
+        case -3:
+        case -1:
+        default:
+            break;
+        }
+
+        break;
+    case 0x100:
+        return 0;
+    }
+
+    switch (subStatus) {
+    case 0x10:
+        return 1;
+    case 0x20:
+        return 2;
+    }
+
+    return -1;
+}
+#endif
 
 INCLUDE_ASM("menu/menusub", McUserCheckFlow);
 
@@ -676,7 +828,10 @@ INCLUDE_ASM("menu/menusub", McUserSaveFlow);
 
 INCLUDE_ASM("menu/menusub", McUserLoadFlow);
 
-INCLUDE_ASM("menu/menusub", TsMCAMes_Init);
+static void TsMCAMes_Init(void) {
+    memset(&MCMesWork, 0, sizeof(MCMesWork));
+    MCMesWork.mesflg = -1;
+}
 
 INCLUDE_ASM("menu/menusub", TsMCAMes_GetSelect);
 
@@ -684,7 +839,62 @@ INCLUDE_ASM("menu/menusub", TsMCAMes_IsON);
 
 INCLUDE_ASM("menu/menusub", TsMCAMes_SetPos);
 
-INCLUDE_ASM("menu/menusub", TsMCAMes_SetMes);
+void TsMCAMes_SetMes(int no) {
+    MCMES_WORK *pmesw;
+    int         i;
+
+    pmesw = &MCMesWork;
+
+    if (no < 0) {
+        pmesw->mesflg = -1;
+        pmesw->selflg = 0;
+        pmesw->seltim = 0;
+        pmesw->line = 0;
+        pmesw->btflg = 0;
+        pmesw->backSw = 0;
+        pmesw->faceNo = 0;
+        return;
+    }
+
+    if (pmesw->mesflg != no) {
+        if (TSSND_CHANISSTOP(2)) {
+            for (i = 0; i < PR_ARRAYSIZEU(McVoiceTbl); i++) {
+                if (McVoiceTbl[i].mesNo == no) {
+                    TSSNDPLAY(McVoiceTbl[i].dataNo);
+                    break;
+                }
+            }
+        }
+    }
+
+    pmesw->mesflg = no;
+    pmesw->faceNo = 0;
+
+    for (i = 0; i < PR_ARRAYSIZEU(McFaceTbl); i++) {
+        if (McFaceTbl[i].mesNo == no) {
+            pmesw->faceNo = McFaceTbl[i].dataNo;
+            break;
+        }
+    }
+
+    if (no & 0x10000) {
+        pmesw->backSw = 0;
+        pmesw->btflg = 0;
+    } else {
+        pmesw->backSw = 1;
+        pmesw->btflg = 1;
+    }
+
+    if (no & 0x20000) {
+        pmesw->color = 1;
+    } else {
+        pmesw->color = 0;
+    }
+
+    pmesw->selflg = 0;
+    pmesw->seltim = 0;
+    pmesw->line = _PkMCMsgGetLine(pmesw->mesflg & 0xffff);
+}
 
 INCLUDE_ASM("menu/menusub", TsMCAMes_Flow);
 
@@ -692,7 +902,23 @@ INCLUDE_ASM("menu/menusub", TsMCAMes_Draw);
 
 INCLUDE_ASM("menu/menusub", TsCMPMes_SetPos);
 
-INCLUDE_ASM("menu/menusub", TsCMPMes_SetMes);
+void TsCMPMes_SetMes(int no) {
+    CMPMES_WORK *pmesw = &CmpMesWork;
+
+    if (no < 0) {
+        pmesw->mesflg = -1;
+        pmesw->backSw = 0;
+
+        pmesw->wh = 0;
+        pmesw->ww = 0;
+    } else {
+        pmesw->mesflg = no;
+        pmesw->backSw = 1;
+
+        pmesw->ww = 600;
+        pmesw->wh = 26;
+    }
+}
 
 INCLUDE_ASM("menu/menusub", TsCMPMes_Draw);
 
@@ -812,13 +1038,54 @@ INCLUDE_ASM("menu/menusub", TsNAMEINBox_Draw);
 
 INCLUDE_ASM("menu/menusub", TsSCFADE_Set);
 
-INCLUDE_ASM("menu/menusub", TsSCFADE_Flow);
+static void TsSCFADE_Flow(int flg, int prm) {
+    SCFADE *pfw = &ScFade;
+
+    if (flg == 1 || flg == 3) {
+        memset(pfw, 0, sizeof(*pfw));
+        if (flg == 3) {
+            pfw->ton = prm;
+        }
+        return;
+    }
+
+    if (pfw->ttim0 != 0) {
+        pfw->ttim++;
+    }
+
+    switch (pfw->state) {
+    case 1:
+    case 5:
+        pfw->ton = 256 - ((pfw->ttim * 256) / pfw->ttim0);
+        if (pfw->ton <= 0) {
+            TsSCFADE_Flow(1, 0);
+        }
+        break;
+    case 2:
+    case 6:
+        pfw->ton = (pfw->ttim * 256) / pfw->ttim0;
+        if (pfw->ton >= 256) {
+            TsSCFADE_Flow(3, 256);
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("menu/menusub", TsSCFADE_Draw);
 
 INCLUDE_ASM("menu/menusub", _PkMCMsgPut);
 
-INCLUDE_ASM("menu/menusub", _PkMCMsgGetLine);
+int _PkMCMsgGetLine(int id) {
+    int flg;
+
+    if (pP3GameState != NULL) {
+        flg = pP3GameState->pGameStatus->language_type;
+    } else {
+        flg = LANG_JAPANESE;
+    }
+
+    return MENUSubtGetLine(MenuMsgGetMessageMc(id, flg), flg);
+}
 
 INCLUDE_ASM("menu/menusub", _PkSubMsgPut);
 

@@ -17,7 +17,7 @@ extern int _PkScrH;
 float FLT_003990DC; /* cannot be defined as extern, needed for `rotcossin` */
 
 static void _tsWorkEnd(TS_WORKMEM *emem) {
-    if (emem->isAlloc && emem->top) {
+    if (emem->isAlloc && emem->top != NULL) {
         free(emem->top);
 
         emem->top = NULL;

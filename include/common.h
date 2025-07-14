@@ -40,7 +40,6 @@ typedef float f32;
 #define PR_SIZEOF(x) (int)(sizeof(x))
 #define PR_ARRAYSIZEU(arr) (sizeof(arr) / sizeof(arr[0]))
 #define PR_ARRAYSIZE(arr)  (s32)(sizeof(arr) / sizeof(arr[0]))
-#define PR_CLEAR(x) { u_int i; char *p = (char*)&x; for (i = 0; i < sizeof(x); i++) *p++ = 0; }
 #define PR_CONCAT(x, y) ((x << 16) | (y))
 #define PR_BIT(x) (1 << x)
 

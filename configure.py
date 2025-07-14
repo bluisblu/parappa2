@@ -486,6 +486,10 @@ def fix_compile_commands():
         if file_path.suffix == ".c" or file_path.suffix == ".cpp":
             entry["command"] = entry["command"].replace(" -G8", "")
             entry["command"] = entry["command"].split(" && mips-linux-gnu-strip")[0].strip()
+
+            # Disable warnings so it stops crying even further
+            # FIXME: should probably get rid of this one day
+            entry["command"] += " -w"
         if file_path.suffix == ".s":
             data.remove(entry)
 

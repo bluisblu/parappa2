@@ -1402,6 +1402,11 @@ TsCELBackDraw                       = 0x00137790; // type:func
 _TsCELBackObjDraw                   = 0x00137930; // type:func
 TsHosiPut                           = 0x00137df0; // type:func
 
+TsVoiceTbl                          = 0x0018b908; // size:0x1c0
+VSNDSEQ_Tbl                         = 0x0018baf8; // size:0x18
+McVoiceTbl                          = 0x0018c8f0; // size:0xb8
+McFaceTbl                           = 0x0018c9a8; // size:0xb8
+
 TexTable                            = 0x0018bb10; // size:0x1a0
 MNS_StageMap                        = 0x0018cc38; // size:0x1154
 
@@ -1428,6 +1433,7 @@ errorNo                             = 0x00399b54;
 waitTime                            = 0x00399b58;
 
 menuPadState                        = 0x01c77ac0; // size:0x20
+TsSndChan                           = 0x01c77ae0; // size:0x12c
 TsBGMState                          = 0x01c77c10; // size:0xa0
 MNS_StageMap2                       = 0x01c77cb0; // size:0x1154
 MNS_CityHall                        = 0x01c78e08; // size:0x1154
@@ -1438,6 +1444,9 @@ MNS_JimakuBak                       = 0x01c7e4b8; // size:0x1154
 CurFileInfo                         = 0x01c7f628; // size:0x18
 MnPkt                               = 0x01c7f640; // size:0xa0
 MnLPkt                              = 0x01c7f6e0; // size:0xa0
+MCMesWork                           = 0x01c7f790; // size:0x34
+CmpMesWork                          = 0x01c7f7c8; // size:0x18
+ScFade                              = 0x01c810c8; // size:0x14
 
 // menu/p3mc.c
 P3MC_GetIconSize                    = 0x00137f70; // type:func

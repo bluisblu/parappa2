@@ -75,7 +75,7 @@ void MtcChangeThCtrl(void *x) {
 
             StartThread(mtcTaskConB[mtcCurrentTask].th_id, 0);
             SleepThread();
-        } else if ((mtcTaskConB[mtcCurrentTask].status == MTC_COND_WAIT) && 
+        } else if ((mtcTaskConB[mtcCurrentTask].status == MTC_COND_WAIT) &&
                  (--mtcTaskConB[mtcCurrentTask].wtime <= 0)) {
             SyoriLineCnt(mtcCurrentTask);
             RotateThreadReadyQueue(16);
@@ -87,7 +87,12 @@ void MtcChangeThCtrl(void *x) {
 }
 
 void MtcInit(void) {
-    PR_CLEAR(mtcTaskConB);
+    u_int  i;
+    char  *clr_pp = (char*)mtcTaskConB;
+
+    for (i = 0; i < sizeof(mtcTaskConB); i++) {
+        *clr_pp++ = 0;
+    }
 
     mtcSemaPara.maxCount = 1;
     mtcSemaPara.initCount = 0;

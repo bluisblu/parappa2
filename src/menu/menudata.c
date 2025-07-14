@@ -199,11 +199,11 @@ void MenuMsgPrintMc(int id, int xp, int yp, int flg) {
     SubtMenuCtrlPrint(mess_mc[id][flg], xp, yp, flg);
 }
 
-char *MenuMsgGetMessageMc(int id, int flg) {
+char* MenuMsgGetMessageMc(int id, int flg) {
     return mess_mc[id][flg];
 }
 
-char *MenuMsgGetMessageSub(int id, int flg) {
+char* MenuMsgGetMessageSub(int id, int flg) {
     return mess_menu[id][flg];
 }
 
