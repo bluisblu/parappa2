@@ -62,8 +62,7 @@ INCLUDE_RODATA("menu/p3mc", D_00396180);
 
 INCLUDE_ASM("menu/p3mc", P3MC_GetIconPtr);
 
-static void _P3MC_SetUserDirName(int mode, int fileNo)
-{
+static void _P3MC_SetUserDirName(int mode, int fileNo) {
     memc_setDirName(_P3MC_GetFilePath(mode, fileNo));
 }
 

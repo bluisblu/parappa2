@@ -46,8 +46,7 @@ void SprPackSet(SPR_DAT *spr_pp) {
     sceGifPkAddGsAD(&gifPkSpr, SCE_GS_FBA_1, PR_REGS(spr_pp).fba );
 }
 
-void SprFlash(void)
-{
+void SprFlash(void) {
     u_long giftag[2] = { SCE_GIF_SET_TAG(0, 1, 0, 0, 0, 1), SCE_GIF_PACKED_AD };
 
     if (sprSetNum != 0) {

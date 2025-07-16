@@ -55,7 +55,7 @@ u_int UsrMemGetEndAdr(int id) {
     return usrMemPos[2047 - id];
 }
 
-u_int UsrMemGetEndSize(int id){   
+u_int UsrMemGetEndSize(int id) {   
     if (id >= usrMemPosEndCnt) {
         printf("UsrMemGetEndSize ID over[%d]\n", id);
         return 0;

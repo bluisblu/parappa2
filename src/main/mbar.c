@@ -244,7 +244,7 @@ INCLUDE_ASM("main/mbar", metFrameInit);
 void conditionFrameInit(void) {
     int i;
 
-    for (i = 0; i < PR_ARRAYSIZE(conditionFramCnt); i++){
+    for (i = 0; i < PR_ARRAYSIZE(conditionFramCnt); i++) {
         conditionFramCnt[i] = 60;
     }
 }

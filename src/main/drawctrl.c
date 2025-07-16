@@ -103,7 +103,7 @@ int outsideDrawSceneReq(OVL_FUNC prg_pp, u_char pri, u_int useF, u_int drawF, vo
     return 0;
 }
 
-static SCENECTRL* getOutsideCtrlScene(int time){
+static SCENECTRL* getOutsideCtrlScene(int time) {
     SCENECTRL *scenectrl_pp;
 
     if (scenectrl_outside_read_cnt >= scenectrl_outside_cnt) {
