@@ -11,7 +11,7 @@
 /* bgm_com.c */
 extern int sce_bgm_loop(void);
 
-IOP_INCLUDE_RODATA("wp2cd/nonmatchings/iop/bgm_entr", D_000039D0);
+ModuleInfo Module = { "WaveP2_driver", 0x100 };
 
 int start(void) {
     struct ThreadParam param;

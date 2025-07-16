@@ -1,6 +1,8 @@
 // iop_mdl/wp2cd/iop/bgm_entr.c
 start                    = 0x00000000; // type:func
 
+Module                   = 0x00003a90; // size:0x6
+
 // iop_mdl/wp2cd/iop/bgm_com.c
 sce_bgm_loop             = 0x000000f0; // type:func
 bgmFunc                  = 0x000001b4; // type:func

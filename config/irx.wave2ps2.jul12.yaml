@@ -55,7 +55,7 @@ segments:
         - [0x3af0, .rodata, iop/bgm_play]
 
         # .data
-        - [0x3b30, data, iop/bgm_entr]
+        - [0x3b30, .data, iop/bgm_entr]
         - [0x3b40, data, iop/bgm_com]
         - [0x3b50, data, iop/bgm_play]
 
