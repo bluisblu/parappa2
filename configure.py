@@ -38,16 +38,21 @@ WP2_ELF_PATH = f"build/{WP2_BASENAME}"
 WP2_MAP_PATH = f"build/{WP2_BASENAME}.map"
 WP2_PRE_ELF_PATH = f"build/{WP2_BASENAME}.elf"
 
-COMPILER_DIR = f"{TOOLS_DIR}/cc/ee-gcc2.96/bin"
+EE_COMPILER_DIR = f"{TOOLS_DIR}/cc/ee-gcc29/bin"
+IOP_COMPILER_DIR = f"{TOOLS_DIR}/cc/iop-gcc281/bin"
 
-EE_COMMON_INCLUDES = "-Iinclude -Isrc -Iinclude/sdk_common -Iinclude/sdk_ee -Iinclude/gcc -Iinclude/gcc/gcc-lib"
-IOP_COMMON_INCLUDES = "-Iinclude -Iinclude/sdk_common -Iinclude/sdk_iop"
+EE_COMMON_INCLUDES = "-Iinclude -Isrc -Iinclude/rtl/common -Iinclude/rtl/ee -Iinclude/rtl/ee_gcc -Iinclude/rtl/ee_gcc/gcc-lib"
+IOP_COMMON_INCLUDES = "-Iinclude -Isrc/iop_mdl/wp2cd/iop -Iinclude/rtl/common -Iinclude/rtl/iop -Iinclude/rtl/iop_gcc -Iinclude/rtl/iop_gcc/gcc-lib"
 
 EE_COMPILER_FLAGS = "-O2 -G8 -g"
 EE_COMPILER_FLAGS_CXX = "-O2 -G8 -g -x c++ -fno-exceptions -fno-strict-aliasing"
 
-EE_COMPILE_CMD = f"{COMPILER_DIR}/ee-gcc -c {EE_COMMON_INCLUDES} {EE_COMPILER_FLAGS}"
-EE_COMPILE_CMD_CXX = f"{COMPILER_DIR}/ee-gcc -c {EE_COMMON_INCLUDES} {EE_COMPILER_FLAGS_CXX}"
+IOP_COMPILER_FLAGS = f"-B {TOOLS_DIR}/cc/iop-gcc281/lib/gcc-lib/mipsel-scei-elfl/2.8.1/ -O0 -G0 -g"
+
+EE_COMPILE_CMD = f"{EE_COMPILER_DIR}/ee-gcc -c {EE_COMMON_INCLUDES} {EE_COMPILER_FLAGS}"
+EE_COMPILE_CMD_CXX = f"{EE_COMPILER_DIR}/ee-gcc -c {EE_COMMON_INCLUDES} {EE_COMPILER_FLAGS_CXX}"
+
+IOP_COMPILE_CMD = f"{IOP_COMPILER_DIR}/iop-gcc -c {IOP_COMMON_INCLUDES} {IOP_COMPILER_FLAGS}"
 
 def exec_shell(command: List[str], stdout=subprocess.PIPE) -> str:
     ret = subprocess.run(command, stdout=stdout, stderr=subprocess.PIPE, text=True)
@@ -228,9 +233,21 @@ def build_stuff(linker_entries: List[LinkerEntry], is_irx: bool = False, append:
         )
 
         ninja.rule(
+            "iop_cpp",
+            description="iop_cpp $in",
+            command="echo If you\'re seeing this then you\'ve messed up big time.",
+        )
+
+        ninja.rule(
             "ee_cc",
             description="ee_cc $in",
             command=f"{EE_COMPILE_CMD} $in -o $out && {cross}strip $out -N dummy-symbol-name",
+        )
+
+        ninja.rule(
+            "iop_cc",
+            description="iop_cc $in",
+            command=f"{IOP_COMPILE_CMD} $in -o $out && {cross}strip $out -N dummy-symbol-name",
         )
 
         ninja.rule(
@@ -545,6 +562,7 @@ def fix_compile_commands():
         #
         if file_path.suffix == ".c" or file_path.suffix == ".cpp":
             entry["command"] = entry["command"].replace(" -G8", "")
+            entry["command"] = entry["command"].replace(" -G0", "")
             entry["command"] = entry["command"].split(" && mips-linux-gnu-strip")[0].strip()
 
             #

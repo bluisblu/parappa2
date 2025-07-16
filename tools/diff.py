@@ -391,6 +391,13 @@ if __name__ == "__main__":
         action="store_true",
         help="Include and diff function symbols.",
     )
+    parser.add_argument(
+        "-t",
+        "--target",
+        choices=("ee", "wp2cd", "tapctrl"),
+        default="ee",
+        help="""Choose the target to diff (ee/wp2cd/tapctrl). Default is 'ee'.""",
+    )
 
     # Project-specific flags, e.g. different versions/make arguments.
     add_custom_arguments_fn = getattr(diff_settings, "add_custom_arguments", None)

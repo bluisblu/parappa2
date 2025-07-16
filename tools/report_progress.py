@@ -49,32 +49,30 @@ def parse_progress(output):
     return total_percentage, folder_percentages
 
 def main():
-    command = ["python3", "-m", "mapfile_parser", "progress", "build/SCPS_150.17.map", "asm", "asm/nonmatchings/"]
+    command = ["python3", "-m", "mapfile_parser", "progress", "build/WAVE2PS2.IRX.map", "asm/iop_mdl/wp2cd/", "asm/iop_mdl/wp2cd/nonmatchings/", "-i 4", "-f"]
     result = subprocess.run(command, stdout=subprocess.PIPE, text=True)
-
-    #result = mapfile_parser.frontends.progress.doProgress("build/SCPS_150.17.map", "asm", "asm/nonmatchings/")
     total_percentage, folder_percentages = parse_progress(result.stdout)
 
-    # print(f"Total percentage: {total_percentage:.4f}%")
+    print(f"Total percentage: {total_percentage:.4f}%")
     total_report = {
         "schemaVersion": 1,
         "label": f"Total percentage",
         "message": f"{total_percentage:.4f}%",
         "color": getColor(float(total_percentage)),
     }
-    save(total_report, "progress/total_progress.json")
+    save(total_report, "progress/wp2cd.total_progress.json")
     
-    for category, percent in folder_percentages.items():
-        if category not in ["sdk", "all"]: # Skip the sdk and all categories
-            print(f"{category} percentage: {percent:.4f}%")
-            report = {
-                "schemaVersion": 1,
-                "label": f"{category}",
-                "message": f"{percent:.4f}%",
-                "color": getColor(float(percent)),
-            }
+    #for category, percent in folder_percentages.items():
+    #    if category not in ["sdk", "all"]: # Skip the sdk and all categories
+    #        print(f"{category} percentage: {percent:.4f}%")
+    #        report = {
+    #            "schemaVersion": 1,
+    #            "label": f"{category}",
+    #            "message": f"{percent:.4f}%",
+    #            "color": getColor(float(percent)),
+    #        }
 
-            save(report, f"progress/{category}_progress.json")
+    #        save(report, f"progress/{category}_progress.json")
 
 if __name__ == "__main__":
     main()
