@@ -16,6 +16,7 @@ from typing import Dict, List, Set, Union, Any, Literal, cast
 
 import ninja_syntax
 
+import spimdisasm
 import splat
 import splat.scripts.split as split
 from splat.segtypes.linker_entry import LinkerEntry
@@ -61,6 +62,8 @@ def clean():
         os.remove("build.ninja")
     if os.path.exists("SCPS_150.17.ld"):
         os.remove("SCPS_150.17.ld")
+    if os.path.exists("WAVE2PS2.IRX.ld"):
+        os.remove("WAVE2PS2.IRX.ld")
     shutil.rmtree("asm", ignore_errors=True)
     shutil.rmtree("assets", ignore_errors=True)
     shutil.rmtree("build", ignore_errors=True)
@@ -194,8 +197,6 @@ def build_stuff(linker_entries: List[LinkerEntry], is_irx: bool = False, append:
     ee_ld_args = f"{common_ld_args} -T config/p3.jul12.vu_syms.txt -T config/p3.jul12.undefined_syms_auto.txt -T config/p3.jul12.undefined_funcs_auto.txt -T config/p3.jul12.undefined_syms.txt"
     wp2_ld_args = f"{common_ld_args} -T config/irx.wave2ps2.jul12.undefined_syms_auto.txt -T config/irx.wave2ps2.jul12.undefined_funcs_auto.txt -T config/irx.wave2ps2.jul12.undefined_syms.txt"
 
-    ld_args = ee_ld_args if not is_irx else wp2_ld_args
-
     if not append:
         ninja.rule(
             "conv_eucjp",
@@ -233,9 +234,15 @@ def build_stuff(linker_entries: List[LinkerEntry], is_irx: bool = False, append:
         )
 
         ninja.rule(
-            "ld",
+            "ee_ld",
             description="link $out",
-            command=f"{cross}ld {ld_args}",
+            command=f"{cross}ld {ee_ld_args}",
+        )
+
+        ninja.rule(
+            "iop_ld",
+            description="link $out",
+            command=f"{cross}ld {wp2_ld_args}",
         )
 
         ninja.rule(
@@ -294,9 +301,11 @@ def build_stuff(linker_entries: List[LinkerEntry], is_irx: bool = False, append:
     ld_path = P3_LD_PATH if not is_irx else WP2_LD_PATH
     map_path = P3_MAP_PATH if not is_irx else WP2_MAP_PATH
 
+    ld_rule = "ee_ld" if not is_irx else "iop_ld"
+
     ninja.build(
         pre_elf_path,
-        "ld",
+        ld_rule,
         ld_path,
         implicit=[str(obj) for obj in built_objects],
         variables={"mapfile": map_path},
@@ -598,7 +607,14 @@ if __name__ == "__main__":
     p3_config = split.config
     build_stuff(linker_entries)
 
-    split.main([Path(WP2_YAML_FILE)], modes="all", verbose=False)
+    #
+    # Hack to avoid spimdisasm from
+    # emitting the `_gp` symbol.
+    #
+    splat.util.symbols.spim_context = spimdisasm.common.Context()
+    splat.util.symbols.reset_symbols()
+
+    split.main([Path(WP2_YAML_FILE)], modes="all", verbose=False, use_cache=False)
     linker_entries = split.linker_writer.entries
     build_stuff(linker_entries, True, True)
 

@@ -1,55 +1,59 @@
 name: Wave2PS2/WP2 (July 12th prototype)
 sha1: 5f46bae0cdbab8cbc281dd4f8788fd222c0fbf5d
 options:
-  # paths
-  basename: WAVE2PS2.IRX
-  target_path: iso/WAVE2PS2.IRX
-  base_path: ..
+    # paths
+    basename: WAVE2PS2.IRX
+    target_path: iso/WAVE2PS2.IRX
+    base_path: ..
 
-  asm_path: asm/iop_mdl/wp2cd
-  src_path: src/iop_mdl/wp2cd
-  asset_path: assets/iop_mdl/wp2cd
-  build_path: build
+    asm_path: asm/iop_mdl/wp2cd
+    src_path: src/iop_mdl/wp2cd
+    asset_path: assets/iop_mdl/wp2cd
+    build_path: build
 
-  extensions_path: tools/splat_ext
-  symbol_addrs_path: config/irx.wave2ps2.jul12.symbol_addrs.txt
-  reloc_addrs_path: config/irx.wave2ps2.jul12.reloc_addrs.txt
-  undefined_funcs_auto_path: config/irx.wave2ps2.jul12.undefined_funcs_auto.txt
-  undefined_syms_auto_path: config/irx.wave2ps2.jul12.undefined_syms_auto.txt
+    extensions_path: tools/splat_ext
+    symbol_addrs_path: config/irx.wave2ps2.jul12.symbol_addrs.txt
+    reloc_addrs_path: config/irx.wave2ps2.jul12.reloc_addrs.txt
+    undefined_funcs_auto_path: config/irx.wave2ps2.jul12.undefined_funcs_auto.txt
+    undefined_syms_auto_path: config/irx.wave2ps2.jul12.undefined_syms_auto.txt
 
-  # compiler
+    # compiler
 
-  #
-  # splat/spim doesn't officially
-  # support IRX modules, thus
-  # treating it as a PS1 binary
-  # is the closest we can get.
-  #
-  compiler: PSYQ
-  platform: psx
+    #
+    # splat/spim doesn't officially
+    # support IRX modules, thus
+    # treating it as a PS1 binary
+    # is the closest we can get.
+    #
+    compiler: PSYQ
+    platform: psx
 
 segments:
-  - [0, databin, elf_header]
-  - [0x34, databin] # ELF program headers
+    - [0, databin, elf_header]
+    - [0x34, databin] # ELF program headers
 
-  - [0x74, databin] # .iopmod
+    - [0x74, databin] # .iopmod
 
-  #- name: main
-  #  type: code
-  #  start: ?
-  #  vram: ?
-  #  subsegments:
-  #
+    - name: main
+      type: code
+      start: 0xa0
+      vram: 0x0 # Yes, it really starts at 0x0. Why?
+      # bss_size: ?
+      subsegments:
+        # .text
+        - [0xa0, asm, text] # .text
 
-  - [0xa0, databin] # .text
-  - [0x3a70, databin] # .rodata
-  - [0x3b30, databin] # .data
+        # .rodata
+        - [0x3a70, databin] # .rodata
 
-  - [0x3ba0, databin] # .mdebug
-  - [0x101bc, databin] # .shstrtab
-  - [0x1021c, databin] # ELF section headers
-  - [0x10424, databin] # .rel.text
-  - [0x12894, databin] # .rel.data
-  - [0x1289c, databin] # .symtab
-  - [0x1325c, databin] # .strtab
-  - [0x13878]
+        # .data
+        - [0x3b30, databin] # .data
+
+    - [0x3ba0, databin] # .mdebug
+    - [0x101bc, databin] # .shstrtab
+    - [0x1021c, databin] # ELF section headers
+    - [0x10424, databin] # .rel.text
+    - [0x12894, databin] # .rel.data
+    - [0x1289c, databin] # .symtab
+    - [0x1325c, databin] # .strtab
+    - [0x13878]
