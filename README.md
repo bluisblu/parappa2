@@ -57,5 +57,8 @@ To generate/update the progress report:
 1. After a successful build, create a folder named `expected`
 2. Copy the `build` folder inside the `expected` folder.
 3. `./tools/diff.py -mwo FUNCTION_NAME`
+    - Use the `-t` argument to diff functions in IRX modules.
+    - Possible targets are: `ee`/`wp2cd`/`tapctrl`. Default is `ee`. `tapctrl` target will not work.
+    - Example: `./tools/diff.py -mwo -t wp2cd FUNCTION_NAME`.
 
 *Note: Every time you add a new symbol, you must do the asm-differ setup again.*

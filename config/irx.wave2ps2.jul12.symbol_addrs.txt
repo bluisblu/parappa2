@@ -7,6 +7,10 @@ Module                   = 0x00003a90; // size:0x6
 sce_bgm_loop             = 0x000000f0; // type:func
 bgmFunc                  = 0x000001b4; // type:func
 
+ret                      = 0x00003aa0; // size:0x4
+
+gRpcArg                  = 0x00003c30; // size:0x40
+
 // iop_mdl/wp2cd/iop/bgm_play.c
 Wp2CdStRead              = 0x00000670; // type:func
 readPC                   = 0x000007b0; // type:func

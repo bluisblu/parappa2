@@ -172,15 +172,15 @@ void CdctrlInit(void) {
     WP2Init();
     printf("out wp2 init\n");
 
-    WP2Ctrl(WP2_INIT, SCECdDVD);
+    WP2Ctrl(WP2_CDINIT, SCECdDVD);
     WP2Ctrl(WP2_SDINIT, WP2_NONE);
     WP2Ctrl(WP2_SETMASTERVOL, PR_CONCAT(0x3fff, 0x3fff));
 
     /*
-     * BGM init--allocate 384KB for the read
+     * WP2 init--allocate 384KB for the read
      * buffer in 768 blocks of 512 bytes each.
      */
-    WP2Ctrl(WP2_BGMINIT, 0x300);
+    WP2Ctrl(WP2_INIT, 0x300);
 }
 
 void CdctrlQuit(void) {
@@ -643,7 +643,7 @@ void CdctrlWP2Set(FILE_STR *fstr_pp) {
 
     while (!CdctrlSerch(cdctrl_str.fstr_pp));
 
-    WP2Ctrl(WP2_BGMSETTRPOINT, WP2_NONE);
+    WP2Ctrl(WP2_SETTRPOINT, WP2_NONE);
     if (fstr_pp->frmode == FRMODE_PC) {
         WP2Ctrl(WP2_OPENFLOC, (int)cdctrl_str.fstr_pp->fname);
     } else {
@@ -724,7 +724,7 @@ int CdctrlWP2PlayEndCheck(void) {
 }
 
 int CdctrlWP2CheckBuffer(void) {
-    return WP2Ctrl(WP2_READBUF, WP2_NONE);
+    return WP2Ctrl(WP2_READBUFF, WP2_NONE);
 }
 
 void CdctrlWP2SetVolume(u_short vol) {
@@ -885,7 +885,7 @@ void CdctrlXTRset(FILE_STR *fstr_pp, u_int usebuf) {
     p3StrInit(usebuf);
     printf("P3STR INIT REQ OUT\n");
 
-    WP2Ctrl(WP2_BGMSETTRPOINT, usebuf);
+    WP2Ctrl(WP2_SETTRPOINT, usebuf);
     printf("WP2_BGMSETTRPOINT exit\n");
 
     if (fstr_pp->frmode == FRMODE_PC) {
