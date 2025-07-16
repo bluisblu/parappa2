@@ -1,0 +1,116 @@
+// iop_mdl/wp2cd/iop/bgm_entr.c
+start                    = 0x00000000; // type:func
+
+// iop_mdl/wp2cd/iop/bgm_com.c
+sce_bgm_loop             = 0x000000f0; // type:func
+bgmFunc                  = 0x000001b4; // type:func
+
+// iop_mdl/wp2cd/iop/bgm_play.c
+Wp2CdStRead              = 0x00000670; // type:func
+readPC                   = 0x000007b0; // type:func
+usrMemcpy                = 0x0000087c; // type:func
+TransBufSet              = 0x00000930; // type:func
+IntFunc                  = 0x00000ec8; // type:func
+IntFuncEnd               = 0x00000f90; // type:func
+makeMyThread             = 0x00000fc4; // type:func
+makeMyThread_Tr          = 0x00001038; // type:func
+makeMySem                = 0x000010ac; // type:func
+BgmSetVolumeDirect       = 0x00001100; // type:func
+BgmSetMasterVolume       = 0x00001188; // type:func
+BgmCdInit                = 0x00001210; // type:func
+BgmSdInit                = 0x00001278; // type:func
+BgmInit                  = 0x000012c8; // type:func
+BgmQuit                  = 0x00001540; // type:func
+BgmOpen                  = 0x000016d4; // type:func
+BgmOpenFLoc              = 0x000019ac; // type:func
+BgmClose                 = 0x00001c80; // type:func
+TransBufSet_SUB          = 0x00001e44; // type:func
+BgmPreLoad               = 0x00002180; // type:func
+_PreLoadBack             = 0x00002354; // type:func
+BgmPreLoadBack           = 0x000023d8; // type:func
+BgmReadBuffFull          = 0x0000241c; // type:func
+BgmStart                 = 0x000024b0; // type:func
+_BgmStop                 = 0x000025ac; // type:func
+BgmStop                  = 0x000026c8; // type:func
+BgmSetVolume             = 0x0000282c; // type:func
+BgmSetMode               = 0x00002874; // type:func
+BgmGetMode               = 0x00002958; // type:func
+GetKoubaisuu             = 0x00002990; // type:func
+BgmSeek                  = 0x00002af0; // type:func
+BgmSeekFLoc              = 0x00002d54; // type:func
+BgmSetChannel            = 0x00002f58; // type:func
+BgmSetTrPoint            = 0x00002fa0; // type:func
+BgmGetTime               = 0x00002fd4; // type:func
+BgmGetTSample            = 0x00003158; // type:func
+BgmGetCdErrCode          = 0x000031d4; // type:func
+_BgmPlay                 = 0x0000320c; // type:func
+
+// tmp/cca21454_ilb_stub.s
+libsd_stub               = 0x00003720;
+sceSdInit                = 0x00003734; // type:func
+sceSdSetParam            = 0x0000373c; // type:func
+sceSdSetCoreAttr         = 0x00003744; // type:func
+sceSdBlockTrans          = 0x0000374c; // type:func
+sceSdBlockTransStatus    = 0x00003754; // type:func
+sceSdSetTransIntrHandler = 0x0000375c; // type:func
+
+cdvdman_stub             = 0x0000376c;
+sceCdInit                = 0x00003780; // type:func
+sceCdGetError            = 0x00003788; // type:func
+sceCdSearchFile          = 0x00003790; // type:func
+sceCdDiskReady           = 0x00003798; // type:func
+sceCdStInit              = 0x000037a0; // type:func
+sceCdStRead              = 0x000037a8; // type:func
+sceCdStStart             = 0x000037b0; // type:func
+sceCdStStat              = 0x000037b8; // type:func
+sceCdStStop              = 0x000037c0; // type:func
+sceCdMmode               = 0x000037c8; // type:func
+sceCdStSeekF             = 0x000037d0; // type:func
+
+sysmem_stub              = 0x000037e0;
+AllocSysMemory           = 0x000037f4; // type:func
+FreeSysMemory            = 0x000037fc; // type:func
+
+intrman_stub             = 0x0000380c;
+EnableIntr               = 0x00003820; // type:func
+CpuEnableIntr            = 0x00003828; // type:func
+CpuSuspendIntr           = 0x00003830; // type:func
+CpuResumeIntr            = 0x00003838; // type:func
+
+ioman_stub               = 0x00003848;
+open                     = 0x0000385c; // type:func
+close                    = 0x00003864; // type:func
+read                     = 0x0000386c; // type:func
+lseek                    = 0x00003874; // type:func
+
+sifcmd_stub              = 0x00003884;
+sceSifInitRpc            = 0x00003898; // type:func
+sceSifRegisterRpc        = 0x000038a0; // type:func
+sceSifSetRpcQueue        = 0x000038a8; // type:func
+sceSifRpcLoop            = 0x000038b0; // type:func
+
+sifman_stub              = 0x000038c0;
+sceSifInit               = 0x000038d4; // type:func
+sceSifSetDma             = 0x000038dc; // type:func
+sceSifDmaStat            = 0x000038e4; // type:func
+sceSifCheckInit          = 0x000038ec; // type:func
+
+stdio_stub               = 0x000038fc;
+printf                   = 0x00003910; // type:func
+
+sysclib_stub             = 0x00003920;
+memcpy                   = 0x00003934; // type:func
+
+thbase_stub              = 0x00003944;
+CreateThread             = 0x00003958; // type:func
+DeleteThread             = 0x00003960; // type:func
+StartThread              = 0x00003968; // type:func
+TerminateThread          = 0x00003970; // type:func
+GetThreadId              = 0x00003978; // type:func
+
+thsemap_stub             = 0x00003988;
+CreateSema               = 0x0000399c; // type:func
+DeleteSema               = 0x000039a4; // type:func
+SignalSema               = 0x000039ac; // type:func
+iSignalSema              = 0x000039b4; // type:func
+WaitSema                 = 0x000039bc; // type:func
