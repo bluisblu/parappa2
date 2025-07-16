@@ -29,8 +29,12 @@ jobs:
     - name: Upgrade pip
       run: python3 -m pip install --upgrade pip setuptools wheel
 
-    - name: Decrypt ELF
-      run: echo ${{ secrets.PROTO_ENCRYPTION_KEY }} | openssl enc -d -aes-256-cbc -pass stdin -pbkdf2 -in iso/SCPS_150.17.aes -out iso/SCPS_150.17
+    - name: Decrypt main game (jul12)
+      run: echo ${{ secrets.JUL12_ENCRYPTION_KEY }} | openssl enc -d -aes-256-cbc -pass stdin -pbkdf2 -in jul12/SCPS_150.17.aes -out iso/SCPS_150.17
+    - name: Decrypt WP2 module (jul12)
+      run: echo ${{ secrets.JUL12_ENCRYPTION_KEY }} | openssl enc -d -aes-256-cbc -pass stdin -pbkdf2 -in jul12/WAVE2PS2.IRX.aes -out iso/WAVE2PS2.IRX
+    - name: Decrypt TAPCTRL module (jul12)
+      run: echo ${{ secrets.JUL12_ENCRYPTION_KEY }} | openssl enc -d -aes-256-cbc -pass stdin -pbkdf2 -in jul12/TAPCTRL.IRX.aes -out iso/TAPCTRL.IRX
 
     - name: Add i686 architecture
       run: sudo dpkg --add-architecture i386

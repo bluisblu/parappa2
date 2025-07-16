@@ -39,7 +39,8 @@ WP2_PRE_ELF_PATH = f"build/{WP2_BASENAME}.elf"
 
 COMPILER_DIR = f"{TOOLS_DIR}/cc/ee-gcc2.96/bin"
 
-EE_COMMON_INCLUDES = "-Iinclude -Isrc -Iinclude/sdk -Iinclude/sdk/ee -Iinclude/gcc -Iinclude/gcc/gcc-lib"
+EE_COMMON_INCLUDES = "-Iinclude -Isrc -Iinclude/sdk_common -Iinclude/sdk_ee -Iinclude/gcc -Iinclude/gcc/gcc-lib"
+IOP_COMMON_INCLUDES = "-Iinclude -Iinclude/sdk_common -Iinclude/sdk_iop"
 
 EE_COMPILER_FLAGS = "-O2 -G8 -g"
 EE_COMPILER_FLAGS_CXX = "-O2 -G8 -g -x c++ -fno-exceptions -fno-strict-aliasing"
@@ -150,13 +151,15 @@ compiler_type = "gcc"
 """
         )
 
+#
 # Files that have EUC-JP strings
 # and have to be converted.
+#
 EUCJP_FILES = {
     Path("src/menu/pksprite.c"),
 }
 
-def build_stuff(linker_entries: List[LinkerEntry]):
+def build_stuff(linker_entries: List[LinkerEntry], is_irx: bool = False, append: bool = False):
     built_objects: Set[Path] = set()
 
     def build(
@@ -182,53 +185,74 @@ def build_stuff(linker_entries: List[LinkerEntry]):
                 implicit_outputs=implicit_outputs,
             )
 
-    ninja = ninja_syntax.Writer(open(str(ROOT / "build.ninja"), "w"), width=9999)
+    open_mode = "a" if append else "w"    
+    ninja = ninja_syntax.Writer(open(str(ROOT / "build.ninja"), open_mode), width=9999)
 
     # Rules
     cross = "mips-linux-gnu-"
-    ee_ld_args = "-EL -T config/p3.jul12.vu_syms.txt -T config/p3.jul12.undefined_syms_auto.txt -T config/p3.jul12.undefined_funcs_auto.txt -T config/p3.jul12.undefined_syms.txt -Map $mapfile -T $in -o $out"
+    common_ld_args = "-EL -Map $mapfile -T $in -o $out"
+    ee_ld_args = f"{common_ld_args} -T config/p3.jul12.vu_syms.txt -T config/p3.jul12.undefined_syms_auto.txt -T config/p3.jul12.undefined_funcs_auto.txt -T config/p3.jul12.undefined_syms.txt"
+    wp2_ld_args = f"{common_ld_args} -T config/irx.wave2ps2.jul12.undefined_syms_auto.txt -T config/irx.wave2ps2.jul12.undefined_funcs_auto.txt -T config/irx.wave2ps2.jul12.undefined_syms.txt"
 
-    ninja.rule(
-        "conv_eucjp",
-        description="conv_eucjp $in",
-        command="iconv -f=UTF-8 -t=EUC-JP $in > $out",
-    )
+    ld_args = ee_ld_args if not is_irx else wp2_ld_args
 
-    ninja.rule(
-        "as",
-        description="as $in",
-        command=f"cpp {EE_COMMON_INCLUDES} $in -o - | iconv -f=UTF-8 -t=EUC-JP $in | {cross}as -no-pad-sections -EL -march=5900 -mabi=eabi -Iinclude -o $out && python3 tools/buildtools/elf_patcher.py $out gas",
-    )
+    if not append:
+        ninja.rule(
+            "conv_eucjp",
+            description="conv_eucjp $in",
+            command="iconv -f=UTF-8 -t=EUC-JP $in > $out",
+        )
 
-    ninja.rule(
-        "cpp",
-        description="cpp $in",
-        command=f"{EE_COMPILE_CMD_CXX} $in -o $out && {cross}strip $out -N dummy-symbol-name",
-    )
+        ninja.rule(
+            "ee_as",
+            description="ee_as $in",
+            command=f"cpp {EE_COMMON_INCLUDES} $in -o - | iconv -f=UTF-8 -t=EUC-JP $in | {cross}as -no-pad-sections -EL -march=5900 -mabi=eabi -Iinclude -o $out && python3 tools/buildtools/elf_patcher.py $out gas",
+        )
 
-    ninja.rule(
-        "cc",
-        description="cc $in",
-        command=f"{EE_COMPILE_CMD} $in -o $out && {cross}strip $out -N dummy-symbol-name",
-    )
+        #
+        # The IRX modules have no JP strings,
+        # thus there's no need to do any special
+        # conversion.
+        #
+        ninja.rule(
+            "iop_as",
+            description="iop_as $in",
+            command=f"cpp {IOP_COMMON_INCLUDES} $in -o - | {cross}as -no-pad-sections -EL -march=3000 -Iinclude -o $out",
+        )
 
-    ninja.rule(
-        "ld",
-        description="link $out",
-        command=f"{cross}ld {ee_ld_args}",
-    )
+        ninja.rule(
+            "ee_cpp",
+            description="ee_cpp $in",
+            command=f"{EE_COMPILE_CMD_CXX} $in -o $out && {cross}strip $out -N dummy-symbol-name",
+        )
 
-    ninja.rule(
-        "sha1sum",
-        description="sha1sum $in",
-        command="sha1sum -c $in && touch $out",
-    )
+        ninja.rule(
+            "ee_cc",
+            description="ee_cc $in",
+            command=f"{EE_COMPILE_CMD} $in -o $out && {cross}strip $out -N dummy-symbol-name",
+        )
 
-    ninja.rule(
-        "elf",
-        description="elf $out",
-        command=f"{cross}objcopy $in $out -O binary",
-    )
+        ninja.rule(
+            "ld",
+            description="link $out",
+            command=f"{cross}ld {ld_args}",
+        )
+
+        ninja.rule(
+            "sha1sum",
+            description="sha1sum $in",
+            command="sha1sum -c $in && touch $out",
+        )
+
+        ninja.rule(
+            "elf",
+            description="elf $out",
+            command=f"{cross}objcopy $in $out -O binary",
+        )
+
+    task_as  = "ee_as" if not is_irx else "iop_as"
+    task_cpp = "ee_cpp" if not is_irx else "iop_cpp"
+    task_cc  = "ee_cc" if not is_irx else "iop_cc"
 
     for entry in linker_entries:
         seg = entry.segment
@@ -242,12 +266,12 @@ def build_stuff(linker_entries: List[LinkerEntry]):
         if isinstance(seg, splat.segtypes.common.asm.CommonSegAsm) or isinstance(
             seg, splat.segtypes.common.data.CommonSegData
         ):
-            build(entry.object_path, entry.src_paths, "as")
+            build(entry.object_path, entry.src_paths, task_as)
         elif isinstance(seg, splat.segtypes.common.cpp.CommonSegCpp):
-            build(entry.object_path, entry.src_paths, "cpp")
+            build(entry.object_path, entry.src_paths, task_cpp)
         elif isinstance(seg, splat.segtypes.common.c.CommonSegC):
             src = entry.src_paths[0]
-            if src in EUCJP_FILES:
+            if src in EUCJP_FILES and not is_irx:
                 tmp_eucjp = Path("build/tmp") / src.name.replace(".c", "_eucjp.c")
                 os.makedirs(tmp_eucjp.parent, exist_ok=True)
 
@@ -256,34 +280,43 @@ def build_stuff(linker_entries: List[LinkerEntry]):
                     rule="conv_eucjp",
                     inputs=str(src),
                 )
-                build(entry.object_path, [tmp_eucjp], "cc")
+                paths = [tmp_eucjp]
             else:
-                build(entry.object_path, entry.src_paths, "cc")
+                paths = entry.src_paths
+            build(entry.object_path, paths, task_cc)
         elif isinstance(seg, splat.segtypes.common.databin.CommonSegDatabin) or isinstance(seg, splat.segtypes.common.rodatabin.CommonSegRodatabin):
-            build(entry.object_path, entry.src_paths, "as")
+            build(entry.object_path, entry.src_paths, task_as)
         else:
             print(f"ERROR: Unsupported build segment type {seg.type}")
             sys.exit(1)
 
+    pre_elf_path = P3_PRE_ELF_PATH if not is_irx else WP2_PRE_ELF_PATH
+    ld_path = P3_LD_PATH if not is_irx else WP2_LD_PATH
+    map_path = P3_MAP_PATH if not is_irx else WP2_MAP_PATH
+
     ninja.build(
-        P3_PRE_ELF_PATH,
+        pre_elf_path,
         "ld",
-        P3_LD_PATH,
+        ld_path,
         implicit=[str(obj) for obj in built_objects],
-        variables={"mapfile": P3_MAP_PATH},
+        variables={"mapfile": map_path},
     )
 
+    elf_path = P3_ELF_PATH if not is_irx else WP2_ELF_PATH
+
     ninja.build(
-        P3_ELF_PATH,
+        elf_path,
         "elf",
-        P3_PRE_ELF_PATH,
+        pre_elf_path,
     )
 
+    checksum_path = "config/p3.jul12.checksum.sha1" if not is_irx else "config/irx.wave2ps2.jul12.checksum.sha1"
+
     ninja.build(
-        P3_ELF_PATH + ".ok",
+        elf_path + ".ok",
         "sha1sum",
-        "checksum.sha1",
-        implicit=[P3_ELF_PATH],
+        checksum_path,
+        implicit=[elf_path],
     )
 
 def generate_objdiff_configuration(config: dict[str, Any]):
@@ -325,10 +358,12 @@ def generate_objdiff_configuration(config: dict[str, Any]):
 
             if subs_type in ("asm", "c", "cpp"):
                 if subs_name.startswith("sdk/") or subs_name.startswith("nalib/"):
+                    #
                     # Skip SDK as it's not part of the game files
                     #
                     # nalib can't be precisely measured because
                     # it's mostly made of inlines, so skip it.
+                    #
                     continue
 
                 tu_to_diff.append((subs_type, subs_name))
@@ -464,20 +499,26 @@ def fix_compile_commands():
     for entry in data[:]:
         file_path = Path(entry["file"])
 
+        #
         # The original files we convert to EUC-JP won't be seen by clangd
         # or any tools that rely on `compile_commands.json` so let's replace those.
+        #
         if file_path in EUCJP_FILES:
             print(f"Found EUC-JP convert entry: file:{file_path}")
 
+            #
             # We want to remove the entry that does the EUC-JP convert
             # and fix the next one to refer to the original file rather
             # than the converted one.
+            #
             fix_eucjp_entry = True
             eucjp_og_file = file_path
             data.remove(entry)
             continue
+        #
         # We assume that the entry that uses the converted file
         # is right next to the one converting the file itself.
+        #
         elif fix_eucjp_entry == True:
             print(f"Found EUC-JP compile entry: file:{file_path}, og_file:{eucjp_og_file}")
             converted_tmp = Path("build/tmp") / (eucjp_og_file.stem + "_eucjp.c")
@@ -487,14 +528,22 @@ def fix_compile_commands():
 
             fix_eucjp_entry = False
         
-        # Remove stuff that clangd complains about.
+        #
+        # Remove stuff that clangd complains about:
+        #  - '-Gx' flag
+        #  - 'strip' command
+        #  - '-gstabs' flag (now replaced with regular '-g')
+        #
         if file_path.suffix == ".c" or file_path.suffix == ".cpp":
             entry["command"] = entry["command"].replace(" -G8", "")
             entry["command"] = entry["command"].split(" && mips-linux-gnu-strip")[0].strip()
 
+            #
             # Disable warnings so it stops crying even further
             # FIXME: should probably get rid of this one day
+            #
             entry["command"] += " -w"
+
         if file_path.suffix == ".s":
             data.remove(entry)
 
@@ -545,10 +594,13 @@ if __name__ == "__main__":
         shutil.rmtree("src", ignore_errors=True)
 
     split.main([Path(P3_YAML_FILE)], modes="all", verbose=False)
-
     linker_entries = split.linker_writer.entries
-
+    p3_config = split.config
     build_stuff(linker_entries)
+
+    split.main([Path(WP2_YAML_FILE)], modes="all", verbose=False)
+    linker_entries = split.linker_writer.entries
+    build_stuff(linker_entries, True, True)
 
     write_permuter_settings()
 
@@ -568,5 +620,5 @@ if __name__ == "__main__":
     fix_compile_commands()
 
     if args.objdiff:
-        generate_objdiff_configuration(split.config)
+        generate_objdiff_configuration(p3_config)
         build_objdiff_objects()
