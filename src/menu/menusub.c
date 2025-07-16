@@ -469,7 +469,7 @@ void TsMENU_InitSystem(void) {
     UserDispWork = NULL;
 
     UserWork = (USER_DATA*)memalign(16, sizeof(USER_DATA));
-    memset(UserWork, 0, sizeof(USER_DATA));
+    memset(UserWork, 0, sizeof(*UserWork));
 
     pCStageRank = (P3MC_STAGERANK*)memalign(16, sizeof(P3MC_STAGERANK[8]));
     memset(pCStageRank, 0, sizeof(P3MC_STAGERANK[8]));
@@ -486,7 +486,7 @@ void TsMenu_RankingClear(void) {
     P3MC_STAGERANK *pRank = pCStageRank;
 
     for (i = 0; i < 8; i++, pRank++) {
-        memset(pRank, 0, sizeof(P3MC_STAGERANK));
+        memset(pRank, 0, sizeof(*pRank));
     }
 }
 
@@ -546,11 +546,11 @@ void TsMenu_Init(int iniflg, P3GAMESTATE *pstate) {
     }
 
     UserLst = (P3MC_USRLST*)memalign(16, sizeof(P3MC_USRLST));
-    memset(UserLst, 0, sizeof(P3MC_USRLST));
+    memset(UserLst, 0, sizeof(*UserLst));
     P3MC_CheckChangeSet();
 
     UserDispWork = (MN_USERLST_WORK*)memalign(16, sizeof(MN_USERLST_WORK));
-    memset(UserDispWork, 0, sizeof(MN_USERLST_WORK));
+    memset(UserDispWork, 0, sizeof(*UserDispWork));
 
     TsInitUPacket(&MnPkt, NULL, 0x20000);
     TsInitUPacket(&MnLPkt, NULL, 0x2000);

@@ -175,6 +175,11 @@ void CdctrlInit(void) {
     WP2Ctrl(WP2_INIT, SCECdDVD);
     WP2Ctrl(WP2_SDINIT, WP2_NONE);
     WP2Ctrl(WP2_SETMASTERVOL, PR_CONCAT(0x3fff, 0x3fff));
+
+    /*
+     * BGM init--allocate 384KB for the read
+     * buffer in 768 blocks of 512 bytes each.
+     */
     WP2Ctrl(WP2_BGMINIT, 0x300);
 }
 
@@ -826,7 +831,7 @@ void CdctrlXTRset(FILE_STR *fstr_pp, u_int usebuf) {
     /* Search the XTR file */
     while (!CdctrlSerch(cdctrl_str.fstr_pp));
 
-    /* Read the XTR's header (2048 bytes) */
+    /* Read the XTR's header (1 sector) */
     while (!cdctrlReadSub(fstr_pp, 0, 2048, usebuf)) {
         MtcWait(1);
     }
@@ -857,7 +862,6 @@ void CdctrlXTRset(FILE_STR *fstr_pp, u_int usebuf) {
         }
 
         pr_pp = (u_char*)UsrMemEndAlloc(tb_pp->press_size);
-
         UsrMemEndFree();
         FlushCache(WRITEBACK_DCACHE);
 

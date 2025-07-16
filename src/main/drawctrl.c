@@ -162,8 +162,7 @@ void BallThrowSetFrame(int frame) {
     bthrow_ctrl_time = frame;
 }
 
-void BallThrowInit(void)
-{
+void BallThrowInit(void) {
     WorkClear(bthrow_ctrl, sizeof(bthrow_ctrl));
 
     bthrow_ctrl[0].targetY = 112.0f;

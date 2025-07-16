@@ -252,7 +252,7 @@ int P3MC_GetUserStart(int mode, P3MC_USRLST *pUsrLst, int bFirst) {
         free(pUChkWork);
     }
     
-    pWork = memalign(16, sizeof(GETUSER_WORK));
+    pWork = memalign(16, sizeof(*pWork));
     pUChkWork = pWork;
 
     portCheckFlg = 0;
@@ -339,7 +339,7 @@ void P3MC_OpeningCheckStart(void) {
         free(pUChkWork);
     }
 
-    pWork = memalign(16, sizeof(GETUSER_WORK));
+    pWork = memalign(16, sizeof(*pWork));
     pUChkWork = pWork;
     
     P3MC_CheckChangeSet();

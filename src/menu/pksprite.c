@@ -51,7 +51,7 @@ u_long128* TsInitUPacket(TsUSERPKT *pk, u_long128 *buf, u_int size) {
     TsUSERPKT *p;
     u_int      b0, b1;
 
-    memset(pk, 0, sizeof(TsUSERPKT));
+    memset(pk, 0, sizeof(*pk));
     p = pk;
 
     top = (u_int)_tsWorkInit(&p->mem, (u_int*)buf, size);
@@ -956,7 +956,7 @@ PKMESH* PkMesh_Create(int w, int h) {
         return NULL;
     }
 
-    memset(pmesh, 0, sizeof(PKMESH));
+    memset(pmesh, 0, sizeof(*pmesh));
     pmesh->pmspt = malloc(sizeof(PKMSPT) * (w + 1) * (h + 1));
 
     if (pmesh->pmspt == NULL) {

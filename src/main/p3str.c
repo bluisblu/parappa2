@@ -46,14 +46,15 @@ void p3strImage2RealPos(P3STR_SD *p3str_sd_pp) {
     }
 
     if (p3str_sd_pp->usrDsize != 0) {
-        p3str_sd_pp->usrD += (int)&p3str_sd_pp->type;
+        p3str_sd_pp->usrD += (int)p3str_sd_pp;
     }
+
     if (p3str_sd_pp->dataDsize != 0) {
-        p3str_sd_pp->dataD += (int)&p3str_sd_pp->type;
+        p3str_sd_pp->dataD += (int)p3str_sd_pp;
     }
 
     if (p3str_sd_pp->adrDsize != 0) {
-        p3str_sd_pp->adrD += (int)&p3str_sd_pp->type;
+        p3str_sd_pp->adrD += (int)p3str_sd_pp;
         adrd_pp = (ADRD*)p3str_sd_pp->adrD;
 
         for (i = 0; i < p3str_sd_pp->adrDsize / 16; i++, adrd_pp++) {
@@ -145,7 +146,7 @@ int p3StrInitSd(P3SRT_OD *p3o_pp, P3STR_SD *p3sd_pp, int datnum) {
         sprintf(scnname, "%d", datnum);
         printf("scene no:%d\n", datnum);
 
-        if (p3o_pp->use) {
+        if (p3o_pp->use != DNUM_NON) {
             fbp_tmp = DrawGetFbpPos(p3o_pp->use);
         } else {
             fbp_tmp = -1;
@@ -243,7 +244,7 @@ int p3StrQuitSdEach(P3SRT_OD *p3o_pp, P3STR_SD *p3sd_pp) {
 
     if (p3sd_pp->type == OD_SCENE) {
         PrCleanupScene((PR_SCENEHANDLE)p3o_pp->pad2);
-        p3o_pp->pad2 = 0;
+        p3o_pp->pad2 = NULL;
     }
 
     p3o_pp->first = 0;
@@ -274,12 +275,11 @@ void p3StrDispDs(P3SRT_OD *p3o_pp, P3STR_SD *p3sd_pp, int subtime) {
                 cur_time = subtime - scn_pp->start + scn_pp->top;
                 tmp_time = scn_pp->end - scn_pp->top - (subtime - scn_pp->start);
 
-                switch (scn_pp->type)
-                {
-                case 0:
+                switch (scn_pp->type) {
+                case STE_MDL:
                     PrShowModel((PR_MODELHANDLE)adrd_pp[scn_pp->adr1num].handle, 0);
                     break;
-                case 1:
+                case STE_ANI:
                     if (tmp_time < 1) {
                         PrHideModel((PR_MODELHANDLE)adrd_pp[scn_pp->adr1num].handle);
                     } else {
@@ -288,7 +288,7 @@ void p3StrDispDs(P3SRT_OD *p3o_pp, P3STR_SD *p3sd_pp, int subtime) {
                         PrShowModel((PR_MODELHANDLE)adrd_pp[scn_pp->adr1num].handle, 0);
                     }
                     break;
-                case 2:
+                case STE_ANIPOS:
                     if (tmp_time < 1) {
                         PrUnlinkPositionAnimation((PR_MODELHANDLE)adrd_pp[scn_pp->adr1num].handle);
                     } else {
@@ -296,19 +296,19 @@ void p3StrDispDs(P3SRT_OD *p3o_pp, P3STR_SD *p3sd_pp, int subtime) {
                         PrAnimateModelPosition((PR_MODELHANDLE)adrd_pp[scn_pp->adr1num].handle, cur_time);
                     }
                     break;
-                case 3:
+                case STE_CAM:
                     if (tmp_time > 0) {
                         PrSelectCamera((PR_CAMERAHANDLE)adrd_pp[scn_pp->adr1num].handle, (PR_SCENEHANDLE)p3o_pp->pad2);
                         PrAnimateSceneCamera((PR_SCENEHANDLE)p3o_pp->pad2, cur_time);
                     }
                     break;
-                case 4:
+                case STE_TM2:
                     if (!scn_pp->pad1) {
                         Tim2TransX((void*)adrd_pp[scn_pp->adr1num].handle, scn_pp->top);
                         scn_pp->pad1 = 1;
                     }
                     break;
-                case 5:
+                case STE_CL2:
                     if (tmp_time > 0) {
                         Cl2MixTrans(cur_time, scn_pp->end, (u_char*)adrd_pp[scn_pp->adr1num].handle, (u_char*)adrd_pp[scn_pp->adr2num].handle);
                     }

@@ -23,21 +23,29 @@ from splat.segtypes.linker_entry import LinkerEntry
 ROOT = Path(__file__).parent
 TOOLS_DIR = ROOT / "tools"
 
-YAML_FILE = "config/pr2.proto.yaml"
-BASENAME = "SCPS_150.17"
-LD_PATH = f"{BASENAME}.ld"
-ELF_PATH = f"build/{BASENAME}"
-MAP_PATH = f"build/{BASENAME}.map"
-PRE_ELF_PATH = f"build/{BASENAME}.elf"
+P3_YAML_FILE = "config/p3.jul12.yaml"
+P3_BASENAME = "SCPS_150.17"
+P3_LD_PATH = f"{P3_BASENAME}.ld"
+P3_ELF_PATH = f"build/{P3_BASENAME}"
+P3_MAP_PATH = f"build/{P3_BASENAME}.map"
+P3_PRE_ELF_PATH = f"build/{P3_BASENAME}.elf"
 
-COMMON_INCLUDES = "-Iinclude -Isrc -Iinclude/sdk -Iinclude/sdk/ee -Iinclude/gcc -Iinclude/gcc/gcc-lib"
+WP2_YAML_FILE = "config/irx.wave2ps2.jul12.yaml"
+WP2_BASENAME = "WAVE2PS2.IRX"
+WP2_LD_PATH = f"{WP2_BASENAME}.ld"
+WP2_ELF_PATH = f"build/{WP2_BASENAME}"
+WP2_MAP_PATH = f"build/{WP2_BASENAME}.map"
+WP2_PRE_ELF_PATH = f"build/{WP2_BASENAME}.elf"
+
 COMPILER_DIR = f"{TOOLS_DIR}/cc/ee-gcc2.96/bin"
 
-COMPILER_FLAGS = "-O2 -G8 -g"
-COMPILER_FLAGS_CPP = "-O2 -G8 -g -x c++ -fno-exceptions -fno-strict-aliasing"
+EE_COMMON_INCLUDES = "-Iinclude -Isrc -Iinclude/sdk -Iinclude/sdk/ee -Iinclude/gcc -Iinclude/gcc/gcc-lib"
 
-COMPILE_CMD = f"{COMPILER_DIR}/ee-gcc -c {COMMON_INCLUDES} {COMPILER_FLAGS}"
-COMPILE_CMD_CPP = f"{COMPILER_DIR}/ee-gcc -c {COMMON_INCLUDES} {COMPILER_FLAGS_CPP}"
+EE_COMPILER_FLAGS = "-O2 -G8 -g"
+EE_COMPILER_FLAGS_CXX = "-O2 -G8 -g -x c++ -fno-exceptions -fno-strict-aliasing"
+
+EE_COMPILE_CMD = f"{COMPILER_DIR}/ee-gcc -c {EE_COMMON_INCLUDES} {EE_COMPILER_FLAGS}"
+EE_COMPILE_CMD_CXX = f"{COMPILER_DIR}/ee-gcc -c {EE_COMMON_INCLUDES} {EE_COMPILER_FLAGS_CXX}"
 
 def exec_shell(command: List[str], stdout=subprocess.PIPE) -> str:
     ret = subprocess.run(command, stdout=stdout, stderr=subprocess.PIPE, text=True)
@@ -178,7 +186,7 @@ def build_stuff(linker_entries: List[LinkerEntry]):
 
     # Rules
     cross = "mips-linux-gnu-"
-    ld_args = "-EL -T config/pr2_proto_vu_syms.txt -T config/undefined_syms_auto.txt -T config/undefined_funcs_auto.txt -T config/undefined_syms.txt -Map $mapfile -T $in -o $out"
+    ee_ld_args = "-EL -T config/p3.jul12.vu_syms.txt -T config/p3.jul12.undefined_syms_auto.txt -T config/p3.jul12.undefined_funcs_auto.txt -T config/p3.jul12.undefined_syms.txt -Map $mapfile -T $in -o $out"
 
     ninja.rule(
         "conv_eucjp",
@@ -189,25 +197,25 @@ def build_stuff(linker_entries: List[LinkerEntry]):
     ninja.rule(
         "as",
         description="as $in",
-        command=f"cpp {COMMON_INCLUDES} $in -o - | iconv -f=UTF-8 -t=EUC-JP $in | {cross}as -no-pad-sections -EL -march=5900 -mabi=eabi -Iinclude -o $out && python3 tools/buildtools/elf_patcher.py $out gas",
+        command=f"cpp {EE_COMMON_INCLUDES} $in -o - | iconv -f=UTF-8 -t=EUC-JP $in | {cross}as -no-pad-sections -EL -march=5900 -mabi=eabi -Iinclude -o $out && python3 tools/buildtools/elf_patcher.py $out gas",
     )
 
     ninja.rule(
         "cpp",
         description="cpp $in",
-        command=f"{COMPILE_CMD_CPP} $in -o $out && {cross}strip $out -N dummy-symbol-name",
+        command=f"{EE_COMPILE_CMD_CXX} $in -o $out && {cross}strip $out -N dummy-symbol-name",
     )
 
     ninja.rule(
         "cc",
         description="cc $in",
-        command=f"{COMPILE_CMD} $in -o $out && {cross}strip $out -N dummy-symbol-name",
+        command=f"{EE_COMPILE_CMD} $in -o $out && {cross}strip $out -N dummy-symbol-name",
     )
 
     ninja.rule(
         "ld",
         description="link $out",
-        command=f"{cross}ld {ld_args}",
+        command=f"{cross}ld {ee_ld_args}",
     )
 
     ninja.rule(
@@ -258,24 +266,24 @@ def build_stuff(linker_entries: List[LinkerEntry]):
             sys.exit(1)
 
     ninja.build(
-        PRE_ELF_PATH,
+        P3_PRE_ELF_PATH,
         "ld",
-        LD_PATH,
+        P3_LD_PATH,
         implicit=[str(obj) for obj in built_objects],
-        variables={"mapfile": MAP_PATH},
+        variables={"mapfile": P3_MAP_PATH},
     )
 
     ninja.build(
-        ELF_PATH,
+        P3_ELF_PATH,
         "elf",
-        PRE_ELF_PATH,
+        P3_PRE_ELF_PATH,
     )
 
     ninja.build(
-        ELF_PATH + ".ok",
+        P3_ELF_PATH + ".ok",
         "sha1sum",
         "checksum.sha1",
-        implicit=[ELF_PATH],
+        implicit=[P3_ELF_PATH],
     )
 
 def generate_objdiff_configuration(config: dict[str, Any]):
@@ -316,7 +324,6 @@ def generate_objdiff_configuration(config: dict[str, Any]):
                 raise RuntimeError("invalid subsegment type")
 
             if subs_type in ("asm", "c", "cpp"):
-                # if subs_name in ("os/tim2",) or subs_name.startswith("sdk/"):
                 if subs_name.startswith("sdk/") or subs_name.startswith("nalib/"):
                     # Skip SDK as it's not part of the game files
                     #
@@ -389,7 +396,6 @@ def generate_objdiff_configuration(config: dict[str, Any]):
     )
 
 def build_objdiff_objects():
-    # obj_path = Path("obj")
     objdiff_path = Path("objdiff.json")
 
     dummy_path = Path("obj", "dummy").with_suffix(".c.o")
@@ -415,7 +421,6 @@ def build_objdiff_objects():
         build_jobs.append((asm_path, target_path))
 
     # compile objects
-
     cross = "mips-linux-gnu-"
 
     dummy_c_path = Path("obj", "dummy.c")
@@ -424,13 +429,13 @@ def build_objdiff_objects():
     # create the empty source (touch)
     dummy_c_path.parent.mkdir(parents=True, exist_ok=True)
     dummy_c_path.open(mode="a").close()
-    command = f"{COMPILE_CMD} {dummy_c_path} -o {dummy_o_path} && {cross}strip {dummy_o_path} -N dummy-symbol-name"
+    command = f"{EE_COMPILE_CMD} {dummy_c_path} -o {dummy_o_path} && {cross}strip {dummy_o_path} -N dummy-symbol-name"
     subprocess.run(command, shell=True)
     dummy_c_path.unlink()
 
     for asm_path, target_path in build_jobs:
         command = (
-            f"cpp {COMMON_INCLUDES} {asm_path} -o - | "
+            f"cpp {EE_COMMON_INCLUDES} {asm_path} -o - | "
             f"iconv -f=UTF-8 -t=EUC-JP {asm_path} | "
             f"{cross}as -no-pad-sections -EL -march=5900 -mabi=eabi -Iinclude -o {target_path} && "
             f"python3 tools/buildtools/elf_patcher.py {target_path} gas"
@@ -539,7 +544,7 @@ if __name__ == "__main__":
     if args.cleansrc:
         shutil.rmtree("src", ignore_errors=True)
 
-    split.main([Path(YAML_FILE)], modes="all", verbose=False)
+    split.main([Path(P3_YAML_FILE)], modes="all", verbose=False)
 
     linker_entries = split.linker_writer.entries
 

@@ -77,7 +77,7 @@ void GPadSysRead(void) {
                 }
 
                 if (id == 0) {
-                    WorkClear(sysP_pp, sizeof(PAD_SYSD));
+                    WorkClear(sysP_pp, sizeof(*sysP_pp));
                 } else {
                     sysP_pp->pad_id = id;
 
@@ -89,7 +89,7 @@ void GPadSysRead(void) {
                         sysP_pp->phase = 70;
                         break;
                     default:
-                        WorkClear(sysP_pp, sizeof(PAD_SYSD));
+                        WorkClear(sysP_pp, sizeof(*sysP_pp));
                         break;
                     }
                 }
@@ -203,7 +203,7 @@ void GPadSysRead(void) {
             }
             break;
         case scePadStateDiscon:
-            WorkClear(sysP_pp, sizeof(PAD_SYSD));
+            WorkClear(sysP_pp, sizeof(*sysP_pp));
             break;
         default:
             break;
