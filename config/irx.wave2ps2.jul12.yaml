@@ -28,6 +28,7 @@ options:
     compiler: PSYQ
     platform: psx
 
+    section_order: [".text", ".rodata", ".data", ".bss"]
 segments:
     - [0, databin, elf_header]
     - [0x34, databin] # ELF program headers
@@ -41,13 +42,21 @@ segments:
       # bss_size: ?
       subsegments:
         # .text
-        - [0xa0, asm, text] # .text
+        - [0xa0, asm, iop/bgm_entr]
+        - [0x190, asm, iop/bgm_com]
+        - [0x710, asm, iop/bgm_play]
+
+        - [0x37c0, asm, sdk/ilb_stub]
 
         # .rodata
-        - [0x3a70, databin] # .rodata
+        - [0x3a70, rodata, iop/bgm_entr]
+        - [0x3ac0, rodata, iop/bgm_com]
+        - [0x3af0, rodata, iop/bgm_play]
 
         # .data
-        - [0x3b30, databin] # .data
+        - [0x3b30, data, iop/bgm_entr]
+        - [0x3b40, data, iop/bgm_com]
+        - [0x3b50, data, iop/bgm_play]
 
     - [0x3ba0, databin] # .mdebug
     - [0x101bc, databin] # .shstrtab
