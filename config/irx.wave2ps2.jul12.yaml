@@ -30,7 +30,7 @@ options:
 
     named_regs_for_c_funcs: False
 
-    section_order: [".text", ".rodata", ".data", ".bss"]
+    section_order: [".text", ".rodata", ".data", ".sbss", ".bss"]
 segments:
     - [0, databin, elf_header]
     - [0x34, databin] # ELF program headers
@@ -40,7 +40,7 @@ segments:
       type: code
       start: 0xa0
       vram: 0x0 # Yes, it really starts at 0x0. Why?
-      # bss_size: ?
+      bss_size: 0x801c8
       subsegments:
         # .text
         - [0xa0, c, iop/bgm_entr]
@@ -58,6 +58,12 @@ segments:
         - [0x3b30, .data, iop/bgm_entr]
         - [0x3b40, .data, iop/bgm_com]
         - [0x3b50, data, iop/bgm_play]
+
+        - { start: 0x3ba0, type: sbss, vram: 0x00003b00, name: iop/bgm_play }
+
+        - { start: 0x3ba0, type: bss,  vram: 0x00003b20, name: iop/bgm_play }
+        - { start: 0x3ba0, type: .bss, vram: 0x00003c30, name: iop/bgm_com  }
+        - { start: 0x3ba0, type: bss,  vram: 0x00003c70, name: iop/bgm_play }
 
     - [0x3ba0, databin] # .mdebug
     - [0x101bc, databin] # .shstrtab

@@ -488,12 +488,11 @@ void CdctrlReadOne(FILE_STR *fstr_pp, u_int buf, int tmpbuf) {
 // さき(saki) -> Destination / もと(moto) -> Source
 void usrMemcpy(void *sakip, void *motop, int size) {
     int     i = size / sizeof(int);
-    int *s_pp = sakip;
     int *m_pp = motop;
+    int *s_pp = sakip;
 
     while (--i != -1) {
-        *s_pp = *m_pp;
-        s_pp++, m_pp++;
+        *s_pp++ = *m_pp++;
     }
 }
 

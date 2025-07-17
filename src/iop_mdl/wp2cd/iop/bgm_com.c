@@ -1,5 +1,3 @@
-#include "common.h"
-
 #include "../wp2cd.h"
 
 #include <intrman.h>
@@ -37,7 +35,7 @@ extern int          BgmGetCdErrCode(void);
 
 static void* bgmFunc(unsigned int command, void *data, int size);
 
-/* .bss  */ extern int gRpcArg[16];
+int gRpcArg[16];
 
 int sce_bgm_loop(void) {
     sceSifQueueData qd;

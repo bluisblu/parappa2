@@ -1,6 +1,8 @@
 #ifndef WP2CD_H
 #define WP2CD_H
 
+#include "common.h"
+
 /* WP2 commands */
 #define WP2_NONE                 (0)
 

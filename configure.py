@@ -278,6 +278,7 @@ def build_stuff(linker_entries: List[LinkerEntry], is_irx: bool = False, append:
     task_cpp = "ee_cpp" if not is_irx else "iop_cpp"
     task_cc  = "ee_cc" if not is_irx else "iop_cc"
 
+    object_paths = set()
     for entry in linker_entries:
         seg = entry.segment
 
@@ -286,6 +287,11 @@ def build_stuff(linker_entries: List[LinkerEntry], is_irx: bool = False, append:
 
         if entry.object_path is None:
             continue
+
+        if entry.object_path in object_paths:
+            print(f"Removing duplicate entry for: {entry.object_path}")
+            continue
+        object_paths.add(entry.object_path)
 
         if isinstance(seg, splat.segtypes.common.asm.CommonSegAsm) or isinstance(
             seg, splat.segtypes.common.data.CommonSegData

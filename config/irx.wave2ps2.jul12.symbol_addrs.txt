@@ -51,6 +51,35 @@ BgmGetTSample            = 0x00003158; // type:func
 BgmGetCdErrCode          = 0x000031d4; // type:func
 _BgmPlay                 = 0x0000320c; // type:func
 
+bug_bug_bug_flag         = 0x00003ab0; // size:0x4
+fp_pc                    = 0x00003ab4; // size:0x4
+sbuf                     = 0x00003ab8; // size:0x10
+gThid                    = 0x00003ac8; // size:0x4
+gSem                     = 0x00003acc; // size:0x4
+gThid_Tr                 = 0x00003ad0; // size:0x4
+gSem_Tr                  = 0x00003ad4; // size:0x4
+gBgmIntr                 = 0x00003ad8; // size:0x4
+gBgmIntrTime             = 0x00003adc; // size:0x4
+ReadBuff                 = 0x00003ae0; // size:0x4
+ReadOutCnt               = 0x00003ae4; // size:0x4
+ReadOddEven              = 0x00003ae8; // size:0x4
+BgmVolumeSet             = 0x00003aec; // size:0x4
+BgmPause                 = 0x00003af0; // size:0x4
+BgmMode                  = 0x00003af4; // size:0x4
+
+ReadPkSize               = 0x00003b00; // size:0x4
+modeCd                   = 0x00003b04; // size:0x4
+BgmVolume                = 0x00003b08; // size:0x4
+CdErrCode                = 0x00003b0c; // size:0x4
+ReadBuffSize             = 0x00003b10; // size:0x4
+oldstat                  = 0x00003b14; // size:0x4
+
+bgmPlayReadMode          = 0x00003b20; // size:0x4
+sifdmadata               = 0x00003b28; // size:0x100
+wavep2                   = 0x00003c70; // size:0x30
+fpCd                     = 0x00003ca0; // size:0x24
+ring_buf                 = 0x00003cd0; // size:0x80000
+
 // tmp/cca21454_ilb_stub.s
 libsd_stub               = 0x00003720;
 sceSdInit                = 0x00003734; // type:func
