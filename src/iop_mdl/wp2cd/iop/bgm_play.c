@@ -841,7 +841,51 @@ int BgmSeek(unsigned int ofs) {
     return ret;
 }
 
-IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", BgmSeekFLoc);
+int BgmSeekFLoc(sceCdlFILE *fpLoc) {
+    u_char *filename;
+    int     ret;
+
+    filename = (u_char*)fpLoc;
+
+    if (filename[0] == 'h' && filename[1] == 'o' &&
+        filename[2] == 's' && filename[3] == 't') {
+        bgmPlayReadMode = RDMODE_PC;
+    } else {
+        bgmPlayReadMode = RDMODE_CD;
+    }
+
+    if (bgmPlayReadMode != RDMODE_CD) {
+        if (fp_pc >= 0) {
+            close(fp_pc);
+        }
+
+        fp_pc = open(filename, O_RDONLY);
+
+        if (fp_pc < 0) {
+            ret = 0;
+        } else {
+            ret = 1;
+            fpCd.size = lseek(fp_pc, 0, SEEK_END);
+            fpCd.lsn = 0;
+        }
+    } else {
+        fpCd = *fpLoc;
+    }
+
+    gBgmIntrTime = 0;
+    gBgmIntr = 0;
+    ReadOutCnt = 0;
+
+    wavep2.size = fpCd.size / 2048;
+    wavep2.ofs = 0;
+    wavep2.pos = 0;
+    wavep2.StartTrPos = 0;
+    wavep2.TransPos = 0;
+    wavep2.readBackFlag = 0;
+
+    BgmMode |= 0x800;
+    return 1;
+}
 
 void BgmSetChannel(u_int chan) {
     wavep2.ReqChan[0] = chan >> 16;
@@ -852,7 +896,37 @@ void BgmSetTrPoint(u_int trpos) {
     wavep2.TransEEAdrs = trpos;
 }
 
-IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", BgmGetTime);
+int BgmGetTime(void) {
+    u_int ret;
+    u_int now_cnt;
+    u_int gBgmIntrTmp;
+
+    while (1) {
+        gBgmIntrTime = 0;
+
+        ret = sceSdBlockTransStatus(1, 0);
+        now_cnt = ReadOutCnt;
+
+        gBgmIntrTmp = gBgmIntr;
+        if (gBgmIntrTime == 0) {
+            break;
+        }
+    }
+
+    if (BgmMode & 0x1000) {
+        ret &= 0xffffff;
+        if (ret >= sbuf.buf_pos[1]) {
+            ret -= sbuf.buf_pos[1];
+        } else {
+            ret -= sbuf.buf_pos[0];
+        }
+    } else {
+        ret = 0;
+    }
+
+    now_cnt += (sbuf.TrackSize / 2) * gBgmIntrTmp;
+    return (now_cnt + (ret / 1024));
+}
 
 int BgmGetTSample() {
     int fsize = (wavep2.size * 2048);
