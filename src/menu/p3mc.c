@@ -287,13 +287,75 @@ void P3MC_GetUserEnd(void) {
 
 INCLUDE_ASM("menu/p3mc", P3MC_GetUserCheck);
 
+#if NON_MATCHING
 INCLUDE_ASM("menu/p3mc", P3MC_AddUser);
+#else
+extern char D_00396420[] = " AddUserWork Over All File Count...\n";
+extern char D_00396448[] = " AddUserWork Over Log File Count...\n";
+extern char D_00396470[] = " AddUserWork Over Replay File Count...\n";
 
+void P3MC_AddUser(P3MC_USRLST *pUser, int mode, USER_DATA *puser) {
+    P3MC_STAGERANK *rank;
+    int iVar6;
+    USER_DATA *dst;
+    USER_DATA *src;
+    
+    src = pUser->getUser + pUser->nGetUser;
+    dst = src;
+    if ((((u_int)puser | (u_int)src) & 7) == 0) {
+      rank = puser->stageRank;
+      do {
+        memcpy(dst, puser, 36);
+        puser = (USER_DATA *)((int)puser->name2);
+        dst = (USER_DATA *)((int)dst->name2);
+      } while (puser != (USER_DATA *)&rank[7].vplay[3][9].score);
+    }
+    else {
+      rank = puser->stageRank;
+      do {
+        memcpy(dst->name, puser->name, 12);
+        memcpy(dst->name1, puser->name1, 12);
+        memcpy(dst->name2, puser->name2, 12);
+        puser = (USER_DATA *)(puser->name2[8]);
+        dst = (USER_DATA *)(dst->name2[8]);
+      } while (puser != (USER_DATA *)&rank[7].vplay[3][9].score);
+    }
+    dst->name[0] = puser->name[0];
+    iVar6 = pUser->nGetUser + 1;
+    pUser->nGetUser = iVar6;
+    if (0x4f < iVar6) {
+      printf(D_00396420);
+      pUser->nGetUser = 0x4f;
+    }
+    if (mode == 1) {
+      iVar6 = pUser->nLogGet + 1;
+      pUser->plog_user[pUser->nLogGet] = src;
+      pUser->nLogGet = iVar6;
+      if (0x4f < iVar6) {
+        printf(D_00396448);
+        pUser->nLogGet = 0x4f;
+      }
+    }
+    else if (mode == 2) {
+      iVar6 = pUser->nRepGet + 1;
+      pUser->prep_user[pUser->nRepGet] = src;
+      pUser->nRepGet = iVar6;
+      if (0x4f < iVar6) {
+        printf(D_00396470);
+        pUser->nRepGet = 0x4f;
+      }
+    }
+    return;
+}
+#endif
+
+#if NON_MATCHING
 INCLUDE_RODATA("menu/p3mc", D_00396420);
 
 INCLUDE_RODATA("menu/p3mc", D_00396448);
 
 INCLUDE_RODATA("menu/p3mc", D_00396470);
+#endif
 
 INCLUDE_ASM("menu/p3mc", _P3MC_AddUserBroken);
 
