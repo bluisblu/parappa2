@@ -638,7 +638,7 @@ void usrFree(void *adrs) {
 
     for (i = 0; i < PR_ARRAYSIZE(usr_malloc_str); i++) {
         if (usr_malloc_str[i].adrs != NULL &&
-            usr_malloc_str[i].adrs == adrs) { 
+            usr_malloc_str[i].adrs == adrs) {
             free(adrs);
             usr_malloc_str[i].adrs = 0;
             usr_malloc_str[i].size = 0;

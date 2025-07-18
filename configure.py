@@ -632,8 +632,8 @@ if __name__ == "__main__":
     build_stuff(linker_entries)
 
     #
-    # Hack to avoid spimdisasm from
-    # emitting the `_gp` symbol.
+    # Hack to avoid splat & spimdisasm from
+    # leaking symbols from the previous split.
     #
     splat.util.symbols.spim_context = spimdisasm.common.Context()
     splat.util.symbols.reset_symbols()

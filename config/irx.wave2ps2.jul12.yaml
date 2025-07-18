@@ -29,6 +29,7 @@ options:
     platform: psx
 
     named_regs_for_c_funcs: False
+    make_full_disasm_for_code: False
 
     section_order: [".text", ".rodata", ".data", ".sbss", ".bss"]
 segments:

@@ -338,7 +338,7 @@ void comMakingNo3(CM_STR_CTRL *cmstr_pp) {
     comMakeSubYure(cmstr_pp->cm_str_make, cmstr_pp->maxBox, -11, 11);
 }
 
-void comMakingNo5(CM_STR_CTRL *cmstr_pp) {   
+void comMakingNo5(CM_STR_CTRL *cmstr_pp) {
     comMakingNo15(cmstr_pp);
 
     comMakeSubYureReset(cmstr_pp->cm_str_make, cmstr_pp->maxBox);
@@ -346,7 +346,7 @@ void comMakingNo5(CM_STR_CTRL *cmstr_pp) {
     comMakeSubYure(cmstr_pp->cm_str_make, cmstr_pp->maxBox, -5, 5);
 }
 
-void comMakingNo6(CM_STR_CTRL *cmstr_pp) {   
+void comMakingNo6(CM_STR_CTRL *cmstr_pp) {
     comMakingNo3(cmstr_pp);
 
     comMakeSubYureReset(cmstr_pp->cm_str_make, cmstr_pp->maxBox);
@@ -380,7 +380,7 @@ void comMakingNo8(CM_STR_CTRL *cmstr_pp) {
     comMakeSubYure(cmstr_pp->cm_str_make, cmstr_pp->maxBox, -2, 2);
 }
 
-void comMakingNo9(CM_STR_CTRL *cmstr_pp) {   
+void comMakingNo9(CM_STR_CTRL *cmstr_pp) {
     comMakingNo15(cmstr_pp);
 
     comMakeSubYureReset(cmstr_pp->cm_str_make, cmstr_pp->maxBox);

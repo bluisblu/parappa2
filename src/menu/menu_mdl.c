@@ -582,7 +582,7 @@ void MNScene_SetAnimeBankEnd(MN_SCENE *pshdl, u_int bnk) {
                 pshdl->time[bnk] = panm->etime;
             }
         }
-    } else {       
+    } else {
         for (i = 0; i < 10; i++, bnk >>= 1) {
             if (!(bnk & 1)) {
                 continue;

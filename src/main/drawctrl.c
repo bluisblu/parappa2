@@ -233,7 +233,7 @@ void BallThrowTarget(void *mdlh, OBJBTHROW_TYPE thtype, int targetframe) {
     bthrow_ctrl[thtype].targ_mdl_adr = mdlh;
 }
 
-void BallThrowPoll(void) {   
+void BallThrowPoll(void) {
     int i, j;
 
     sceGifPacket gifP;

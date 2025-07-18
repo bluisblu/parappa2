@@ -40,7 +40,7 @@ private:
     NaMATRIX<float, 4, 4> unk20;
 };
     
-class SpaNodeAnimation {   
+class SpaNodeAnimation {
 public:
     bool IsVisible(float arg0) const;
     int Optimize();

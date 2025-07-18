@@ -44,7 +44,7 @@ void mccReqInit(void) {
     WorkClear(mc_resetTmp, sizeof(mc_resetTmp));
 }
 
-void mccReqSaveInit(void) {   
+void mccReqSaveInit(void) {
     mc_rep_str_local.scoreN_cnt = 0;
     mc_rep_str_local.levelN_cnt = 0;
     mc_rep_str_local.mc_rep_dat_cnt = 0;

@@ -363,7 +363,7 @@ int selPlayDisp(int sel_stage, int sel_disp, int firstf) {
     ReportHeapUsage();
     printf("=== selPlayDisp stg:%d disp:%d ===\n", sel_stage, sel_disp);
 
-    // Load stage overlay
+    /* Load stage overlay */
     printf(D_00393A00);
     CdctrlRead(&stdat_rec[sel_stage].ovlfile, overlay_loadaddr, NULL);
     CdctrlReadWait();

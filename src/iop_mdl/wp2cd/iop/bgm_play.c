@@ -12,6 +12,7 @@
 #include <stdio.h>
 
 #define KB(x) (x*1024)
+#define SCTORS(x) (x/2048)
 
 #define RDMODE_CD (0)
 #define RDMODE_PC (1)
@@ -138,7 +139,82 @@ void usrMemcpy(void *sakip, void *motop, int size) {
     }
 }
 
-IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", TransBufSet);
+int TransBufSet(void) {
+    int i;
+    int pos;
+    int spu_pp;
+    int org;
+    int ee_cnt;
+
+    ee_cnt = 0;
+    pos = wavep2.TransPos;
+    org = pos;
+    spu_pp = sbuf.buf_pos[sbuf.dbuf_flg];
+
+    for (i = 0; i < (sbuf.TrackSize / 2); i++) {
+        usrMemcpy((void*)spu_pp, (void*)(((pos * wavep2.Tr1Size) + (wavep2.ReqChan[0] * 512)) + ReadBuff), 512);
+        spu_pp += 512;
+        usrMemcpy((void*)spu_pp, (void*)(((pos * wavep2.Tr1Size) + (wavep2.ReqChan[1] * 512)) + ReadBuff), 512);
+        spu_pp += 512;
+
+        if (wavep2.TransEEAdrs != 0) {
+            int j;
+            for (j = 0; j < wavep2.Channel; j++) {
+                P3STR_TRH *tr_pp;
+
+                if (wavep2.ReqChan[0] == j || wavep2.ReqChan[1] == j) {
+                    continue;
+                }
+
+                tr_pp = (P3STR_TRH*)(((pos * wavep2.Tr1Size) + (j * 512)) + ReadBuff);
+                if (tr_pp->trSize == 0) {
+                    continue;
+                }
+
+                sifdmadata[ee_cnt].data = (unsigned int)&tr_pp->dat;
+                sifdmadata[ee_cnt].addr = tr_pp->trAdr + wavep2.TransEEAdrs;
+                sifdmadata[ee_cnt].size = tr_pp->trSize;
+                sifdmadata[ee_cnt].mode = 0;
+
+                ee_cnt++;
+                ee_cnt %= 16;
+                if (ee_cnt == 0) {
+                    int ret = 0;
+                    while (ret == 0) {
+                        CpuSuspendIntr(&oldstat);
+                        ret = sceSifSetDma(sifdmadata, 16);
+                        if (ret != 0) {
+                            wavep2.TransId = ret;
+                        }
+                        CpuResumeIntr(oldstat);
+                    }
+                }
+            }
+        }
+
+        pos++;
+        if (pos >= wavep2.TransMax) {
+            pos = 0;
+        }
+    }
+
+    if (ee_cnt != 0) {
+        int ret = 0;
+        while (ret == 0) {
+            CpuSuspendIntr(&oldstat);
+            ret = sceSifSetDma(sifdmadata, ee_cnt);
+            if (ret != 0) {
+                wavep2.TransId = ret;
+            }
+            CpuResumeIntr(oldstat);
+        }
+    }
+
+    sbuf.dbuf_flg ^= 1;
+    wavep2.TransPos = pos;
+
+    return (pos / (wavep2.TransMax / 2)) != (org / (wavep2.TransMax / 2));
+}
 
 static int IntFunc(int ch, void *common) {
     if (gBgmIntr == 0) {
@@ -195,7 +271,7 @@ static int makeMySem() {
     return CreateSema(&sem);
 }
 
-void BgmSetVolumeDirect(unsigned int vol) {    
+void BgmSetVolumeDirect(unsigned int vol) {
     CpuSuspendIntr(&oldstat);
     sceSdSetParam(0xf81,  vol >> 16);
     sceSdSetParam(0x1081, vol);
@@ -203,13 +279,19 @@ void BgmSetVolumeDirect(unsigned int vol) {
     return; /* Explicit return needed to match. */
 }
 
-IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", BgmSetMasterVolume);
+void BgmSetMasterVolume(unsigned int vol) {
+    CpuSuspendIntr(&oldstat);
+    sceSdSetParam(0x981, vol >> 16);
+    sceSdSetParam(0xa81, vol);
+    CpuResumeIntr(oldstat);
+    return; /* Explicit return needed to match. */
+}
 
 void BgmCdInit(int mode) {
-    sceCdInit(0);
+    sceCdInit(SCECdINIT);
     sceCdMmode(mode);
-    sceCdStInit(256, 16, (u_int)ring_buf);
-    sceCdDiskReady(0);
+    sceCdStInit(SCTORS(KB(512)), 16, (u_int)ring_buf);
+    sceCdDiskReady(0); /* blocking */
 }
 
 void BgmSdInit(int status) {
@@ -256,7 +338,7 @@ int BgmInit(int block_size) {
     }
 
     sbuf.dbuf_flg = 0;
-    
+
     if (ReadBuff != NULL) {
         CpuSuspendIntr(&oldstat);
         FreeSysMemory((void*)ReadBuff);
@@ -273,29 +355,402 @@ int BgmInit(int block_size) {
     return gThid;
 }
 
-IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", BgmQuit);
+void BgmQuit(int status) {
+    CpuSuspendIntr(&oldstat);
 
-IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", BgmOpen);
+    FreeSysMemory((void*)ReadBuff);
+    ReadBuff = 0;
+    ReadBuffSize = 0;
 
-IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", BgmOpenFLoc);
+    FreeSysMemory((void*)sbuf.buf_pos[0]);
+    sbuf.buf_pos[0] = NULL;
+    sbuf.buf_pos[1] = NULL;
+    sbuf.TrackSize = 0;
 
-IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", BgmClose);
+    CpuResumeIntr(oldstat);
 
-IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", TransBufSet_SUB);
+    if (gThid != 0) {
+        TerminateThread(gThid);
+    }
 
-IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", BgmPreLoad);
+    if (gSem != 0) {
+        DeleteSema(gSem);
+    }
 
-IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", _PreLoadBack);
+    if (gThid != 0) {
+        DeleteThread(gThid);
+    }
 
-IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", BgmPreLoadBack);
+    gThid = 0;
+    gSem = 0;
 
-IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", BgmReadBuffFull);
+    if (gThid_Tr != 0) {
+        TerminateThread(gThid_Tr);
+    }
 
-IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", BgmStart);
+    if (gSem_Tr != 0) {
+        DeleteSema(gSem_Tr);
+    }
 
-IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", _BgmStop);
+    if (gThid_Tr != 0) {
+        DeleteThread(gThid_Tr);
+    }
 
-IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", BgmStop);
+    gThid_Tr = 0;
+    gSem_Tr = 0;
+    return; /* Explicit return needed to match. */
+}
+
+int BgmOpen(char *filename) {
+    int ret;
+
+    if (filename[0] == 'h' && filename[1] == 'o' &&
+        filename[2] == 's' && filename[3] == 't') {
+        bgmPlayReadMode = 1;
+    } else {
+        bgmPlayReadMode = 0;
+    }
+
+    if (bgmPlayReadMode != RDMODE_CD) {
+        if (fp_pc >= 0) {
+            close(fp_pc);
+        }
+
+        fp_pc = open(filename, O_RDONLY);
+
+        if (fp_pc < 0) {
+            ret = FALSE;
+        } else {
+            ret = TRUE;
+            fpCd.size = lseek(fp_pc, 0, SEEK_END);
+            fpCd.lsn = 0;
+            lseek(fp_pc, 0, SEEK_SET);
+        }
+    } else {
+        ret = sceCdSearchFile(&fpCd, filename);
+    }
+
+    if (!ret) {
+        return -1;
+    }
+
+    sceCdDiskReady(0); /* blocking */
+
+    modeCd.trycount = 0; /* 256 tries */
+    modeCd.spindlctrl = SCECdSpinStm;
+    modeCd.datapattern = SCECdSecS2048;
+
+    ReadOutCnt = 0;
+    gBgmIntr = 0;
+
+    wavep2.size = fpCd.size / 2048;
+    wavep2.ofs = 0;
+    wavep2.pos = 0;
+    wavep2.StartTrPos = 0;
+    wavep2.TransPos = 0;
+
+    if (bgmPlayReadMode == RDMODE_CD) {
+        while (!sceCdStStart(fpCd.lsn, &modeCd));
+    }
+
+    BgmMode |= 0x800;
+    ReadOddEven = 0;
+
+    CpuSuspendIntr(&oldstat);
+    sceSdSetTransIntrHandler(1, IntFunc, NULL);
+    CpuResumeIntr(oldstat);
+
+    wavep2.TransId = 0;
+    wavep2.readBackFlag = FALSE;
+
+    return wavep2.size;
+}
+
+int BgmOpenFLoc(sceCdlFILE *fpLoc) {
+    u_char *filename;
+    int     ret;
+
+    filename = (u_char*)fpLoc;
+
+    if (filename[0] == 'h' && filename[1] == 'o' &&
+        filename[2] == 's' && filename[3] == 't') {
+        bgmPlayReadMode = RDMODE_PC;
+    } else {
+        bgmPlayReadMode = RDMODE_CD;
+    }
+
+    gBgmIntr = 0;
+
+    if (bgmPlayReadMode != RDMODE_CD) {
+        if (fp_pc >= 0) {
+            close(fp_pc);
+        }
+
+        do {
+            fp_pc = open(filename, O_RDONLY);
+        } while (fp_pc < 0);
+
+        ret = 1;
+
+        fpCd.size = lseek(fp_pc, 0, SEEK_END);
+        fpCd.lsn = 0;
+        lseek(fp_pc, 0, SEEK_SET);
+    } else {
+        fpCd = *fpLoc;
+    }
+
+    sceCdDiskReady(0); /* blocking */
+
+    modeCd.trycount = 0; /* 256 tries */
+    modeCd.spindlctrl = SCECdSpinStm;
+    modeCd.datapattern = SCECdSecS2048;
+
+    ReadOutCnt = 0;
+
+    wavep2.size = fpCd.size / 2048;
+    wavep2.ofs = 0;
+    wavep2.pos = 0;
+    wavep2.StartTrPos = 0;
+    wavep2.TransPos = 0;
+
+    if (bgmPlayReadMode == RDMODE_CD) {
+        while (!sceCdStStart(fpCd.lsn, &modeCd));
+    }
+
+    BgmMode |= 0x800;
+    ReadOddEven = 0;
+
+    CpuSuspendIntr(&oldstat);
+    sceSdSetTransIntrHandler(1, IntFunc, NULL);
+    CpuResumeIntr(oldstat);
+
+    wavep2.TransId = 0;
+    wavep2.readBackFlag = FALSE;
+
+    return wavep2.size;
+}
+
+void BgmClose(int status) {
+    ReadOddEven = 0;
+
+    CpuSuspendIntr(&oldstat);
+    sceSdSetTransIntrHandler(1, IntFuncEnd, NULL);
+    CpuResumeIntr(oldstat);
+
+    BgmMode &= ~0x800;
+
+    if (bgmPlayReadMode == RDMODE_CD) {
+        while (!sceCdStStop());
+    } else {
+        if (fp_pc >= 0) {
+            close(fp_pc);
+        }
+
+        fp_pc = -1;
+    }
+
+    if (wavep2.TransEEAdrs != NULL && wavep2.TransId != 0) {
+        while (1) {
+            CpuSuspendIntr(&oldstat);
+            if (sceSifDmaStat(wavep2.TransId) < 0) {
+                break;
+            }
+            CpuResumeIntr(oldstat);
+        }
+
+        CpuResumeIntr(oldstat);
+    }
+
+    wavep2.TransId = 0;
+    wavep2.readBackFlag = FALSE;
+
+    gBgmIntr = 0;
+
+    TerminateThread(gThid_Tr);
+    StartThread(gThid_Tr, NULL);
+    return; /* Explicit return needed to match. */
+}
+
+static void TransBufSet_SUB(void) {
+    int which;
+    int remain;
+    int tmp_size;
+    int *addr;
+    int i;
+
+    if (!TransBufSet()) {
+        return;
+    }
+
+    which    = 1 - (wavep2.TransPos / (wavep2.TransMax / 2));
+    tmp_size = (wavep2.TransMax * wavep2.Tr1Size) / 2;
+    remain   = wavep2.size - wavep2.pos;
+    remain  *= 2048;
+
+    if (remain > tmp_size) {
+        remain = tmp_size;
+    } else {
+        addr = (int*)((((which * tmp_size) * 4) + ReadBuff) + (remain * 4));
+        for (i = 0; i < ((u_int)(tmp_size - remain) / 4); i++) {
+            *addr++ = 0;
+        }
+
+        BgmMode &= 0xfff;
+        BgmMode |= 0x8000;
+    }
+
+    if (bgmPlayReadMode == RDMODE_CD) {
+        if (Wp2CdStRead(remain / 2048, (u_int*)((which * tmp_size) + ReadBuff), 1, &CdErrCode) != (remain / 2048)) {
+            /* Empty */
+        }
+    } else {
+        readPC(fp_pc, (u_char*)((which * tmp_size) + ReadBuff), remain);
+        CdErrCode = 0;
+    }
+
+    if (CdErrCode != 0) {
+        /* Empty */
+    }
+
+    wavep2.pos += (remain / 2048);
+}
+
+int BgmPreLoad(void) {
+    if (bgmPlayReadMode == RDMODE_CD) {
+        Wp2CdStRead((wavep2.TransMax * wavep2.Tr1Size) / 2048, (u_int*)ReadBuff, 1, &CdErrCode);
+    } else {
+        readPC(fp_pc, (u_char*)ReadBuff, wavep2.TransMax * wavep2.Tr1Size);
+        CdErrCode = 0;
+    }
+
+    if (!(BgmMode & 0x800)) {
+        return 0;
+    }
+
+    wavep2.TransPos = 0;
+
+    ReadOutCnt = ((wavep2.pos * 2048) / wavep2.Tr1Size) + wavep2.TransPos;
+
+    wavep2.pos += (wavep2.TransMax * wavep2.Tr1Size) / 2048;
+
+    sbuf.dbuf_flg = 0;
+
+    TransBufSet_SUB();
+    TransBufSet_SUB();
+
+    return CdErrCode;
+}
+
+int _PreLoadBack(int status) {
+    while (1) {
+        WaitSema(gSem_Tr);
+
+        if (BgmMode & 0x800) {
+            BgmPreLoad();
+        } else {
+            /* Empty */
+        }
+
+        wavep2.readBackFlag = FALSE;
+    }
+}
+
+void BgmPreLoadBack(void) {
+    SignalSema(gSem_Tr);
+    wavep2.readBackFlag = TRUE;
+}
+
+int BgmReadBuffFull(void) {
+    if (wavep2.readBackFlag) {
+        return 1;
+    }
+
+    if (bgmPlayReadMode != RDMODE_CD) {
+        return 0;
+    }
+
+    if (sceCdStStat() < 240) {
+        return 2;
+    }
+
+    return 0;
+}
+
+int BgmStart(void) {
+    int ret;
+
+    BgmSetVolumeDirect(BgmVolume);
+
+    while (1) {
+        CpuSuspendIntr(&oldstat);
+        ret = sceSdBlockTrans(1, 0x10, (u_char*)sbuf.buf_pos[0], KB(44));
+        CpuResumeIntr(oldstat);
+        if (ret >= 0) {
+            break;
+        }
+        printf(" sceSdBlockTrans ERROR!!\n");
+    }
+
+    BgmMode &= 0xfff;
+    BgmMode |= 0x1000;
+    return ret;
+}
+
+void _BgmStop(void) {
+    int ret         = 0;
+    int BgmMode_tmp = BgmMode;
+
+    BgmMode &= 0xfff;
+    BgmMode &= ~0x800;
+
+    if ((BgmMode_tmp &= 0x1000) != 0) {
+        while (1) {
+            CpuSuspendIntr(&oldstat);
+            ret = sceSdBlockTrans(1, 0x2, NULL, 0);
+            CpuResumeIntr(oldstat);
+            if (ret >= 0) {
+                break;
+            }
+            printf(" sceSdBlockTrans ERROR!!\n");
+        }
+    }
+
+    gBgmIntr = 0;
+    wavep2.readBackFlag = FALSE;
+    return; /* Explicit return needed to match. */
+}
+
+void BgmStop(unsigned int vol) {
+    int ret         = 0;
+    int BgmMode_tmp = BgmMode;
+
+    BgmSetVolumeDirect(0);
+
+    BgmMode &= 0xfff;
+    BgmMode &= ~0x800;
+
+    if ((BgmMode_tmp &= 0x1000) != 0) {
+        while (1) {
+            CpuSuspendIntr(&oldstat);
+            ret = sceSdBlockTrans(1, 0x2, NULL, 0);
+            CpuResumeIntr(oldstat);
+            if (ret >= 0) {
+                break;
+            }
+            printf(" sceSdBlockTrans ERROR!!\n");
+        }
+    }
+
+    gBgmIntr = 0;
+    wavep2.readBackFlag = FALSE;
+
+    if (bgmPlayReadMode == RDMODE_CD) {
+        TerminateThread(gThid);
+        StartThread(gThid, NULL);
+    }
+
+    return; /* Explicit return needed to match. */
+}
 
 void BgmSetVolume(unsigned int vol) {
     BgmVolumeSet = 1;
@@ -303,7 +758,23 @@ void BgmSetVolume(unsigned int vol) {
     return; /* Explicit return needed to match. */
 }
 
-IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", BgmSetMode);
+void BgmSetMode(u_int maxChan) {
+    CpuSuspendIntr(&oldstat);
+
+    wavep2.Channel = maxChan;
+
+    wavep2.ReqChan[0] = 0;
+    wavep2.ReqChan[1] = 1;
+
+    wavep2.TransPos = 0;
+    wavep2.StartTrPos = 0;
+
+    /* Unnnecessary div+mult but required to match. */
+    wavep2.TransMax = ((ReadBuffSize / 512) / maxChan) / 2 * 2;
+    wavep2.Tr1Size = maxChan * 512;
+
+    CpuResumeIntr(oldstat);
+}
 
 unsigned int BgmGetMode(void) {
     return BgmMode;
@@ -365,7 +836,7 @@ int BgmSeek(unsigned int ofs) {
     ReadOutCnt = ((wavep2.pos * 2048) / wavep2.Tr1Size) + wavep2.TransPos;
 
     gBgmIntr = 0;
-    wavep2.readBackFlag = 0;
+    wavep2.readBackFlag = FALSE;
     BgmMode |= 0x800;
     return ret;
 }
@@ -391,7 +862,5 @@ int BgmGetTSample() {
 int BgmGetCdErrCode(void) {
     return CdErrCode;
 }
-
-IOP_INCLUDE_RODATA("wp2cd/nonmatchings/iop/bgm_play", D_00003A50);
 
 IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", _BgmPlay);

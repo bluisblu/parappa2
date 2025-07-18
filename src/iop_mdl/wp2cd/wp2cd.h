@@ -19,9 +19,9 @@
 #define WP2_SETMASTERVOL         0x000a /* Arg -> Master volume     */
 #define WP2_SETMODE              0x800c /* Arg -> Mode              */
 #define WP2_GETMODE              0x800b /*         No args          */
-#define WP2_SDINIT               0x000d /* Arg -> Status            */
+#define WP2_SDINIT               0x000d /* Arg -> Status (unused)   */
 #define WP2_SETCHANNEL           0x000f /* Arg -> Channel           */
-#define WP2_CDINIT               0x000e /* Arg -> Mode              */
+#define WP2_CDINIT               0x000e /* Arg -> Disc media mode   */
 #define WP2_GETTIME              0x8010 /*         No args          */
 #define WP2_GETTIMESAMPLE        0x8011 /*         No args          */
 #define WP2_GETCDERRCODE         0x8012 /*         No args          */
